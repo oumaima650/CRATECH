@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class rapport_mensuels extends Model
 {
+    protected $table = 'rapport_mensuels';
+    protected $primaryKey = 'id_rapport_mensuel';
     protected $fillable = [
         'id_CRA',
         'chemin_fichier',

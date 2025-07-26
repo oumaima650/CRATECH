@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('utilisateurs', function (Blueprint $table) {
-            $table->enum('role' , ['sous-traitant' , 'employe'])->default('employe');
-
+        Schema::create('groupes', function (Blueprint $table) {
+            $table->id('id_groupe');
+            $table->string('nom_groupe');
+            $table->string('description')->nullable(); // Optional field for group description
+            $table->timestamps();
         });
     }
 
@@ -22,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('utilisateurs', function (Blueprint $table) {
-            $table->dropColumn('role');
-        });
+        Schema::dropIfExists('groupes');
     }
 };

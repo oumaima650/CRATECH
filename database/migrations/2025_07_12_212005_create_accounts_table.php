@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id('id_account');
-            $table->unsignedBigInteger('id_user');
+            $table->unsignedBigInteger('proprietaire_id');
+            $table->string('proprietaire_type');
             $table->date('dateCreation'); 
             $table->string('MotDePasseTemp')->nullable();
             // MotDePasseTemp is a temporary password field, can be null if not set in case the user wants to reset or delete their password.

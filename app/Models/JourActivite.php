@@ -6,11 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class JourActivite extends Model
 {
+    protected $table = 'jour_activites';
+    protected $primaryKey = 'id_jour_activite';
     protected $fillable = [
         'id_CRA',
-        'dateJour',
-        'activite',
-        'duree',
+        'date',
+        'heuresTravaillées',
+        'description',
+        'projet',
+        'type', 
+    ];
+    protected $casts = [
+        'date' => 'date',
     ];
 
     public function cra()

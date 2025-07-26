@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class rapport_annuels extends Model
 {
+    protected $table = 'rapport_annuels';
+    protected $primaryKey = 'id_rapport_annuel';
     protected $fillable = [
         'id_user',
         'annee',

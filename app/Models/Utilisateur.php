@@ -4,32 +4,41 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\morphMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Utilisateur extends Model
 {
+    protected $table = 'utilisateurs';
+    protected $primaryKey = 'id_user';
     protected $fillable = [
         'nom_user',
         'email_user',
         'motDePasse_user',
         'role',
+        'id_groupe',
+    ];
+    protected $hidden = [
+        'motDePasse_user',
     ];
     public function cras(): HasMany
     {
         return $this->hasMany(Cra::class , 'id_user');
     }
-    public function accounts(): HasOne
+    public function accounts(): MorphOne
     {
-        return $this->hasOne(Accounts::class, 'id_user');
-
+        return $this->morphOne(Compte::class, 'proprietaire');
     }
     public function notifs(): MorphMany
     {
-        return $this->morphMany(notifs::class, 'destinataire');
+        return $this->morphMany(Notifs::class, 'destinataire');
     }
     public function rapport_annuel(): HasMany
     {
-        return $this->hasMany(rapport_annuels::class, 'id_user');
+        return $this->hasMany(Rapport_annuels::class, 'id_user');
+    }
+    public function groupe()
+    {
+        return $this->belongsTo(Groupes::class, 'id_groupe');
     }
 }

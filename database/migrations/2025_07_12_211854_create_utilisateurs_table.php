@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('nom_user');
             $table->string('email_user')->unique();
             $table->string('motdepasse_user');
+            $table->enum('role', ['employé', 'sous-traitant'])->default('employé'); // Assuming 'employé' is the default role
+            $table->unsignedBigInteger('id_groupe');
+            $table->foreign('id_groupe')->references('id_groupe')->on('groupes')->onDelete('cascade');
             $table->timestamps();
         });
     }

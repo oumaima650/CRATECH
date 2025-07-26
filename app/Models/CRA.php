@@ -8,11 +8,17 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class CRA extends Model
 {
+    protected $table = 'cra';
+    protected $primaryKey = 'id_CRA';
     protected $fillable = [
         'id_user',
         'dateMois',
         'statut',
         'submittedAt',
+    ];
+    protected $casts = [
+        'dateMois' => 'date',
+        'submittedAt' => 'datetime',
     ];
 
     public function utilisateur()
@@ -27,6 +33,10 @@ class CRA extends Model
     public function rapport_mensuels(): HasOne
     {
         return $this->hasOne(rapport_mensuels::class, 'id_CRA');
+    }
+    public function cra_affectations(): HasMany
+    {
+        return $this->hasMany(cra_affectation::class, 'id_CRA');
     }
 
 }

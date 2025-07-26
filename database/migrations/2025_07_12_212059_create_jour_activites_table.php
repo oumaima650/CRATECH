@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('heuresTravaillees'); // heures is the number of hours worked on that day.
             $table->text('description')->nullable(); // description is an optional field to provide details about the day's activities.
             $table->string('projet');
-            $table->enum('type', ['présence', 'absence', 'conges', 'maladie'])->default('absence');
+            $table->enum('type', ['présence', 'absence', 'conges', 'maladie', 'teletravail'])->default('absence');
             $table->timestamps();
         });
     }
