@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class notifs extends Model
 {
@@ -11,8 +12,8 @@ class notifs extends Model
      protected $fillable = [
         'message',
         'dateEnvoi',
-        'destinataire_id',
-        'destinataire_type',
+        'id_user',
+
     ];
 
     protected $casts = [
@@ -20,8 +21,8 @@ class notifs extends Model
     ];
 
 
-    public function destinataire()
+    public function destinataire(): BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(Utilisateur::class, 'id_user');
     }
 }

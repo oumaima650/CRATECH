@@ -13,12 +13,13 @@ class UtilisateurSeeder extends Seeder
     public function run(): void
     {
         \App\Models\Utilisateur::create([
-            'nom_user' => 'oumaima',
-            'email_user' => 'oumaima.ameziane@gmail.com',
-            'motdepasse_user' => 'lovexo2004',
-            'role' => 'employé',
-            'id_groupe' => 1,
-        ]); // Assuming 'employé' is a role defined in your application
+    'nom_user' => 'Oumaima',
+    'email_user' => 'oumaima@example.com',
+    'motDePasse_user' => bcrypt('secret'),
+    'role' => 'administrateur',
+    'status' => 'actif',
+]);
+ // Assuming 'employé' is a role defined in your application
         
     }
 }

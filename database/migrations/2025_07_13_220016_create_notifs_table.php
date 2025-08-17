@@ -15,7 +15,7 @@ return new class extends Migration
         $table->id('id_notif');
         $table->string('message');
         $table->dateTime('dateEnvoi')->nullable();
-        $table->morphs('destinataire'); // => destinataire_id + destinataire_type
+        $table->foreign('id_user')->references('id_user')->on('utilisateurs')->onDelete('cascade');
         $table->timestamps();
     });
 }

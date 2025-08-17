@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id('id_affectation');
             $table->unsignedBigInteger('id_CRA');
             $table->foreign('id_CRA')->references('id_CRA')->on('c_r_a_s')->onDelete('cascade');
-            $table->unsignedBigInteger('id_val');
-            $table->foreign('id_val')->references('id_val')->on('validateurs')->onDelete('cascade');
+            $table->unsignedBigInteger('id_validateur')->nullable();
+            $table->foreign('id_validateur')->references('id_user')->on('utilisateurs')->onDelete('cascade');
             $table->date('date_affectation'); 
             $table->boolean('actif')->default(true); // Assuming 'actif' indicates if the assignment is active
             $table->timestamps();

@@ -10,15 +10,10 @@ class cra_affectation extends Model
     protected $primaryKey = 'id_affectation';
     protected $fillable = [
         'id_CRA',
-        'id_val',
+        'id_validateur',
         'date_affectation',
         'actif',
     ];
-    protected $casts = [
-        'date_affectation' => 'date',
-        'actif' => 'boolean',
-    ];
-
     public function cra()
     {
         return $this->belongsTo(CRA::class, 'id_CRA');
@@ -26,6 +21,6 @@ class cra_affectation extends Model
 
     public function validateur()
     {
-        return $this->belongsTo(Validateur::class, 'id_val');
+        return $this->belongsTo(Utilisateur::class, 'id_validateur')->where('role', 'validateur');
 }
 }

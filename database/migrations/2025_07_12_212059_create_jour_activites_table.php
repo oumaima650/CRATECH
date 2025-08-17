@@ -16,10 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('id_CRA');
             $table->foreign('id_CRA')->references('id_CRA')->on('c_r_a_s')->onDelete('cascade');
             $table->date('date');
-            $table->integer('heuresTravaillees'); // heures is the number of hours worked on that day.
             $table->text('description')->nullable(); // description is an optional field to provide details about the day's activities.
-            $table->string('projet');
-            $table->enum('type', ['présence', 'absence', 'conges', 'maladie', 'teletravail'])->default('absence');
+            $table->enum('type', ['1', '0' , '0.5'])->default('0'); // Assuming '1' is presence, '0' is absence, and '0,5' is half-day
+            $table->unsignedBigInteger('id_activité');
+            $table->foreign('id_activité')->references('id_activité')->on('activités')->onDelete('cascade');
             $table->timestamps();
         });
     }

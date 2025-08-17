@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('groupes', function (Blueprint $table) {
-            $table->id('id_groupe');
-            $table->string('nom_groupe');
-            $table->string('description')->nullable(); // Optional field for group description
+        Schema::create('activités', function (Blueprint $table) {
+            $table->id('id_activité');
+            $table->string('nom_act');
+            $table->text('description')->nullable(); // Optional description for the activity
+            $table->enum("status", ['actif', 'inactif']); 
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('groupes');
+        Schema::dropIfExists('activités');
     }
 };

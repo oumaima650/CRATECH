@@ -12,17 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('utilisateurs', function (Blueprint $table) {
-            $table->id('id_user');
+            $table->bigIncrements('id_user');
             $table->string('nom_user');
-            $table->string('email_user')->unique();
+            $table->string('email_user')->unique()->nullable();
             $table->string('motdepasse_user');
-            $table->enum('role', ['employé', 'sous-traitant'])->default('employé'); // Assuming 'employé' is the default role
-            $table->unsignedBigInteger('id_groupe');
-            $table->foreign('id_groupe')->references('id_groupe')->on('groupes')->onDelete('cascade');
+            $table->enum('role', ['employé', 'sous-traitant', 'validateur' ,'administrateur']); // Assuming 'employé' is the default role
+            $table->enum('status', ['actif', 'inactif'])->nullable(); 
+            $table->unsignedBigInteger('id_validateur')->nullable();
+            $table->foreign('id_validateur')->references('id_user')->on('utilisateurs')->nullOnDelete();
             $table->timestamps();
         });
     }
-
+ 
     /**
      * Reverse the migrations.
      */

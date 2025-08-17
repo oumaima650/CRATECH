@@ -30,7 +30,7 @@ class CRA extends Model
         return $this->hasMany(JourActivite::class, 'id_CRA');
     }
 
-    public function rapport_mensuels(): HasOne
+    public function RapportMensuels(): HasOne
     {
         return $this->hasOne(rapport_mensuels::class, 'id_CRA');
     }
@@ -38,5 +38,25 @@ class CRA extends Model
     {
         return $this->hasMany(cra_affectation::class, 'id_CRA');
     }
+     public function scopeValides($query)
+    {
+        return $query->where('statut', 'valide');
+    }
+    public function scopeNonValidés($query)
+    {
+        return $query->where('statut', 'refuse');
+    }
+    public function scopeEnAttente($query)
+    {
+        return $query->where('statut', 'en_attente');
+    }
+
+    /**
+     * Scope : filtrer les CRA d’un mois donné
+     */
+    public function scopeDuMois($query, $mois, $annee)
+{
+    return $query->whereMonth('dateMois', $mois)->whereYear('dateMois', $annee);
+}
 
 }

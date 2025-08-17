@@ -3,18 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JourActivite extends Model
 {
     protected $table = 'jour_activites';
-    protected $primaryKey = 'id_jour_activite';
+    protected $primaryKey = 'id_day';
     protected $fillable = [
         'id_CRA',
         'date',
-        'heuresTravaillées',
+        'id_activité',
+        'type',
         'description',
-        'projet',
-        'type', 
+        
     ];
     protected $casts = [
         'date' => 'date',
@@ -24,4 +25,21 @@ class JourActivite extends Model
     {
         return $this->belongsTo(CRA::class, 'id_CRA');
     }
+    public function activite() : BelongsTo
+    {
+        return $this->belongsTo(Activité::class, 'id_activité');
+    }
+      public function scopeTravailles($query)
+    {
+        return $query->whereIn('type', ['1', '0.5']);
+    }
+
+    /**
+     * Scope : filtrer les absences
+     */
+    public function scopeAbsences($query)
+    {
+        return $query->where('type', '0');
+    }
+
 }
