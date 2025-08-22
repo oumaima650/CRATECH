@@ -19,6 +19,7 @@ class Utilisateur extends Model
         'role',
         'status',
         'id_validateur',
+        'keycloak_id',
     ];
     protected $hidden = [
         'motDePasse_user',
@@ -71,5 +72,11 @@ class Utilisateur extends Model
     {
         return $query->where('role', 'sous-traitant');
     }
+   public function hasRole($role)
+{
+    return $this->role === $role;
+}
+
+
 
 }
