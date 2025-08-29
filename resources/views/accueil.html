@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRATECH - Votre espace de gestion simplifiée</title>
+    <link rel="stylesheet" href="../css/accueil.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-top">
+            <div class="header-left">
+                <a href="#accueil" class="logo-brand">CRATECH</a>
+                <nav class="nav-links">
+                    <a href="#accueil" class="nav-link">Accueil</a>
+                    <a href="#fonctionnalites" class="nav-link">Fonctionnalités</a>
+                    <a href="#contact" class="nav-link">Contactez nous !</a>
+                </nav>
+            </div>
+            
+            <div class="header-right">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Recherche...">
+                </div>
+                
+                <div class="auth-buttons">
+                    <a href="/login" class="btn btn-auth">
+                        <i class="fas fa-user"></i>
+                        <span>Connexion / Inscription</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section" id="accueil">
+            <div class="logo-container">
+                <div class="logo-symbol">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgdmlld0JveD0iMCAwIDE0MCAxNDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImxvZ29HcmFkaWVudCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM3QzNBQ0Q7c3RvcC1vcGFjaXR5OjEiLz4KPHN0b3Agb2Zmc2V0PSI1MCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM4QjVDRjY7c3RvcC1vcGFjaXR5OjEiLz4KPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojRUM0ODk5O3N0b3Atb3BhY2l0eToxIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPHBhdGggZD0iTTcwIDEwIEwxMTAgMzAgTDEwIDMwIEw3MCAxMCBaIiBmaWxsPSJ1cmwoI2xvZ29HcmFkaWVudCkiLz4KPHBhdGggZD0iTTEwIDMwIEwxMCAxMTAgTDEwIDEwIEwxMCAzMCBaIiBmaWxsPSJ1cmwoI2xvZ29HcmFkaWVudCkiLz4KPHBhdGggZD0iTTEwIDExMCBMNzAgMTMwIEwxMTAgMTEwIEw3MCAxMzAgTDEwIDExMCBaIiBmaWxsPSJ1cmwoI2xvZ29HcmFkaWVudCkiLz4KPHBhdGggZD0iTTExMCAxMTAgTDExMCAzMCBMNzAgMTAgTDExMCAzMCBaIiBmaWxsPSJ1cmwoI2xvZ29HcmFkaWVudCkiLz4KPGNpcmNsZSBjeD0iNzAiIGN5PSI3MCIgcj0iMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzdDM0FDRCIgc3Ryb2tlLXdpZHRoPSIzIiBvcGFjaXR5PSIwLjMiLz4KPC9zdmc+" alt="CRATECH Logo" class="logo-img">
+                </div>
+                <h1 class="logo-text">CRATECH</h1>
+            </div>
+            <h2 class="hero-title">
+                Boostez votre carrière avec des outils conçus pour mettre en valeur votre créativité, 
+                toucher une plus large audience et augmenter vos revenus, le tout au même endroit.
+            </h2>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta-section">
+            <div class="cta-container">
+                <a href="../views/auth.html" class="cta-button cta-primary">
+                    <i class="fas fa-rocket"></i>
+                    <span>Commencer un essai gratuit</span>
+                </a>
+                <button class="cta-button cta-secondary">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Comparer les formules</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Features Cards -->
+        <section class="features-section" id="fonctionnalites">
+            <div class="features-grid">
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="card-header">
+                        <h3>Bienvenue sur CRATECH</h3>
+                        <div class="card-menu">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                    </div>
+                    <p>Votre espace personnel pour gérer vos activités sans stress. Ici, vous pouvez saisir, suivre et valider vos CRA en toute simplicité.</p>
+                </div>
+
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-header">
+                        <h3>Un CRA de plus, un pas vers l'efficacité</h3>
+                    </div>
+                    <p>Parce que chaque jour travaillé mérite d'être reconnu, CRATECH vous accompagne pour suivre vos efforts, valoriser vos contributions et garder une trace claire de vos missions.</p>
+                </div>
+
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-header">
+                        <h3>Simplifiez votre quotidien</h3>
+                    </div>
+                    <p>Fini les tableaux Excel perdus et les oublis de fin de mois ! Avec CRATECH, vos comptes rendus d'activité sont centralisés, organisés et toujours accessibles.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="footer-content">
+            <div class="footer-section social-section">
+                <h4>Suivez-nous</h4>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section menu-section">
+                <h4>Menu</h4>
+                <ul>
+                    <li><a href="#accueil">Accueil</a></li>
+                    <li><a href="#fonctionnalites">Fonctionnalités</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section app-section">
+                <h4>Application</h4>
+                <ul>
+                    <li><a href="../views/auth.html">Connexion</a></li>
+                    <li><a href="../views/auth.html">Inscription</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/accueil.js"></script>
+</body>
+</html> 

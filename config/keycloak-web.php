@@ -3,7 +3,7 @@
 return [
 
     'base_url' => env('KEYCLOAK_BASE_URL', 'http://127.0.0.1:8080'),
-    'realm' => env('KEYCLOAK_REALM', 'LaravelRealMe'),
+    'realm' => env('KEYCLOAK_REALM', 'master'),
 
     /**
      * The Keycloak Server realm public key (string).

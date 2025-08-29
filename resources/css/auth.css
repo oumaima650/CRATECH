@@ -1,0 +1,624 @@
+/* Reset et base avec design sombre et élégant */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #ffffff;
+    background: #000000;
+    overflow: hidden;
+    font-size: 16px;
+    position: relative;
+    height: 100vh;
+}
+
+/* Arrière-plan avec gradient magnifique */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, 
+        rgba(124, 58, 237, 0.15) 0%, 
+        rgba(79, 70, 229, 0.1) 25%, 
+        rgba(236, 72, 153, 0.08) 50%, 
+        rgba(139, 92, 246, 0.05) 75%, 
+        transparent 100%);
+    z-index: -1;
+    animation: subtleFloat 20s ease-in-out infinite;
+}
+
+@keyframes subtleFloat {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.1) rotate(1deg); }
+}
+
+/* Variables CSS pour un design sombre et élégant */
+:root {
+    --primary-purple: #7C3AED;
+    --primary-dark: #6D28D9;
+    --primary-light: #A78BFA;
+    --secondary-blue: #4F46E5;
+    --accent-pink: #EC4899;
+    --accent-violet: #8B5CF6;
+    --text-white: #ffffff;
+    --text-light: #e2e8f0;
+    --text-muted: #94a3b8;
+    --background-dark: #000000;
+    --background-card: rgba(15, 23, 42, 0.8);
+    --background-form: rgba(15, 23, 42, 0.9);
+    --border-color: rgba(124, 58, 237, 0.3);
+    --border-light: rgba(255, 255, 255, 0.1);
+    --shadow-glow: 0 0 30px rgba(124, 58, 237, 0.3);
+    --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.4);
+    --border-radius: 12px;
+    --border-radius-lg: 16px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Container principal */
+.auth-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* Section Formulaire (Gauche) */
+.form-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem;
+    background: var(--background-form);
+    backdrop-filter: blur(30px);
+    border-right: 1px solid var(--border-light);
+    overflow-y: auto;
+    position: relative;
+}
+
+.form-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="formDots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="1" fill="rgba(124, 58, 237, 0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23formDots)"/></svg>');
+    opacity: 0.3;
+    z-index: -1;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.form-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-white);
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.form-header p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    font-weight: 400;
+}
+
+/* Sélecteur de type d'utilisateur */
+.user-type-selector {
+    display: flex;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius);
+    padding: 0.25rem;
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--border-light);
+    position: relative;
+    z-index: 1;
+}
+
+.type-option {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: none;
+    background: transparent;
+    color: var(--text-light);
+    border-radius: calc(var(--border-radius) - 0.25rem);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.type-option.active {
+    background: var(--primary-purple);
+    color: var(--text-white);
+    box-shadow: var(--shadow-glow);
+}
+
+.type-option:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-white);
+}
+
+.type-option i {
+    font-size: 1.1rem;
+}
+
+/* Formulaire d'authentification */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    color: var(--text-white);
+    font-weight: 600;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius);
+    color: var(--text-white);
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    transition: var(--transition);
+}
+
+.input-container input::placeholder {
+    color: var(--text-muted);
+}
+
+.input-container input:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: var(--shadow-glow);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.clear-input {
+    position: absolute;
+    right: 1rem;
+    background: rgba(124, 58, 237, 0.2);
+    border: 1px solid var(--border-color);
+    color: var(--primary-purple);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.clear-input:hover {
+    background: var(--primary-purple);
+    color: var(--text-white);
+    transform: scale(1.1);
+}
+
+.form-hint {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Information de sécurité */
+.security-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(124, 58, 237, 0.1);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.security-info i {
+    color: var(--primary-purple);
+    font-size: 1.1rem;
+}
+
+/* Actions du formulaire */
+.form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, var(--primary-purple), var(--accent-pink));
+    color: var(--text-white);
+    border: none;
+    padding: 1.25rem;
+    border-radius: var(--border-radius);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-glow);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-purple));
+}
+
+.switch-btn {
+    background: transparent;
+    color: var(--primary-light);
+    border: 2px solid var(--border-color);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.switch-btn:hover {
+    background: var(--primary-purple);
+    color: var(--text-white);
+    border-color: var(--primary-purple);
+    transform: translateY(-2px);
+}
+
+/* Pied de formulaire */
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-light);
+}
+
+.forgot-password {
+    color: var(--primary-light);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
+    transition: var(--transition);
+}
+
+.forgot-password:hover {
+    color: var(--primary-purple);
+    text-decoration: underline;
+}
+
+.back-home {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.back-home:hover {
+    color: var(--primary-purple);
+    transform: translateX(-5px);
+}
+
+/* Section Logo (Droite) */
+.logo-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
+    background: var(--background-dark);
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        rgba(124, 58, 237, 0.1) 0%, 
+        rgba(79, 70, 229, 0.08) 25%, 
+        rgba(236, 72, 153, 0.06) 50%, 
+        rgba(139, 92, 246, 0.04) 75%, 
+        transparent 100%);
+    z-index: -1;
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 4rem;
+    position: relative;
+    z-index: 1;
+}
+
+.logo-symbol {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 2rem;
+    transition: var(--transition);
+    filter: drop-shadow(0 20px 40px rgba(124, 58, 237, 0.4));
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+.logo-symbol:hover {
+    transform: scale(1.05) rotate(5deg);
+    filter: drop-shadow(0 25px 50px rgba(124, 58, 237, 0.6));
+}
+
+.logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: var(--transition);
+}
+
+.logo-text {
+    font-size: 4rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--text-white), var(--primary-light), var(--accent-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.03em;
+    margin: 0 0 1rem 0;
+    text-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+    font-family: 'Poppins', sans-serif;
+}
+
+.logo-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    font-weight: 400;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Caractéristiques du logo */
+.logo-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: rgba(124, 58, 237, 0.1);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-light);
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.feature-item:hover {
+    background: rgba(124, 58, 237, 0.2);
+    color: var(--text-white);
+    transform: translateX(10px);
+    border-color: var(--primary-purple);
+}
+
+.feature-item i {
+    color: var(--primary-purple);
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+/* Animations */
+@keyframes logoFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .auth-container {
+        flex-direction: column;
+    }
+    
+    .form-section {
+        flex: none;
+        height: 60vh;
+        border-right: none;
+        border-bottom: 1px solid var(--border-light);
+    }
+    
+    .logo-section {
+        flex: none;
+        height: 40vh;
+        padding: 2rem;
+    }
+    
+    .logo-symbol {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .logo-text {
+        font-size: 3rem;
+    }
+    
+    .logo-features {
+        flex-direction: row;
+        gap: 1rem;
+    }
+    
+    .feature-item {
+        flex: 1;
+        text-align: center;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-section {
+        padding: 2rem;
+        height: 65vh;
+    }
+    
+    .logo-section {
+        padding: 1.5rem;
+        height: 35vh;
+    }
+    
+    .form-header h1 {
+        font-size: 2rem;
+    }
+    
+    .logo-text {
+        font-size: 2.5rem;
+    }
+    
+    .logo-symbol {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .logo-features {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .feature-item {
+        flex-direction: row;
+        text-align: left;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-section {
+        padding: 1.5rem;
+        height: 70vh;
+    }
+    
+    .logo-section {
+        padding: 1rem;
+        height: 30vh;
+    }
+    
+    .form-header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .logo-text {
+        font-size: 2rem;
+    }
+    
+    .logo-symbol {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .type-option {
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .form-actions {
+        gap: 0.75rem;
+    }
+    
+    .submit-btn,
+    .switch-btn {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+}
+
+/* Focus states pour l'accessibilité */
+.submit-btn:focus,
+.switch-btn:focus,
+.type-option:focus,
+.input-container input:focus {
+    outline: 2px solid var(--primary-purple);
+    outline-offset: 2px;
+}
+
+/* Scrollbar personnalisée élégante */
+.form-section::-webkit-scrollbar {
+    width: 8px;
+}
+
+.form-section::-webkit-scrollbar-track {
+    background: var(--background-dark);
+}
+
+.form-section::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-purple), var(--accent-pink));
+    border-radius: 4px;
+}
+
+.form-section::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-purple));
+} 

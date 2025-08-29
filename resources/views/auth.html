@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRATECH - Authentification</title>
+    <link rel="stylesheet" href="../css/auth.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Section Formulaire (Gauche) -->
+        <div class="form-section">
+            <div class="form-header">
+                <h1>Bienvenue sur CRATECH !</h1>
+                <p>Connectez-vous ou créez votre compte</p>
+            </div>
+            
+            <!-- Sélecteur de type d'utilisateur -->
+            <div class="user-type-selector">
+                <button class="type-option" data-type="employee">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Employé / Sous-traitant</span>
+                </button>
+                <button class="type-option active" data-type="admin">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Administrateur</span>
+                </button>
+            </div>
+            
+            <!-- Formulaire de connexion (par défaut pour admin) -->
+            <form class="auth-form" id="loginForm">
+                <div class="form-group">
+                    <label for="userId">ID *</label>
+                    <div class="input-container">
+                        <input type="text" id="userId" name="userId" placeholder="125" required>
+                        <button type="button" class="clear-input">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <small class="form-hint">Cet ID est fourni par l'administrateur</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userEmail">Email *</label>
+                    <div class="input-container">
+                        <input type="email" id="userEmail" name="userEmail" placeholder="admin@cratech.com" required>
+                        <button type="button" class="clear-input">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userPassword">Mot de Passe *</label>
+                    <div class="input-container">
+                        <input type="password" id="userPassword" name="userPassword" placeholder="*********" required>
+                        <button type="button" class="clear-input">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="security-info">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Vos données sont protégées par OpenID Connect</span>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Se Connecter</span>
+                    </button>
+                    
+                    <button type="button" class="switch-btn" id="switchToSignup">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Créer un compte</span>
+                    </button>
+                </div>
+                
+                <div class="form-footer">
+                    <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+                    <a href="../views/accueil.html" class="back-home">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Retour à l'accueil</span>
+                    </a>
+                </div>
+            </form>
+            
+            <!-- Formulaire d'inscription (caché par défaut) -->
+            <form class="auth-form" id="signupForm" style="display: none;">
+                <div class="form-group">
+                    <label for="adminName">Nom d'Administrateur *</label>
+                    <div class="input-container">
+                        <input type="text" id="adminName" name="adminName" placeholder="Admin CRATECH" required>
+                        <button type="button" class="clear-input">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="adminEmail">Email *</label>
+                    <div class="input-container">
+                        <input type="email" id="adminEmail" name="adminEmail" placeholder="admin@cratech.com" required>
+                        <button type="button" class="clear-input">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="adminPassword">Mot de Passe *</label>
+                    <div class="input-container">
+                        <input type="password" id="adminPassword" name="adminPassword" placeholder="*********" required>
+                        <button type="button" class="clear-input">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="adminConfirmPassword">Confirmation Mot de Passe *</label>
+                    <div class="input-container">
+                        <input type="password" id="adminConfirmPassword" name="adminConfirmPassword" placeholder="*********" required>
+                        <button type="button" class="clear-input">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="security-info">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Vos données sont protégées par OpenID Connect</span>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Créer le compte</span>
+                    </button>
+                    
+                    <button type="button" class="switch-btn" id="switchToLogin">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Déjà un compte ?</span>
+                    </button>
+                </div>
+                
+                <div class="form-footer">
+                    <a href="../views/accueil.html" class="back-home">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Retour à l'accueil</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Section Logo (Droite) -->
+        <div class="logo-section">
+            <div class="logo-container">
+                <div class="logo-symbol">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImxvZ29HcmFkaWVudCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM3QzNBQ0Q7c3RvcC1vcGFjaXR5OjEiLz4KPHN0b3Agb2Zmc2V0PSI1MCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM4QjVDRjY7c3RvcC1vcGFjaXR5OjEiLz4KPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojRUM0ODk5O3N0b3Atb3BhY2l0eToxIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPHBhdGggZD0iTTEwMCAyMCBMMTYwIDQwIEwyMCA0MCBMMTAwIDIwIFoiIGZpbGw9InVybCgjbG9nb0dyYWRpZW50Ii8+CjxwYXRoIGQ9Ik0yMCA0MCBMMjAgMTYwIEwyMCAyMCBMMjAgNDAgWiIgZmlsbD0idXJsKCNsb2dvR3JhZGllbnQiLz4KPHBhdGggZD0iTTIwIDE2MCBMMTAwIDE4MCBMMTYwIDE2MCBMMTAwIDE4MCBMMjAgMTYwIFoiIGZpbGw9InVybCgjbG9nb0dyYWRpZW50Ii8+CjxwYXRoIGQ9Ik0xNjAgMTYwIEwxNjAgNDAgTDEwMCAyMCBMMTYwIDQwIFoiIGZpbGw9InVybCgjbG9nb0dyYWRpZW50Ii8+CjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iMzAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzdDM0FDRCIgc3Ryb2tlLXdpZHRoPSI0IiBvcGFjaXR5PSIwLjMiLz4KPC9zdmc+" alt="CRATECH Logo" class="logo-img">
+                </div>
+                <h1 class="logo-text">CRATECH</h1>
+                <p class="logo-subtitle">Votre espace de gestion simplifiée</p>
+            </div>
+            
+            <div class="logo-features">
+                <div class="feature-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Sécurité renforcée</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-rocket"></i>
+                    <span>Performance optimale</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-users"></i>
+                    <span>Gestion d'équipe</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+</body>
+</html> 
