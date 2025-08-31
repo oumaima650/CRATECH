@@ -13,9 +13,9 @@ class UtilisateurSeeder extends Seeder
     public function run(): void
     {
         \App\Models\Utilisateur::create([
-    'nom_user' => 'Oumaima',
-    'email_user' => 'oumaima@example.com',
-    'motDePasse_user' => bcrypt('secret'),
+    'nom_user' => 'OUM',
+    'email_user' => 'oum@example.com',
+    'motdepasse_user' => bcrypt('secret'),
     'role' => 'administrateur',
     'status' => 'actif',
 ]);

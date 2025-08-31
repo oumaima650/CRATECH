@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('id_CRA');
             $table->unsignedBigInteger('id_user');
             $table->date('dateMois');
-            $table->enum('statut' ,['en_attente', 'valide', 'refuse'])->default('en_attente');
+            $table->enum('status' ,['en_attente', 'valide', 'refuse'])->default('en_attente');
             $table->timestamp('submittedAT')->nullable();
             // submittedAT is nullable to allow for cases where the CRA has not yet been submitted.
             $table->timestamps();

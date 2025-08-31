@@ -5,160 +5,150 @@ namespace App\Http\Controllers;
 use App\Models\Utilisateur; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
     /**
-     * Redirection vers Keycloak login
+     * Afficher le formulaire de connexion
      */
-    public function redirectToKeycloak(Request $request)
+    public function showLogin()
     {
-        Log::info('Redirect to Keycloak initiated');
-        
-        if ($request->has('id')) {
-            session(['expected_id' => $request->input('id')]);
-            Log::info('Expected ID set: ' . $request->input('id'));
-        }
-        
-        // Construire l'URL d'authentification Keycloak
-        $keycloakBase = env('KEYCLOAK_BASE_URL', 'http://127.0.0.1:8080');
-        $realm = env('KEYCLOAK_REALM', 'master');
-        $clientId = env('KEYCLOAK_CLIENT_ID', 'cratech-laravel');
-        $redirectUri = env('KEYCLOAK_REDIRECT_URI', 'http://127.0.0.1:8000/callback');
-        
-        $authUrl = $keycloakBase . '/realms/' . $realm . '/protocol/openid-connect/auth?' . http_build_query([
-            'client_id' => $clientId,
-            'redirect_uri' => $redirectUri,
-            'response_type' => 'code',
-            'scope' => 'openid profile email',
-        ]);
-        
-        Log::info('Redirecting to Keycloak: ' . $authUrl);
-        return redirect()->away($authUrl);
+        return view('auth.login');
     }
 
     /**
-     * Callback après login Keycloak
+     * Traiter la connexion
      */
-    public function handleCallback(Request $request)
+    public function login(Request $request)
     {
-        Log::info('Keycloak callback received', ['request' => $request->all()]);
-        
-        // Vérifier s'il y a une erreur
-        if ($request->has('error')) {
-            Log::error('Keycloak error: ' . $request->input('error'));
-            return redirect()->route('login')->with('error', 'Erreur d\'authentification: ' . $request->input('error'));
-        }
+        $request->validate([
+            'identifier' => 'required',
+            'password' => 'required',
+        ]);
 
-        // Récupérer le code d'autorisation
-        $code = $request->input('code');
-        if (!$code) {
-            Log::error('No authorization code received');
-            return redirect()->route('login')->with('error', 'Code d\'autorisation manquant');
-        }
+        // Récupérer l'utilisateur par ID
+        $user = Utilisateur::where('id_user', $request->identifier)->first();
 
-        try {
-            // Échanger le code contre un token
-            $keycloakBase = env('KEYCLOAK_BASE_URL', 'http://127.0.0.1:8080');
-            $realm = env('KEYCLOAK_REALM', 'master');
-            $clientId = env('KEYCLOAK_CLIENT_ID', 'cratech-laravel');
-            $clientSecret = env('KEYCLOAK_CLIENT_SECRET', 'XCNGdiCoLn6QXdk2B4T6RIEIZ5ktQdPq');
-            $redirectUri = env('KEYCLOAK_REDIRECT_URI', 'http://127.0.0.1:8000/callback');
-            
-            Log::info('Exchanging code for token', [
-                'keycloakBase' => $keycloakBase,
-                'realm' => $realm,
-                'clientId' => $clientId,
-                'redirectUri' => $redirectUri
-            ]);
-            
-            $tokenResponse = Http::asForm()->post($keycloakBase . '/realms/' . $realm . '/protocol/openid-connect/token', [
-                'grant_type' => 'authorization_code',
-                'client_id' => $clientId,
-                'client_secret' => $clientSecret,
-                'redirect_uri' => $redirectUri,
-                'code' => $code,
-            ]);
-
-            Log::info('Token response status: ' . $tokenResponse->status());
-            Log::info('Token response body: ' . $tokenResponse->body());
-            
-            if (!$tokenResponse->successful()) {
-                Log::error('Token exchange failed: ' . $tokenResponse->body());
-                return redirect()->route('login')->with('error', 'Échec de l\'échange de token');
-            }
-
-            $tokens = $tokenResponse->json();
-            $accessToken = $tokens['access_token'];
-            
-            // Récupérer les informations utilisateur
-            $userResponse = Http::withToken($accessToken)->get($keycloakBase . '/realms/' . $realm . '/protocol/openid-connect/userinfo');
-            
-            Log::info('User info response status: ' . $userResponse->status());
-            Log::info('User info response body: ' . $userResponse->body());
-            
-            if (!$userResponse->successful()) {
-                Log::error('User info failed: ' . $userResponse->body());
-                return redirect()->route('login')->with('error', 'Échec de la récupération des informations utilisateur');
-            }
-
-            $userInfo = $userResponse->json();
-            $expectedId = session('expected_id');
-            
-            Log::info('User info received', ['userInfo' => $userInfo]);
-            
-            // Trouver ou créer l'utilisateur
-            $user = Utilisateur::where('email_user', $userInfo['email'])->first();
-
-            if ($user) {
-                // Mise à jour si l'utilisateur existe
-                $user->update([
-                    'nom_user' => $userInfo['name'] ?? $userInfo['preferred_username'],
-                    'status' => 'actif',
-                    'id_validateur' => $expectedId,
-                ]);
-                Log::info('User updated: ' . $userInfo['email']);
+        if ($user) {
+            // Vérifier le mot de passe
+            if (Hash::check($request->password, $user->motdepasse_user)) {
+                // Vérifier le statut
+                if ($user->status === 'actif') {
+                    // Connexion réussie
+                    Auth::login($user, $request->has('remember'));
+                    
+                    // Redirection selon le rôle
+                    if ($user->role === 'administrateur') {
+                        return redirect('/admin/dashboard')->with('success', 'Connexion administrateur réussie !');
+                    } else {
+                        return redirect('/employe/dashboard')->with('success', 'Connexion réussie !');
+                    }
+                } else {
+                    return back()->withErrors(['identifier' => 'Votre compte est désactivé.']);
+                }
             } else {
-                // Création si l'utilisateur n'existe pas
-                $user = Utilisateur::create([
-                    'email_user' => $userInfo['email'],
-                    'nom_user' => $userInfo['name'] ?? $userInfo['preferred_username'],
-                    'role' => 'employé', // Par défaut
-                    'status' => 'actif',
-                    'id_validateur' => $expectedId,
-                ]);
-                Log::info('User created: ' . $userInfo['email']);
+                return back()->withErrors(['password' => 'Mot de passe incorrect.']);
             }
-
-            // Connecter l'utilisateur manuellement
-            Auth::login($user);
-            Log::info('User logged in: ' . $userInfo['email']);
-
-            // Vérification de l'ID pour les admins
-            if ($user->role === 'admin' && $expectedId && $user->id_validateur != $expectedId) {
-                Auth::logout();
-                Log::error('Invalid admin ID');
-                return redirect()->route('login')->withErrors(['id' => 'ID administrateur invalide']);
-            }
-
-            // Redirection selon le rôle
-            return match ($user->role) {
-                'admin', 'administrateur' => redirect()->route('admin.dashboard'),
-                'validateur' => redirect()->route('validateur.dashboard'),
-                default => redirect()->route('employe.dashboard'),
-            };
-
-        } catch (\Exception $e) {
-            Log::error('Callback error: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
-            return redirect()->route('login')->with('error', 'Erreur lors de l\'authentification: ' . $e->getMessage());
+        } else {
+            return back()->withErrors(['identifier' => 'Aucun compte trouvé avec cet identifiant.']);
         }
     }
 
-    public function motDePasseOublie()
+    /**
+     * Afficher le formulaire d'inscription
+     */
+    public function showRegister()
     {
-        return redirect()->away(env('KEYCLOAK_BASE_URL') . '/realms/' . env('KEYCLOAK_REALM') . '/account/password');
+        return view('auth.register');
+    }
+
+    /**
+     * Traiter l'inscription
+     */
+    public function register(Request $request)
+    {
+        // Log des données reçues
+        Log::info('Données reçues pour inscription:', $request->all());
+        
+        $request->validate([
+            'nom' => 'required|string|max:255',
+            'email' => 'required|email|unique:utilisateurs,email_user',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        try {
+            Log::info('Validation réussie, création de l\'utilisateur...');
+            
+            // Créer l'utilisateur administrateur
+            $user = Utilisateur::create([
+                'nom_user' => $request->nom,
+                'email_user' => $request->email,
+                'motdepasse_user' => Hash::make($request->password),
+                'role' => 'administrateur',
+                'status' => 'actif',
+                'id_validateur' => null,
+                'remember_token' => null,
+            ]);
+
+            Log::info('Utilisateur créé avec succès:', ['id' => $user->id_user, 'email' => $user->email_user]);
+
+            // Connecter automatiquement l'utilisateur
+            Auth::login($user);
+            if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Compte administrateur créé avec succès !',
+                'redirect' => '/admin/dashboard'
+            ]);
+        }
+
+            // Redirection vers le dashboard admin
+            return redirect('/admin/dashboard')->with('success', 'Compte administrateur créé avec succès !');
+
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la création du compte admin: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return back()->withErrors(['error' => 'Erreur lors de la création du compte. Veuillez réessayer.']);
+        }
+    }
+
+    /**
+     * Déconnexion
+     */
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/login')->with('success', 'Déconnexion réussie !');
+    }
+
+    /**
+     * Afficher le formulaire de mot de passe oublié
+     */
+    public function showForgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
+
+    /**
+     * Traiter la demande de mot de passe oublié
+     */
+    public function forgotPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = Utilisateur::where('email_user', $request->email)->first();
+        
+        if ($user) {
+            // Ici vous pourriez implémenter l'envoi d'email
+            // Pour l'instant, on affiche juste un message
+            return back()->with('success', 'Si un compte existe avec cet email, vous recevrez un lien de réinitialisation.');
+        } else {
+            // Pour des raisons de sécurité, on affiche le même message
+            return back()->with('success', 'Si un compte existe avec cet email, vous recevrez un lien de réinitialisation.');
+        }
     }
 }

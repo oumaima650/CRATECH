@@ -3,35 +3,77 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AcceuilController;
+use App\Http\Controllers\AdminController;
 
+// Route d'accueil
+Route::get('/', [AcceuilController::class, 'index'])->name('accueil');
 
-// Redirection vers Keycloak
-Route::get('/', [AcceuilController::class, 'index'])->name('accueil.html');
+// Routes d'authentification
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
+Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.forgot');
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Route de login Keycloak
-Route::get('/login', [AuthController::class, 'redirectToKeycloak'])->name('login');
-
-// Route de callback Keycloak (TRÈS IMPORTANTE)
-Route::get('/callback', [AuthController::class, 'handleCallback'])->name('keycloak.callback');
-
-// Route mot de passe oublié
-Route::get('/mot-de-passe-oublie', [AuthController::class, 'motDePasseOublie'])->name('password.forgot');
-
-// Routes protégées
-Route::middleware(['auth', 'checkRole:administrateur'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+// Route pour récupérer le token CSRF
+Route::get('/csrf-token', function () {
+    return response()->json(['token' => csrf_token()]);
 });
 
-Route::middleware(['auth', 'checkRole:validateur'])->group(function () {
-    Route::get('/validateur/dashboard', [ValidateurController::class, 'index'])->name('validateur.dashboard');
+// Routes protégées par authentification
+Route::middleware(['auth'])->group(function () {
+    
+    // Routes pour les administrateurs
+    Route::middleware(['auth'])->prefix('admin')->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+        Route::get('/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
+        Route::post('/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
+        Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
+        Route::put('/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+        Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+        
+        // Autres routes admin
+        Route::get('/validators', [AdminController::class, 'validators'])->name('admin.validators');
+        Route::get('/assignments', [AdminController::class, 'assignments'])->name('admin.assignments');
+        Route::get('/reporting', [AdminController::class, 'reporting'])->name('admin.reporting');
+        Route::get('/cra', [AdminController::class, 'cra'])->name('admin.cra');
+        Route::get('/projects', [AdminController::class, 'projects'])->name('admin.projects');
+        Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
+    });
+    
+    // Routes pour les employés
+    Route::middleware(['auth'])->prefix('employe')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('employe.dashboard');
+        })->name('employe.dashboard');
+    });
+    
+    // Routes pour les validateurs
+    Route::middleware(['auth'])->prefix('validateur')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('validateur.dashboard');
+        })->name('validateur.dashboard');
+    });
 });
 
-Route::middleware(['auth', 'checkRole:employé'])->group(function () {
-    Route::get('/employe/dashboard', [EmployeController::class, 'index'])->name('employe.dashboard');
+// Routes pour les vues HTML directes
+Route::get('/auth/login', function () {
+    return view('auth.login');
+})->name('auth.login');
+
+Route::get('/auth/register', function () {
+    return view('auth.register');
+})->name('auth.register');
+
+// Route de fallback
+Route::fallback(function () {
+    return redirect('/login');
 });
-// Route temporaire pour voir les logs - À SUPPRIMER EN PRODUCTION
-Route::get('/logs', [AuthController::class, 'showLogs']);
-// routes/web.php - Ajoutez ces routes
+
+// Routes pour les ressources statiques
 Route::get('/css/{file}', function ($file) {
     $path = resource_path('css/' . $file);
     if (file_exists($path)) {

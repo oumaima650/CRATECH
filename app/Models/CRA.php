@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class CRA extends Model
 {
-    protected $table = 'cra';
+    protected $table = 'c_r_a_s';
     protected $primaryKey = 'id_CRA';
     protected $fillable = [
         'id_user',
         'dateMois',
-        'statut',
+        'status',
         'submittedAt',
     ];
     protected $casts = [
@@ -40,15 +40,15 @@ class CRA extends Model
     }
      public function scopeValides($query)
     {
-        return $query->where('statut', 'valide');
+        return $query->where('status', 'valide');
     }
     public function scopeNonValidés($query)
     {
-        return $query->where('statut', 'refuse');
+        return $query->where('status', 'refuse');
     }
     public function scopeEnAttente($query)
     {
-        return $query->where('statut', 'en_attente');
+        return $query->where('status', 'en_attente');
     }
 
     /**

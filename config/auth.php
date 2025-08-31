@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults
@@ -37,7 +36,7 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'keycloak-web',
+            'driver' => 'session',
             'provider' => 'users',
         ],
     ],
@@ -62,7 +61,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => App\Models\Utilisateur::class, // ← Change ici
         ],
 
         // 'users' => [
@@ -111,5 +110,4 @@ return [
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
-
 ];

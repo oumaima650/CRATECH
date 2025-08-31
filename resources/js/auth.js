@@ -3,10 +3,42 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialisation des composants
     initAuthInterface();
-    initFormSwitching();
+    initUserTypeSwitching();
+    initAdminFormSwitching();
     initInteractiveElements();
     initFormValidation();
     initPerformanceOptimizations();
+    initCSRFToken();
+    
+    // Récupération du token CSRF
+    async function initCSRFToken() {
+        try {
+            // Récupérer le token CSRF depuis l'API
+            const response = await fetch('/csrf-token');
+            const data = await response.json();
+            const token = data.token;
+            
+            if (token) {
+                // Mettre à jour tous les champs _token
+                document.querySelectorAll('input[name="_token"], #csrf-token').forEach(input => {
+                    input.value = token;
+                });
+                
+                console.log('Token CSRF initialisé avec succès');
+            } else {
+                console.error('Token CSRF non reçu');
+            }
+        } catch (error) {
+            console.error('Erreur lors de la récupération du token CSRF:', error);
+        }
+    }
+    
+    // Fonction utilitaire pour récupérer un cookie
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
     
     // Interface d'authentification principale
     function initAuthInterface() {
@@ -34,29 +66,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Basculement entre connexion et inscription
-    function initFormSwitching() {
-        const loginForm = document.getElementById('loginForm');
-        const signupForm = document.getElementById('signupForm');
-        const switchToSignupBtn = document.getElementById('switchToSignup');
-        const switchToLoginBtn = document.getElementById('switchToLogin');
+    // Basculement entre types d'utilisateurs
+    function initUserTypeSwitching() {
         const typeOptions = document.querySelectorAll('.type-option');
+        const employeeForm = document.getElementById('employeeLoginForm');
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const adminSignupForm = document.getElementById('adminSignupForm');
+        const adminSwitchButtons = document.querySelector('.admin-switch-buttons');
         
-        // Basculement vers l'inscription
-        if (switchToSignupBtn) {
-            switchToSignupBtn.addEventListener('click', function() {
-                switchForm('signup');
-            });
-        }
-        
-        // Basculement vers la connexion
-        if (switchToLoginBtn) {
-            switchToLoginBtn.addEventListener('click', function() {
-                switchForm('login');
-            });
-        }
-        
-        // Gestion des types d'utilisateur
         typeOptions.forEach(option => {
             option.addEventListener('click', function() {
                 const type = this.dataset.type;
@@ -71,64 +88,97 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.style.transform = 'scale(1)';
                 }, 150);
                 
-                // Logique spécifique au type
-                if (type === 'admin') {
-                    // Par défaut, montrer le formulaire de connexion pour admin
-                    switchForm('login');
-                } else {
-                    // Pour les employés, montrer aussi le formulaire de connexion
-                    switchForm('login');
+                // Affichage des formulaires appropriés
+                if (type === 'employee') {
+                    showEmployeeForm();
+                } else if (type === 'admin') {
+                    showAdminForms();
                 }
             });
         });
         
-        // Fonction de basculement
-        function switchForm(formType) {
+        function showEmployeeForm() {
+            employeeForm.style.display = 'flex';
+            adminLoginForm.style.display = 'none';
+            adminSignupForm.style.display = 'none';
+            adminSwitchButtons.style.display = 'none';
+            
+            // Animation d'apparition
+            employeeForm.style.opacity = '0';
+            employeeForm.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                employeeForm.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                employeeForm.style.opacity = '1';
+                employeeForm.style.transform = 'translateY(0)';
+            }, 50);
+        }
+        
+        function showAdminForms() {
+            employeeForm.style.display = 'none';
+            adminLoginForm.style.display = 'flex';
+            adminSignupForm.style.display = 'none';
+            adminSwitchButtons.style.display = 'flex';
+            
+            // Animation d'apparition
+            adminLoginForm.style.opacity = '0';
+            adminLoginForm.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                adminLoginForm.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                adminLoginForm.style.opacity = '1';
+                adminLoginForm.style.transform = 'translateY(0)';
+            }, 50);
+        }
+    }
+    
+    // Basculement entre connexion et inscription pour les admins
+    function initAdminFormSwitching() {
+        const switchToAdminLoginBtn = document.getElementById('switchToAdminLogin');
+        const switchToAdminSignupBtn = document.getElementById('switchToAdminSignup');
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const adminSignupForm = document.getElementById('adminSignupForm');
+        
+        if (switchToAdminLoginBtn) {
+            switchToAdminLoginBtn.addEventListener('click', function() {
+                switchAdminForm('login');
+            });
+        }
+        
+        if (switchToAdminSignupBtn) {
+            switchToAdminSignupBtn.addEventListener('click', function() {
+                switchAdminForm('signup');
+            });
+        }
+        
+        function switchAdminForm(formType) {
             if (formType === 'signup') {
-                loginForm.style.display = 'none';
-                signupForm.style.display = 'flex';
+                adminLoginForm.style.display = 'none';
+                adminSignupForm.style.display = 'flex';
                 
                 // Animation d'apparition
-                signupForm.style.opacity = '0';
-                signupForm.style.transform = 'translateY(20px)';
+                adminSignupForm.style.opacity = '0';
+                adminSignupForm.style.transform = 'translateY(20px)';
                 
                 setTimeout(() => {
-                    signupForm.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                    signupForm.style.opacity = '1';
-                    signupForm.style.transform = 'translateY(0)';
+                    adminSignupForm.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                    adminSignupForm.style.opacity = '1';
+                    adminSignupForm.style.transform = 'translateY(0)';
                 }, 50);
-                
-                // Mise à jour du bouton
-                if (switchToSignupBtn) {
-                    switchToSignupBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>Déjà un compte ?</span>';
-                    switchToSignupBtn.id = 'switchToLogin';
-                    switchToSignupBtn.addEventListener('click', function() {
-                        switchForm('login');
-                    });
-                }
                 
             } else {
-                signupForm.style.display = 'none';
-                loginForm.style.display = 'flex';
+                adminSignupForm.style.display = 'none';
+                adminLoginForm.style.display = 'flex';
                 
                 // Animation d'apparition
-                loginForm.style.opacity = '0';
-                loginForm.style.transform = 'translateY(20px)';
+                adminLoginForm.style.opacity = '0';
+                adminLoginForm.style.transform = 'translateY(20px)';
                 
                 setTimeout(() => {
-                    loginForm.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                    loginForm.style.opacity = '1';
-                    loginForm.style.transform = 'translateY(0)';
+                    adminLoginForm.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                    adminLoginForm.style.opacity = '1';
+                    adminLoginForm.style.transform = 'translateY(0)';
                 }, 50);
-                
-                // Mise à jour du bouton
-                if (switchToLoginBtn) {
-                    switchToLoginBtn.innerHTML = '<i class="fas fa-user-plus"></i><span>Créer un compte</span>';
-                    switchToLoginBtn.id = 'switchToSignup';
-                    switchToLoginBtn.addEventListener('click', function() {
-                        switchForm('signup');
-                    });
-                }
             }
         }
     }
@@ -232,67 +282,99 @@ document.addEventListener('DOMContentLoaded', function() {
             document.head.appendChild(style);
         }
     }
+    // Affichage des messages
+        function showFormMessage(message, type) {
+            const existingMessage = document.querySelector('.form-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `form-message ${type}`;
+            messageDiv.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i> ${message}`;
+            
+            const activeForm = document.querySelector('.auth-form[style*="flex"]') || employeeForm;
+            activeForm.insertBefore(messageDiv, activeForm.firstChild);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 4000);
+        }
     
     // Validation des formulaires
     function initFormValidation() {
-        const loginForm = document.getElementById('loginForm');
-        const signupForm = document.getElementById('signupForm');
+        const employeeForm = document.getElementById('employeeLoginForm');
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const adminSignupForm = document.getElementById('adminSignupForm');
         
-        // Validation du formulaire de connexion
-        if (loginForm) {
-            loginForm.addEventListener('submit', function(e) {
+        // Validation du formulaire employés
+        if (employeeForm) {
+            employeeForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
                 const formData = new FormData(this);
-                const userId = formData.get('userId');
-                const userEmail = formData.get('userEmail');
-                const userPassword = formData.get('userPassword');
-                const activeType = document.querySelector('.type-option.active').dataset.type;
+                const employeeId = formData.get('username');
+                const employeeEmail = formData.get('email');
+                const employeePassword = formData.get('password');
+                const remember = formData.get('remember');
                 
                 // Validation basique
-                if (!userId || !userEmail || !userPassword) {
+                if (!employeeId || !employeeEmail || !employeePassword) {
                     showFormMessage('Veuillez remplir tous les champs obligatoires', 'error');
                     return;
                 }
                 
                 // Validation email
-                if (!isValidEmail(userEmail)) {
+                if (!isValidEmail(employeeEmail)) {
                     showFormMessage('Veuillez entrer une adresse email valide', 'error');
                     return;
                 }
                 
-                // Simulation de connexion
-                showFormMessage('Connexion en cours...', 'success');
-                
-                setTimeout(() => {
-                    console.log('Tentative de connexion:', {
-                        type: activeType,
-                        userId: userId,
-                        email: userEmail,
-                        password: userPassword
-                    });
-                    
-                    // Ici vous pouvez ajouter votre logique de connexion
-                    showFormMessage('Connexion réussie ! Redirection...', 'success');
-                    
-                    setTimeout(() => {
-                        // Redirection vers le dashboard ou la page principale
-                        window.location.href = '../views/accueil.html';
-                    }, 1500);
-                }, 1000);
+                // Connexion employé
+                submitEmployeeLogin({
+                    username: employeeId,
+                    email: employeeEmail,
+                    password: employeePassword,
+                    remember: remember
+                });
             });
         }
         
-        // Validation du formulaire d'inscription
-        if (signupForm) {
-            signupForm.addEventListener('submit', function(e) {
+        // Validation du formulaire de connexion admin
+        if (adminLoginForm) {
+            adminLoginForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
                 const formData = new FormData(this);
-                const adminName = formData.get('adminName');
-                const adminEmail = formData.get('adminEmail');
-                const adminPassword = formData.get('adminPassword');
-                const adminConfirmPassword = formData.get('adminConfirmPassword');
+                const adminId = formData.get('username');
+                const adminPassword = formData.get('password');
+                const remember = formData.get('remember');
+                
+                // Validation basique
+                if (!adminId || !adminPassword) {
+                    showFormMessage('Veuillez remplir tous les champs obligatoires', 'error');
+                    return;
+                }
+                
+                // Connexion admin
+                submitAdminLogin({
+                    username: adminId,
+                    password: adminPassword,
+                    remember: remember
+                });
+            });
+        }
+        
+        // Validation du formulaire d'inscription admin
+        if (adminSignupForm) {
+            adminSignupForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const adminName = formData.get('nom');
+                const adminEmail = formData.get('email');
+                const adminPassword = formData.get('password');
+                const adminConfirmPassword = formData.get('password_confirmation');
                 
                 // Validation basique
                 if (!adminName || !adminEmail || !adminPassword || !adminConfirmPassword) {
@@ -318,24 +400,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
                 
-                // Simulation d'inscription
-                showFormMessage('Création du compte en cours...', 'success');
-                
-                setTimeout(() => {
-                    console.log('Tentative d\'inscription:', {
-                        name: adminName,
-                        email: adminEmail,
-                        password: adminPassword
-                    });
-                    
-                    // Ici vous pouvez ajouter votre logique d'inscription
-                    showFormMessage('Compte créé avec succès ! Redirection...', 'success');
-                    
-                    setTimeout(() => {
-                        // Redirection vers le dashboard ou la page principale
-                        window.location.href = '../views/accueil.html';
-                    }, 1500);
-                }, 1000);
+                // Inscription admin
+                submitAdminSignup({
+                    nom: adminName,
+                    email: adminEmail,
+                    password: adminPassword,
+                    password_confirmation: adminConfirmPassword
+                });
             });
         }
         
@@ -345,24 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return emailRegex.test(email);
         }
         
-        // Affichage des messages
-        function showFormMessage(message, type) {
-            const existingMessage = document.querySelector('.form-message');
-            if (existingMessage) {
-                existingMessage.remove();
-            }
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `form-message ${type}`;
-            messageDiv.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i> ${message}`;
-            
-            const activeForm = document.querySelector('.auth-form[style*="flex"]') || loginForm;
-            activeForm.insertBefore(messageDiv, activeForm.firstChild);
-            
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 4000);
-        }
+        
         
         // Ajouter les styles pour les messages
         if (!document.querySelector('#form-messages')) {
@@ -371,7 +425,7 @@ document.addEventListener('DOMContentLoaded', function() {
             style.textContent = `
                 .form-message {
                     padding: 1rem;
-                    border-radius: var(--border-radius);
+                    border-radius: 12px;
                     margin-bottom: 1rem;
                     display: flex;
                     align-items: center;
@@ -407,6 +461,161 @@ document.addEventListener('DOMContentLoaded', function() {
             document.head.appendChild(style);
         }
     }
+    
+    // Soumission des formulaires
+    async function submitEmployeeLogin(data) {
+        try {
+            showFormMessage('Connexion en cours...', 'success');
+            
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                showFormMessage('Connexion réussie ! Redirection...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/employe/dashboard';
+                }, 1500);
+            } else {
+                const errorData = await response.json();
+                if (errorData.errors) {
+                    // Afficher les erreurs de validation
+                    Object.values(errorData.errors).forEach(error => {
+                        showFormMessage(error[0], 'error');
+                    });
+                } else {
+                    showFormMessage(errorData.message || 'Erreur de connexion', 'error');
+                }
+            }
+        } catch (error) {
+            console.error('Erreur de connexion:', error);
+            showFormMessage('Erreur de connexion au serveur', 'error');
+        }
+    }
+    
+    async function submitAdminLogin(data) {
+        try {
+            showFormMessage('Connexion administrateur en cours...', 'success');
+            
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                showFormMessage('Connexion admin réussie ! Redirection...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/admin/dashboard';
+                }, 1500);
+            } else {
+                const errorData = await response.json();
+                if (errorData.errors) {
+                    // Afficher les erreurs de validation
+                    Object.values(errorData.errors).forEach(error => {
+                        showFormMessage(error[0], 'error');
+                    });
+                } else {
+                    showFormMessage(errorData.message || 'Erreur de connexion admin', 'error');
+                }
+            }
+        } catch (error) {
+            console.error('Erreur de connexion admin:', error);
+            showFormMessage('Erreur de connexion au serveur', 'error');
+        }
+    }
+    
+    async function submitAdminSignup(data) {
+    try {
+        console.log('Début de submitAdminSignup avec données:', data);
+        showFormMessage('Création du compte administrateur en cours...', 'success');
+        
+        // Préparer les données en FormData
+        const formData = new FormData();
+        formData.append('nom', data.nom);
+        formData.append('email', data.email);
+        formData.append('password', data.password);
+        formData.append('password_confirmation', data.password_confirmation);
+
+        // Ajouter le token CSRF
+        const token = document.querySelector('input[name="_token"]').value;
+        formData.append('_token', token);
+        
+        console.log('Token CSRF utilisé:', token);
+
+        // Ajouter l'en-tête pour indiquer que nous attendons du JSON
+        const headers = {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+        };
+
+        // Requête AJAX vers /register
+        console.log('Envoi de la requête vers /register...');
+        const response = await fetch('/register', {
+            method: 'POST',
+            body: formData,
+            headers: headers
+        });
+
+        console.log('Réponse reçue:', response.status, response.statusText);
+
+        // Vérifier le type de contenu de la réponse
+        const contentType = response.headers.get('content-type');
+        
+        if (contentType && contentType.includes('application/json')) {
+            // Si c'est du JSON, traiter normalement
+            const responseData = await response.json();
+            
+            if (response.ok) {
+                console.log('Inscription réussie !', responseData);
+                showFormMessage(responseData.message || 'Compte administrateur créé avec succès ! Redirection...', 'success');
+                setTimeout(() => {
+                    window.location.href = responseData.redirect || '/admin/dashboard';
+                }, 1500);
+            } else {
+                console.log('Erreur de réponse:', responseData);
+                
+                if (responseData.errors) {
+                    Object.values(responseData.errors).forEach(error => {
+                        showFormMessage(error[0], 'error');
+                    });
+                } else {
+                    showFormMessage(responseData.message || 'Erreur lors de la création du compte', 'error');
+                }
+            }
+        } else {
+            // Si ce n'est pas du JSON, c'est probablement une redirection ou une page HTML
+            console.log('Réponse non-JSON reçue, redirection probable');
+            
+            if (response.redirected) {
+                // Si le serveur a redirigé, suivre la redirection
+                window.location.href = response.url;
+            } else if (response.ok) {
+                // Si la réponse est OK mais pas JSON, rediriger manuellement
+                showFormMessage('Compte créé avec succès ! Redirection...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/admin/dashboard';
+                }, 1500);
+            } else {
+                // Lire le texte de la réponse pour debugger
+                const textResponse = await response.text();
+                console.error('Réponse HTML reçue:', textResponse.substring(0, 200));
+                showFormMessage('Erreur serveur inattendue. Veuillez vérifier la console.', 'error');
+            }
+        }
+    } catch (error) {
+        console.error('Erreur d\'inscription admin:', error);
+        showFormMessage('Erreur de connexion au serveur', 'error');
+    }
+}
     
     // Optimisations de performance
     function initPerformanceOptimizations() {
@@ -468,6 +677,42 @@ document.addEventListener('DOMContentLoaded', function() {
         document.documentElement.style.setProperty('--transition', 'none');
     }
     
+    // Fonction de test pour vérifier l'attachement des formulaires
+    function testFormAttachment() {
+        console.log('🧪 Test d\'attachement des formulaires...');
+        
+        const forms = {
+            'employeeLoginForm': document.getElementById('employeeLoginForm'),
+            'adminLoginForm': document.getElementById('adminLoginForm'),
+            'adminSignupForm': document.getElementById('adminSignupForm')
+        };
+        
+        Object.entries(forms).forEach(([name, form]) => {
+            if (form) {
+                console.log(`✅ ${name} trouvé`);
+                
+                // Vérifier si l'événement submit est attaché
+                const submitEvent = form.onsubmit;
+                if (submitEvent) {
+                    console.log(`✅ ${name} a un événement submit`);
+                } else {
+                    console.log(`⚠️ ${name} n'a PAS d'événement submit`);
+                }
+            } else {
+                console.error(`❌ ${name} NON TROUVÉ`);
+            }
+        });
+        
+        // Test de clic sur le bouton d'inscription admin
+        const adminSignupBtn = document.querySelector('#adminSignupForm button[type="submit"]');
+        if (adminSignupBtn) {
+            console.log('✅ Bouton d\'inscription admin trouvé');
+            console.log('Bouton:', adminSignupBtn);
+        } else {
+            console.error('❌ Bouton d\'inscription admin NON TROUVÉ');
+        }
+    }
+    
     // Initialisation réussie
     console.log('🚀 CRATECH - Interface d\'authentification élégante initialisée avec succès ! ✨');
     
@@ -508,7 +753,20 @@ document.addEventListener('DOMContentLoaded', function() {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-15px); }
         }
+        
+        /* Styles pour les boutons de basculement admin */
+        .admin-switch-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+        }
+        
+        .admin-switch-buttons .switch-btn {
+            flex: 1;
+            max-width: 200px;
+        }
     `;
     
     document.head.appendChild(dynamicStyles);
-}); 
+});
