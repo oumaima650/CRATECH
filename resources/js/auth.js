@@ -346,7 +346,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 
                 const formData = new FormData(this);
-                const adminId = formData.get('username');
+                const adminId = formData.get('nom_user');
                 const adminPassword = formData.get('password');
                 const remember = formData.get('remember');
                 
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Connexion admin
                 submitAdminLogin({
-                    username: adminId,
+                    nom_user: adminId,
                     password: adminPassword,
                     remember: remember
                 });
@@ -499,39 +499,43 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     async function submitAdminLogin(data) {
-        try {
-            showFormMessage('Connexion administrateur en cours...', 'success');
-            
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                },
-                body: JSON.stringify(data)
-            });
+    try {
+        showFormMessage('Connexion administrateur en cours...', 'success');
+        
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+            },
+            body: JSON.stringify(data)
+        });
 
-            if (response.ok) {
-                showFormMessage('Connexion admin réussie ! Redirection...', 'success');
-                setTimeout(() => {
-                    window.location.href = '/admin/dashboard';
-                }, 1500);
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            // Succès côté serveur
+            showFormMessage('Connexion admin réussie ! Redirection...', 'success');
+            setTimeout(() => {
+                window.location.href = '/admin/dashboard';
+            }, 1500);
+        } else {
+            // Erreurs envoyées par Laravel
+            if (result.errors) {
+                Object.values(result.errors).forEach(error => {
+                    showFormMessage(error[0], 'error');
+                });
             } else {
-                const errorData = await response.json();
-                if (errorData.errors) {
-                    // Afficher les erreurs de validation
-                    Object.values(errorData.errors).forEach(error => {
-                        showFormMessage(error[0], 'error');
-                    });
-                } else {
-                    showFormMessage(errorData.message || 'Erreur de connexion admin', 'error');
-                }
+                showFormMessage(result.message || 'Mot de passe ou identifiant incorrect', 'error');
             }
-        } catch (error) {
-            console.error('Erreur de connexion admin:', error);
-            showFormMessage('Erreur de connexion au serveur', 'error');
         }
+
+    } catch (error) {
+        console.error('Erreur de connexion admin:', error);
+        showFormMessage('Erreur de connexion au serveur', 'error');
     }
+}
+
     
     async function submitAdminSignup(data) {
     try {

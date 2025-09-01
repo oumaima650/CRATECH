@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CompteCreeMail;
 
 class AuthController extends Controller
 {
@@ -91,6 +93,20 @@ class AuthController extends Controller
                 'id_validateur' => null,
                 'remember_token' => null,
             ]);
+            
+        // Récupérer l'ID après la création
+       $userId = $user->id_user;
+
+        // Envoyer l'email avec l'ID
+        try {
+            $this->envoyerEmailAvecID($user, $request->password, $userId);
+            Log::info('Email envoyé avec succès à: ' . $user->email_user);
+        } catch (\Exception $e) {
+            Log::error('Erreur envoi email: ' . $e->getMessage());
+            // Continuer même si l'email échoue
+        }
+        
+            
 
             Log::info('Utilisateur créé avec succès:', ['id' => $user->id_user, 'email' => $user->email_user]);
 
@@ -113,6 +129,13 @@ class AuthController extends Controller
             return back()->withErrors(['error' => 'Erreur lors de la création du compte. Veuillez réessayer.']);
         }
     }
+
+        private function envoyerEmailAvecID($user, $password, $userId)
+    {
+    Mail::to($user->email_user)->send(new CompteCreeMail($user, $password, $userId));
+          }
+
+    
 
     /**
      * Déconnexion

@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Utilisateur extends Authenticatable
 {
@@ -160,4 +162,50 @@ class Utilisateur extends Authenticatable
     {
         return $query->where('role', 'sous-traitant');
     }
+
+    public function cras(): HasMany
+    {
+        return $this->hasMany(Cra::class , 'id_user');
+    }
+    public function notifs(): HasMany
+    {
+        return $this->hasMany(notifs::class, 'id_user');
+    }
+    public function assignements(): HasMany 
+    {
+        return $this->hasMany(User_act::class, 'id_user');
+    }
+    public function affectations(): HasMany
+    {
+        return $this->hasMany(Cra_affectation::class, 'id_validateur');
+    }
+    public function validateur(): BelongsTo
+    {
+        return $this->belongsTo(Utilisateur::class, 'id_validateur');
+    }
+    public function validés(): HasMany
+    {
+        return $this->hasMany(Utilisateur::class, 'id_validateur'); 
+    }
+
+    
+   
+    public function rapport_annuels(): HasMany
+    {
+        return $this->hasMany(Rapport_annuels::class, 'id_user');
+    }
+    
+    public function scopeValidateurs($query)
+    {
+        return $query->where('role', 'validateur');
+    }
+    public function scopeEmployes($query)
+    {
+        return $query->where('role', 'employé');
+    }
+    public function scopeSousTraitants($query)
+    {
+        return $query->where('role', 'sous-traitant');
+    }
+
 }

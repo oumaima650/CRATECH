@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#7C3AED">
+    <title>CRATECH - Gestion des utilisateurs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <!-- Logo -->
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-symbol">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <span class="logo-text">CRATECH</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="nav-title">Menu Principal</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item active">
+                            <a href="/admin/dashboard" class="nav-link">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>Tableau de bord</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/users" class="nav-link">
+                                <i class="fas fa-users"></i>
+                                <span>Utilisateurs</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/validators" class="nav-link">
+                                <i class="fas fa-user-check"></i>
+                                <span>Validateurs</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/assignments" class="nav-link">
+                                <i class="fas fa-tasks"></i>
+                                <span>Affectations</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/reporting" class="nav-link">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Reporting</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/cra" class="nav-link">
+                                <i class="fas fa-file-alt"></i>
+                                <span>CRA</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/projects" class="nav-link">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>Projets</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-title">Compte</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="/admin/profile" class="nav-link">
+                                <i class="fas fa-user-cog"></i>
+                                <span>Mon Compte</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/logout" class="nav-link">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Déconnexion</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-content">
+                    <div class="header-left">
+                        <h1 class="page-title">Gestion des utilisateurs</h1>
+                        <p class="page-subtitle">Gérez vos utilisateurs en toute simplicité : ajoutez, modifiez ou désactivez les comptes en un clic.</p>
+                    </div>
+                    
+                    <div class="header-right">
+                        <!-- Notifications -->
+                        <div class="notification-center">
+                            <button class="notification-btn" aria-label="Notifications">
+                                <i class="fas fa-bell"></i>
+                                <span class="notification-badge">3</span>
+                            </button>
+                        </div>
+                        
+                        <!-- User Menu -->
+                        <div class="user-menu">
+                            <div class="user-info">
+                                <span class="user-role">Administrateur</span>
+                                <span class="user-name">Admin CRATECH</span>
+                            </div>
+                            <div class="user-avatar">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+               
+                <!-- Quick Actions -->
+                <section class="quick-actions-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Actions Rapides</h2>
+                    </div>
+                    
+                    <div class="quick-actions-grid">
+                        <button class="quick-action-btn" onclick="window.location.href='/admin/create_user'">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Ajouter un employé/sous traitant/manager</span>
+                        </button>
+                        
+                        <button class="quick-action-btn" onclick="window.location.href='/admin/delete_user'">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>Supprimer un employé/sous traitant/manager</span>
+                        </button>
+                        
+                        <button class="quick-action-btn" onclick="window.location.href='/admin/list_users'">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Liste des Employés/sous traitant</span>
+                        </button>
+                        
+                        <button class="quick-action-btn" onclick="window.location.href='/admin/list_managers'">
+                            <i class="fas fa-cog"></i>
+                            <span>Liste des Managers </span>
+                        </button>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="../js/admin.js"></script>
+</body>
+</html>

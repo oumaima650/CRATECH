@@ -120,7 +120,7 @@
 
             <!-- Formulaire d'inscription pour administrateurs -->
             <form class="auth-form" id="adminSignupForm" action="/register" method="post" style="display: none;">
-                <input type="hidden" name="_token" id="csrf-token">
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 
                 <div class="form-group">
                     <label for="adminName">Nom Complet *</label>

@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
                 const perfData = performance.getEntriesByType('navigation')[0];
                 if (perfData) {
-                    console.log('🚀 CRATECH - Temps de chargement du dashboard:', perfData.loadEventEnd - perfData.loadEventStart, 'ms');
+                    console.log(' CRATECH - Temps de chargement du dashboard:', perfData.loadEventEnd - perfData.loadEventStart, 'ms');
                 }
             }, 0);
         });
@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Initialisation réussie
-    console.log('🚀 CRATECH - Interface d\'administration élégante initialisée avec succès ! ✨');
+    console.log(' CRATECH - Interface d\'administration élégante initialisée avec succès ! ');
     
     // Ajouter des styles CSS dynamiques élégants
     const dynamicStyles = document.createElement('style');
