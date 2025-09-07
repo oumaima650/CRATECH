@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRATECH - Ajouter un utilisateur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-section">
+                    <div class="logo-icon">C</div>
+                    <span class="logo-text">CRATECH</span>
+                </div>
+                <div class="admin-badge">
+                    <i class="fas fa-crown"></i>
+                    <span>Administrateur</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Tableau de bord</h3>
+                    <a href="/admin/dashboard" class="nav-item">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Vue d'ensemble</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Gestion</h3>
+                    <a href="/admin/users.html" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                    <a href="#activities" class="nav-item">
+                        <i class="fas fa-tasks"></i>
+                        <span>Activités</span>
+                    </a>
+                    <a href="#reports" class="nav-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Rapports</span>
+                    </a>
+        </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Configuration</h3>
+                    <a href="#settings" class="nav-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Paramètres</span>
+                    </a>
+                    <a href="#backup" class="nav-item">
+                        <i class="fas fa-database"></i>
+                        <span>Sauvegarde</span>
+                    </a>
+                </div>
+            </nav>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">Admin CRATECH</span>
+                        <span class="user-role">Administrateur</span>
+                    </div>
+                </div>
+                <a href="/logout" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Déconnexion</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                    <div class="header-left">
+                    <button class="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div>
+                        <h1 class="page-title">Ajouter un utilisateur</h1>
+                        <div class="breadcrumbs" style="margin-top:.25rem;color:var(--gray-500);font-weight:500;">
+                            <a href="/admin/dashboard" class="link" style="color:var(--gray-500);text-decoration:none;">Dashboard</a>
+                            <span style="margin:0 .5rem;">/</span>
+                            <a href="/admin/users.html" class="link" style="color:var(--gray-500);text-decoration:none;">Utilisateurs</a>
+                            <span style="margin:0 .5rem;">/</span>
+                            <span style="color:var(--gray-700);">Nouveau</span>
+                    </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <a href="/admin/users.html" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:.5rem;">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Retour à la liste</span>
+                    </a>
+                </div>
+            </header>
+
+            <div class="users-content" style="max-width:1100px;margin:0 auto;">
+                <div class="users-table-container" style="overflow:visible;">
+                    <div class="table-header" style="border-bottom:none;padding-bottom:0;">
+                        <div style="display:flex;align-items:center;gap:.75rem;">
+                            <div class="user-avatar-small" style="width:40px;height:40px;border-radius:10px;">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div>
+                                <h2 style="margin:0;">Créer un nouveau compte</h2>
+                                <p style="margin:.25rem 0 0;color:var(--gray-600);">Renseignez les informations ci-dessous. Un email sera envoyé automatiquement.</p>
+                            </div>
+                            </div>
+                        </div>
+                    <div class="table-wrapper" style="padding: 1.5rem;">
+                        <form id="createUserForm" class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+                            <input type="hidden" name="_token" id="csrf-token-create" value="">
+                            <div class="form-row" style="grid-column:span 1;">
+                                <label for="nom_user" style="font-weight:600;color:var(--gray-800);">Nom complet</label>
+                                <div style="position:relative;">
+                                    <i class="fas fa-user" style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--gray-400);"></i>
+                                    <input style="padding-left:2.5rem;" type="text" id="nom_user" name="nom_user" placeholder="Ex: Jean Dupont" required>
+                                </div>
+                            </div>
+                            <div class="form-row" style="grid-column:span 1;">
+                                <label for="email_user" style="font-weight:600;color:var(--gray-800);">Email</label>
+                                <div style="position:relative;">
+                                    <i class="fas fa-envelope" style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--gray-400);"></i>
+                                    <input style="padding-left:2.5rem;" type="email" id="email_user" name="email_user" placeholder="exemple@domaine.com" required>
+                            </div>
+                        </div>
+                            <div class="form-row" style="grid-column:span 1;">
+                                <label for="role" style="font-weight:600;color:var(--gray-800);">Rôle</label>
+                                <select id="role" name="role" required>
+                                    <option value="administrateur">Administrateur</option>
+                                    <option value="validateur">Validateur</option>
+                                    <option value="employé">Employé</option>
+                                    <option value="sous-traitant">Sous-traitant</option>
+                                </select>
+                            </div>
+                            <div class="form-row" style="grid-column:span 1;">
+                                <label for="password" style="font-weight:600;color:var(--gray-800);">Mot de passe</label>
+                                <div style="display:flex; gap:.5rem; align-items:center;">
+                                    <input type="text" id="password" name="password" readonly>
+                                    <button type="button" class="btn btn-secondary" id="generatePasswordBtn">
+                                        <i class="fas fa-wand-magic-sparkles"></i>
+                                        <span>Générer</span>
+                                    </button>
+                            </div>
+                                <small style="color:var(--gray-500);">Généré automatiquement et envoyé par email.</small>
+                        </div>
+                            <div style="grid-column:1/-1;display:flex; gap:1rem; margin-top:.5rem;">
+                            <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-check"></i>
+                                    <span>Créer</span>
+                            </button>
+                                <a href="/admin/users.html" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i>
+                                    <span>Annuler</span>
+                                </a>
+                        </div>
+                    </form>
+                </div>
+        </div>
+    </div>
+        </main>
+    </div>
+
+    <script src="/js/admin.js"></script>
+    <script>
+    fetch('/csrf-token').then(r=>r.json()).then(d=>{
+        const el = document.getElementById('csrf-token-create');
+        if (el) el.value = d.token;
+    });
+    function generatePassword(length = 12) {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%^&*';
+        let out='';
+        for (let i=0;i<length;i++) out += chars[Math.floor(Math.random()*chars.length)];
+        return out;
+    }
+    document.getElementById('generatePasswordBtn').addEventListener('click', ()=>{
+        document.getElementById('password').value = generatePassword();
+    });
+    document.getElementById('password').value = generatePassword();
+    document.getElementById('createUserForm').addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const form = e.currentTarget;
+        const data = new FormData(form);
+        try {
+            const res = await fetch('/admin/users', {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': document.getElementById('csrf-token-create').value },
+                body: data,
+                credentials: 'same-origin'
+            });
+            if (res.ok) {
+                window.location.href = '/admin/users.html';
+            } else {
+                const t = await res.text();
+                alert(t || 'Erreur lors de la création');
+            }
+        } catch (err) {
+            alert('Erreur réseau');
+        }
+    });
+    </script>
+</body>
+</html>
+

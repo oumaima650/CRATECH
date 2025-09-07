@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test CSRF Token</title>
+</head>
+<body>
+    <h1>Test CSRF Token</h1>
+    <div id="result"></div>
+    
+    <script>
+        async function testCSRF() {
+            try {
+                const response = await fetch('/csrf-token', {
+                    method: 'GET',
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+                document.getElementById('result').innerHTML = 
+                    '<p>Token CSRF: ' + data.token + '</p>' +
+                    '<p>Status: ' + response.status + '</p>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    '<p>Erreur: ' + error.message + '</p>';
+            }
+        }
+        
+        testCSRF();
+    </script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#7C3AED">
+    <title>CRATECH - Modifier Validateur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <!-- Logo -->
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-symbol">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <span class="logo-text">CRATECH</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="nav-title">Menu Principal</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="/admin/dashboard" class="nav-link">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>Tableau de bord</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/users" class="nav-link">
+                                <i class="fas fa-users"></i>
+                                <span>Utilisateurs</span>
+                            </a>
+                        </li>
+                        <li class="nav-item active">
+                            <a href="/admin/validators" class="nav-link">
+                                <i class="fas fa-user-check"></i>
+                                <span>Validateurs</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/assignments" class="nav-link">
+                                <i class="fas fa-tasks"></i>
+                                <span>Affectations</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/reporting" class="nav-link">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Reporting</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/cra" class="nav-link">
+                                <i class="fas fa-file-alt"></i>
+                                <span>CRA</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/projects" class="nav-link">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>Projets</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-title">Compte</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="/admin/profile" class="nav-link">
+                                <i class="fas fa-user-cog"></i>
+                                <span>Mon Compte</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/logout" class="nav-link">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Déconnexion</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-content">
+                    <div class="header-left">
+                        <h1 class="page-title">Modifier Validateur</h1>
+                        <p class="page-subtitle">Modifier les informations de {{ $validator->nom_user }}</p>
+                    </div>
+                    
+                    <div class="header-right">
+                        <button class="btn btn-secondary" onclick="window.location.href='/admin/validators'">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Retour</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="dashboard-content">
+                <div class="form-container">
+                    <form action="/admin/validators/{{ $validator->id_user }}" method="POST" class="user-form">
+                        @csrf
+                        @method('PUT')
+                        
+                        <div class="form-section">
+                            <h3 class="form-section-title">Informations personnelles</h3>
+                            
+                            <div class="form-group">
+                                <label for="nom_user" class="form-label">Nom complet *</label>
+                                <input type="text" id="nom_user" name="nom_user" class="form-input" value="{{ $validator->nom_user }}" required>
+                                <span class="form-error" id="nom_user_error"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email_user" class="form-label">Adresse email *</label>
+                                <input type="email" id="email_user" name="email_user" class="form-input" value="{{ $validator->email_user }}" required>
+                                <span class="form-error" id="email_user_error"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3 class="form-section-title">Statut</h3>
+                            
+                            <div class="form-group">
+                                <label for="status" class="form-label">Statut *</label>
+                                <select id="status" name="status" class="form-select" required>
+                                    <option value="">Sélectionner un statut</option>
+                                    <option value="actif" {{ $validator->status === 'actif' ? 'selected' : '' }}>Actif</option>
+                                    <option value="inactif" {{ $validator->status === 'inactif' ? 'selected' : '' }}>Inactif</option>
+                                </select>
+                                <span class="form-error" id="status_error"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3 class="form-section-title">Informations système</h3>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label class="info-label">ID Validateur :</label>
+                                    <span class="info-value">{{ $validator->id_user }}</span>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <label class="info-label">Rôle :</label>
+                                    <span class="info-value role-badge role-validateur">Validateur</span>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <label class="info-label">Date de création :</label>
+                                    <span class="info-value">{{ $validator->created_at->format('d/m/Y H:i') }}</span>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <label class="info-label">Dernière modification :</label>
+                                    <span class="info-value">{{ $validator->updated_at->format('d/m/Y H:i') }}</span>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <label class="info-label">Utilisateurs validés :</label>
+                                    <span class="info-value badge">{{ $validator->validés->count() }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="window.location.href='/admin/validators'">
+                                <i class="fas fa-times"></i>
+                                <span>Annuler</span>
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                <span>Mettre à jour</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="../../js/admin.js"></script>
+    <script>
+        // Form validation
+        document.querySelector('.user-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Clear previous errors
+            document.querySelectorAll('.form-error').forEach(error => {
+                error.textContent = '';
+            });
+            
+            // Get form data
+            const formData = new FormData(this);
+            
+            // Basic validation
+            let isValid = true;
+            
+            if (!formData.get('nom_user').trim()) {
+                document.getElementById('nom_user_error').textContent = 'Le nom est requis';
+                isValid = false;
+            }
+            
+            if (!formData.get('email_user').trim()) {
+                document.getElementById('email_user_error').textContent = 'L\'email est requis';
+                isValid = false;
+            } else if (!isValidEmail(formData.get('email_user'))) {
+                document.getElementById('email_user_error').textContent = 'Format d\'email invalide';
+                isValid = false;
+            }
+            
+            if (!formData.get('status')) {
+                document.getElementById('status_error').textContent = 'Le statut est requis';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                this.submit();
+            }
+        });
+        
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        // Real-time validation
+        document.getElementById('email_user').addEventListener('blur', function() {
+            const email = this.value.trim();
+            if (email && !isValidEmail(email)) {
+                document.getElementById('email_user_error').textContent = 'Format d\'email invalide';
+            } else {
+                document.getElementById('email_user_error').textContent = '';
+            }
+        });
+    </script>
+</body>
+</html>

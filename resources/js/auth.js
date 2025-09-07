@@ -1,469 +1,246 @@
-// CRATECH - Interface d'Authentification Élégante
+// CRATECH - JavaScript pour la page de Login Professionnelle
+
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // Initialisation des composants
+    // Initialisation
     initAuthInterface();
     initUserTypeSwitching();
     initAdminFormSwitching();
-    initInteractiveElements();
     initFormValidation();
-    initPerformanceOptimizations();
     initCSRFToken();
+    initAnimations();
+    initInteractiveElements();
+});
+
+// Interface d'authentification principale
+function initAuthInterface() {
+    console.log('🚀 CRATECH - Interface d\'authentification professionnelle initialisée !');
+    
+    // Animation d'entrée
+    const formWrapper = document.querySelector('.form-wrapper');
+    if (formWrapper) {
+        formWrapper.style.opacity = '0';
+        formWrapper.style.transform = 'translateY(30px)';
+        
+        setTimeout(() => {
+            formWrapper.style.transition = 'all 0.6s ease';
+            formWrapper.style.opacity = '1';
+            formWrapper.style.transform = 'translateY(0)';
+        }, 100);
+    }
+}
     
     // Récupération du token CSRF
     async function initCSRFToken() {
         try {
-            // Récupérer le token CSRF depuis l'API
-            const response = await fetch('/csrf-token');
+            const response = await fetch('/csrf-token', {
+                method: 'GET',
+                credentials: 'same-origin'
+            });
             const data = await response.json();
             const token = data.token;
             
             if (token) {
                 // Mettre à jour tous les champs _token
-                document.querySelectorAll('input[name="_token"], #csrf-token').forEach(input => {
+                document.querySelectorAll('input[name="_token"]').forEach(input => {
                     input.value = token;
                 });
                 
-                console.log('Token CSRF initialisé avec succès');
-            } else {
-                console.error('Token CSRF non reçu');
+                // Mettre à jour les champs spécifiques
+                const employeeToken = document.getElementById('csrf-token-employee');
+                const adminToken = document.getElementById('csrf-token-admin');
+                const signupToken = document.getElementById('csrf-token-signup');
+                
+                if (employeeToken) employeeToken.value = token;
+                if (adminToken) adminToken.value = token;
+                if (signupToken) signupToken.value = token;
+                
+                console.log('✅ Token CSRF initialisé pour tous les formulaires');
             }
         } catch (error) {
-            console.error('Erreur lors de la récupération du token CSRF:', error);
-        }
-    }
-    
-    // Fonction utilitaire pour récupérer un cookie
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
-    
-    // Interface d'authentification principale
-    function initAuthInterface() {
-        console.log('🚀 CRATECH - Interface d\'authentification initialisée !');
-        
-        // Animation d'entrée élégante
-        const formSection = document.querySelector('.form-section');
-        const logoSection = document.querySelector('.logo-section');
-        
-        if (formSection && logoSection) {
-            formSection.style.opacity = '0';
-            formSection.style.transform = 'translateX(-30px)';
-            logoSection.style.opacity = '0';
-            logoSection.style.transform = 'translateX(30px)';
-            
-            setTimeout(() => {
-                formSection.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-                logoSection.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-                
-                formSection.style.opacity = '1';
-                formSection.style.transform = 'translateX(0)';
-                logoSection.style.opacity = '1';
-                logoSection.style.transform = 'translateX(0)';
-            }, 100);
+            console.error('❌ Erreur CSRF:', error);
         }
     }
     
     // Basculement entre types d'utilisateurs
     function initUserTypeSwitching() {
         const typeOptions = document.querySelectorAll('.type-option');
-        const employeeForm = document.getElementById('employeeLoginForm');
-        const adminLoginForm = document.getElementById('adminLoginForm');
-        const adminSignupForm = document.getElementById('adminSignupForm');
-        const adminSwitchButtons = document.querySelector('.admin-switch-buttons');
+    const authForms = document.querySelectorAll('.auth-form');
         
         typeOptions.forEach(option => {
             option.addEventListener('click', function() {
                 const type = this.dataset.type;
                 
-                // Mise à jour de l'état actif
+            // Mettre à jour les boutons
                 typeOptions.forEach(opt => opt.classList.remove('active'));
                 this.classList.add('active');
                 
-                // Animation de transition
-                this.style.transform = 'scale(1.05)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 150);
-                
-                // Affichage des formulaires appropriés
-                if (type === 'employee') {
-                    showEmployeeForm();
-                } else if (type === 'admin') {
-                    showAdminForms();
+            // Afficher le formulaire correspondant
+            authForms.forEach(form => {
+                form.classList.remove('active');
+                if (form.id === `${type}LoginForm`) {
+                    form.classList.add('active');
+                }
+            });
+            
+            // Afficher/masquer les boutons admin
+            const adminButtons = document.querySelector('.admin-switch-buttons');
+            if (adminButtons) {
+                adminButtons.style.display = type === 'admin' ? 'flex' : 'none';
                 }
             });
         });
-        
-        function showEmployeeForm() {
-            employeeForm.style.display = 'flex';
-            adminLoginForm.style.display = 'none';
-            adminSignupForm.style.display = 'none';
-            adminSwitchButtons.style.display = 'none';
-            
-            // Animation d'apparition
-            employeeForm.style.opacity = '0';
-            employeeForm.style.transform = 'translateY(20px)';
-            
-            setTimeout(() => {
-                employeeForm.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                employeeForm.style.opacity = '1';
-                employeeForm.style.transform = 'translateY(0)';
-            }, 50);
-        }
-        
-        function showAdminForms() {
-            employeeForm.style.display = 'none';
-            adminLoginForm.style.display = 'flex';
-            adminSignupForm.style.display = 'none';
-            adminSwitchButtons.style.display = 'flex';
-            
-            // Animation d'apparition
-            adminLoginForm.style.opacity = '0';
-            adminLoginForm.style.transform = 'translateY(20px)';
-            
-            setTimeout(() => {
-                adminLoginForm.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                adminLoginForm.style.opacity = '1';
-                adminLoginForm.style.transform = 'translateY(0)';
-            }, 50);
-        }
-    }
+}
+
+// Basculement entre login et signup admin
+function initAdminFormSwitching() {
+    const switchToLogin = document.getElementById('switchToAdminLogin');
+    const switchToSignup = document.getElementById('switchToAdminSignup');
+    const authForms = document.querySelectorAll('.auth-form');
     
-    // Basculement entre connexion et inscription pour les admins
-    function initAdminFormSwitching() {
-        const switchToAdminLoginBtn = document.getElementById('switchToAdminLogin');
-        const switchToAdminSignupBtn = document.getElementById('switchToAdminSignup');
-        const adminLoginForm = document.getElementById('adminLoginForm');
-        const adminSignupForm = document.getElementById('adminSignupForm');
-        
-        if (switchToAdminLoginBtn) {
-            switchToAdminLoginBtn.addEventListener('click', function() {
-                switchAdminForm('login');
-            });
-        }
-        
-        if (switchToAdminSignupBtn) {
-            switchToAdminSignupBtn.addEventListener('click', function() {
-                switchAdminForm('signup');
-            });
-        }
-        
-        function switchAdminForm(formType) {
-            if (formType === 'signup') {
-                adminLoginForm.style.display = 'none';
-                adminSignupForm.style.display = 'flex';
-                
-                // Animation d'apparition
-                adminSignupForm.style.opacity = '0';
-                adminSignupForm.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    adminSignupForm.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                    adminSignupForm.style.opacity = '1';
-                    adminSignupForm.style.transform = 'translateY(0)';
-                }, 50);
-                
-            } else {
-                adminSignupForm.style.display = 'none';
-                adminLoginForm.style.display = 'flex';
-                
-                // Animation d'apparition
-                adminLoginForm.style.opacity = '0';
-                adminLoginForm.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    adminLoginForm.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                    adminLoginForm.style.opacity = '1';
-                    adminLoginForm.style.transform = 'translateY(0)';
-                }, 50);
-            }
-        }
-    }
-    
-    // Éléments interactifs élégants
-    function initInteractiveElements() {
-        // Boutons avec effet de ripple élégant
-        const buttons = document.querySelectorAll('.submit-btn, .switch-btn, .type-option');
-        buttons.forEach(button => {
-            button.addEventListener('click', createElegantRipple);
-        });
-        
-        // Boutons de suppression des champs
-        const clearButtons = document.querySelectorAll('.clear-input');
-        clearButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const input = this.parentElement.querySelector('input');
-                if (input) {
-                    input.value = '';
-                    input.focus();
-                    
-                    // Animation de suppression
-                    this.style.transform = 'scale(0.8)';
-                    setTimeout(() => {
-                        this.style.transform = 'scale(1)';
-                    }, 150);
+    if (switchToLogin) {
+        switchToLogin.addEventListener('click', function() {
+            authForms.forEach(form => {
+                form.classList.remove('active');
+                if (form.id === 'adminLoginForm') {
+                    form.classList.add('active');
                 }
             });
-        });
-        
-        // Effets de hover sur les champs
-        const inputs = document.querySelectorAll('input');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'scale(1.02)';
-            });
             
-            input.addEventListener('blur', function() {
-                this.parentElement.style.transform = 'scale(1)';
-            });
+            // Mettre à jour les boutons
+            document.querySelectorAll('.switch-btn').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
         });
-        
-        // Animation du logo au hover
-        const logoSymbol = document.querySelector('.logo-symbol');
-        if (logoSymbol) {
-            logoSymbol.addEventListener('mouseenter', function() {
-                this.style.transform = 'scale(1.05) rotate(5deg)';
-                this.style.filter = 'drop-shadow(0 25px 50px rgba(124, 58, 237, 0.6))';
-            });
-            
-            logoSymbol.addEventListener('mouseleave', function() {
-                this.style.transform = 'scale(1) rotate(0deg)';
-                this.style.filter = 'drop-shadow(0 20px 40px rgba(124, 58, 237, 0.4))';
-            });
-        }
     }
     
-    // Effet de ripple élégant sur les boutons
-    function createElegantRipple(event) {
-        const button = event.currentTarget;
-        const ripple = document.createElement('span');
-        const rect = button.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = event.clientX - rect.left - size / 2;
-        const y = event.clientY - rect.top - size / 2;
-        
-        ripple.style.cssText = `
-            position: absolute;
-            width: ${size}px;
-            height: ${size}px;
-            left: ${x}px;
-            top: ${y}px;
-            background: radial-gradient(circle, 
-                rgba(124, 58, 237, 0.4) 0%, 
-                rgba(236, 72, 153, 0.3) 50%, 
-                transparent 100%);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: elegantRipple 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
-            z-index: 1;
-        `;
-        
-        button.appendChild(ripple);
-        
-        setTimeout(() => {
-            ripple.remove();
-        }, 800);
-        
-        // Ajouter l'animation CSS si elle n'existe pas
-        if (!document.querySelector('#elegant-ripple')) {
-            const style = document.createElement('style');
-            style.id = 'elegant-ripple';
-            style.textContent = `
-                @keyframes elegantRipple {
-                    0% { transform: scale(0); opacity: 1; }
-                    50% { transform: scale(1.2); opacity: 0.8; }
-                    100% { transform: scale(2); opacity: 0; }
+    if (switchToSignup) {
+        switchToSignup.addEventListener('click', function() {
+            authForms.forEach(form => {
+                form.classList.remove('active');
+                if (form.id === 'adminSignupForm') {
+                    form.classList.add('active');
                 }
-            `;
-            document.head.appendChild(style);
-        }
+            });
+            
+            // Mettre à jour les boutons
+            document.querySelectorAll('.switch-btn').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+        });
     }
-    // Affichage des messages
-        function showFormMessage(message, type) {
-            const existingMessage = document.querySelector('.form-message');
-            if (existingMessage) {
-                existingMessage.remove();
-            }
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `form-message ${type}`;
-            messageDiv.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i> ${message}`;
-            
-            const activeForm = document.querySelector('.auth-form[style*="flex"]') || employeeForm;
-            activeForm.insertBefore(messageDiv, activeForm.firstChild);
-            
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 4000);
         }
     
     // Validation des formulaires
     function initFormValidation() {
-        const employeeForm = document.getElementById('employeeLoginForm');
-        const adminLoginForm = document.getElementById('adminLoginForm');
-        const adminSignupForm = document.getElementById('adminSignupForm');
+    const forms = document.querySelectorAll('.auth-form');
         
-        // Validation du formulaire employés
-        if (employeeForm) {
-            employeeForm.addEventListener('submit', function(e) {
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                const formData = new FormData(this);
-                const employeeId = formData.get('username');
-                const employeeEmail = formData.get('email');
-                const employeePassword = formData.get('password');
-                const remember = formData.get('remember');
-                
-                // Validation basique
-                if (!employeeId || !employeeEmail || !employeePassword) {
-                    showFormMessage('Veuillez remplir tous les champs obligatoires', 'error');
-                    return;
+            const formId = this.id;
+            const submitBtn = this.querySelector('.submit-btn');
+            
+            // Activer l'état de chargement
+            if (submitBtn) {
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+            }
+            
+            // Validation côté client
+            if (validateForm(this)) {
+                if (formId === 'employeeLoginForm') {
+                    submitEmployeeLogin(this);
+                } else if (formId === 'adminLoginForm') {
+                    submitAdminLogin(this);
+                } else if (formId === 'adminSignupForm') {
+                    submitAdminSignup(this);
                 }
+            } else {
+                // Désactiver l'état de chargement en cas d'erreur
+                if (submitBtn) {
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
+                }
+            }
+                });
+            });
+        }
+        
+// Validation d'un formulaire
+function validateForm(form) {
+    const requiredFields = form.querySelectorAll('input[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            showFieldError(field, 'Ce champ est obligatoire');
+            isValid = false;
+        } else {
+            clearFieldError(field);
+        }
+    });
                 
                 // Validation email
-                if (!isValidEmail(employeeEmail)) {
-                    showFormMessage('Veuillez entrer une adresse email valide', 'error');
-                    return;
-                }
-                
-                // Connexion employé
-                submitEmployeeLogin({
-                    username: employeeId,
-                    email: employeeEmail,
-                    password: employeePassword,
-                    remember: remember
-                });
-            });
-        }
-        
-        // Validation du formulaire de connexion admin
-        if (adminLoginForm) {
-            adminLoginForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                const adminId = formData.get('nom_user');
-                const adminPassword = formData.get('password');
-                const remember = formData.get('remember');
-                
-                // Validation basique
-                if (!adminId || !adminPassword) {
-                    showFormMessage('Veuillez remplir tous les champs obligatoires', 'error');
-                    return;
-                }
-                
-                // Connexion admin
-                submitAdminLogin({
-                    nom_user: adminId,
-                    password: adminPassword,
-                    remember: remember
-                });
-            });
-        }
-        
-        // Validation du formulaire d'inscription admin
-        if (adminSignupForm) {
-            adminSignupForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                const adminName = formData.get('nom');
-                const adminEmail = formData.get('email');
-                const adminPassword = formData.get('password');
-                const adminConfirmPassword = formData.get('password_confirmation');
-                
-                // Validation basique
-                if (!adminName || !adminEmail || !adminPassword || !adminConfirmPassword) {
-                    showFormMessage('Veuillez remplir tous les champs obligatoires', 'error');
-                    return;
-                }
-                
-                // Validation email
-                if (!isValidEmail(adminEmail)) {
-                    showFormMessage('Veuillez entrer une adresse email valide', 'error');
-                    return;
-                }
-                
-                // Validation du mot de passe
-                if (adminPassword.length < 8) {
-                    showFormMessage('Le mot de passe doit contenir au moins 8 caractères', 'error');
-                    return;
-                }
-                
-                // Validation de la confirmation
-                if (adminPassword !== adminConfirmPassword) {
-                    showFormMessage('Les mots de passe ne correspondent pas', 'error');
-                    return;
-                }
-                
-                // Inscription admin
-                submitAdminSignup({
-                    nom: adminName,
-                    email: adminEmail,
-                    password: adminPassword,
-                    password_confirmation: adminConfirmPassword
-                });
-            });
-        }
-        
-        // Validation email
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
-        
-        
-        
-        // Ajouter les styles pour les messages
-        if (!document.querySelector('#form-messages')) {
-            const style = document.createElement('style');
-            style.id = 'form-messages';
-            style.textContent = `
-                .form-message {
-                    padding: 1rem;
-                    border-radius: 12px;
-                    margin-bottom: 1rem;
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                    font-family: 'Poppins', sans-serif;
-                    font-weight: 500;
-                    animation: messageSlideIn 0.3s ease;
-                }
-                
-                .form-message.error {
-                    background: rgba(239, 68, 68, 0.1);
-                    border: 1px solid rgba(239, 68, 68, 0.3);
-                    color: #fca5a5;
-                }
-                
-                .form-message.success {
-                    background: rgba(34, 197, 94, 0.1);
-                    border: 1px solid rgba(34, 197, 94, 0.3);
-                    color: #86efac;
-                }
-                
-                @keyframes messageSlideIn {
-                    from { 
-                        transform: translateY(-10px); 
-                        opacity: 0; 
-                    }
-                    to { 
-                        transform: translateY(0); 
-                        opacity: 1; 
-                    }
-                }
-            `;
-            document.head.appendChild(style);
+    const emailField = form.querySelector('input[type="email"]');
+    if (emailField && emailField.value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailField.value)) {
+            showFieldError(emailField, 'Adresse email invalide');
+            isValid = false;
         }
     }
     
-    // Soumission des formulaires
-    async function submitEmployeeLogin(data) {
+    // Validation mot de passe
+    const passwordField = form.querySelector('input[type="password"]');
+    if (passwordField && passwordField.value && passwordField.value.length < 8) {
+        showFieldError(passwordField, 'Le mot de passe doit contenir au moins 8 caractères');
+        isValid = false;
+    }
+    
+    return isValid;
+}
+
+// Afficher une erreur de champ
+function showFieldError(field, message) {
+    clearFieldError(field);
+    
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'field-error';
+    errorDiv.textContent = message;
+    errorDiv.style.color = 'var(--error)';
+    errorDiv.style.fontSize = '0.75rem';
+    errorDiv.style.marginTop = '0.25rem';
+    
+    field.parentNode.appendChild(errorDiv);
+    field.style.borderColor = 'var(--error)';
+}
+
+// Effacer une erreur de champ
+function clearFieldError(field) {
+    const existingError = field.parentNode.querySelector('.field-error');
+    if (existingError) {
+        existingError.remove();
+    }
+    field.style.borderColor = '';
+}
+
+// Soumission du formulaire employé
+async function submitEmployeeLogin(form) {
+    const formData = new FormData(form);
+    const data = {
+        username: formData.get('username'),
+        email: formData.get('email'),
+        password: formData.get('password'),
+        remember: formData.get('remember') ? true : false
+    };
+    
+    // Log des données pour déboguer
+    console.log('Données envoyées:', {
+        username: data.username,
+        email: data.email,
+        password: '***',
+        remember: data.remember
+    });
+    
         try {
             showFormMessage('Connexion en cours...', 'success');
             
@@ -471,178 +248,272 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                'X-CSRF-TOKEN': document.getElementById('csrf-token-employee').value,
                 },
                 body: JSON.stringify(data)
             });
 
-            if (response.ok) {
+        // Lire la réponse JSON
+        const result = await response.json();
+        
+        // Vérifier le statut de la réponse
+        if (response.ok && result.success) {
+            // Succès - redirection immédiate
                 showFormMessage('Connexion réussie ! Redirection...', 'success');
                 setTimeout(() => {
-                    window.location.href = '/employe/dashboard';
-                }, 1500);
+                window.location.href = result.redirect;
+            }, 1000);
             } else {
-                const errorData = await response.json();
-                if (errorData.errors) {
-                    // Afficher les erreurs de validation
-                    Object.values(errorData.errors).forEach(error => {
-                        showFormMessage(error[0], 'error');
-                    });
-                } else {
-                    showFormMessage(errorData.message || 'Erreur de connexion', 'error');
-                }
+            // Erreur - afficher le message d'erreur
+            showFormMessage(result.error || 'Erreur de connexion', 'error');
             }
         } catch (error) {
             console.error('Erreur de connexion:', error);
             showFormMessage('Erreur de connexion au serveur', 'error');
+    } finally {
+        // Désactiver l'état de chargement
+        const submitBtn = form.querySelector('.submit-btn');
+        if (submitBtn) {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
         }
     }
+}
+
+// Soumission du formulaire admin
+async function submitAdminLogin(form) {
+    const formData = new FormData(form);
+    const data = {
+        username: formData.get('username'),
+        email: formData.get('email'),
+        password: formData.get('password'),
+        admin_section: formData.get('admin_section'),
+        remember: formData.get('remember') ? true : false
+    };
     
-    async function submitAdminLogin(data) {
+    // Log des données pour déboguer
+    console.log('Données admin envoyées:', {
+        username: data.username,
+        email: data.email,
+        password: '***',
+        admin_section: data.admin_section,
+        remember: data.remember
+    });
+    
     try {
-        showFormMessage('Connexion administrateur en cours...', 'success');
+        showFormMessage('Connexion admin en cours...', 'success');
         
         const response = await fetch('/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                'X-CSRF-TOKEN': document.getElementById('csrf-token-admin').value,
             },
             body: JSON.stringify(data)
         });
 
+        // Vérifier le statut de la réponse
+        if (response.ok) {
+            // Lire la réponse JSON
         const result = await response.json();
 
-        if (response.ok && result.success) {
-            // Succès côté serveur
+            if (result.success) {
+                // Succès - redirection immédiate
             showFormMessage('Connexion admin réussie ! Redirection...', 'success');
             setTimeout(() => {
-                window.location.href = '/admin/dashboard';
-            }, 1500);
+                    window.location.href = result.redirect;
+                }, 1000);
         } else {
-            // Erreurs envoyées par Laravel
-            if (result.errors) {
-                Object.values(result.errors).forEach(error => {
-                    showFormMessage(error[0], 'error');
-                });
+                // Erreur - afficher le message d'erreur
+                showFormMessage(result.error || 'Erreur de connexion', 'error');
+            }
             } else {
-                showFormMessage(result.message || 'Mot de passe ou identifiant incorrect', 'error');
+            // Erreur HTTP - essayer de lire le JSON
+            try {
+                const result = await response.json();
+                showFormMessage(result.error || 'Erreur de connexion', 'error');
+            } catch (e) {
+                // Si ce n'est pas du JSON, afficher un message générique
+                showFormMessage('Identifiant ou mot de passe incorrect', 'error');
             }
         }
-
     } catch (error) {
         console.error('Erreur de connexion admin:', error);
         showFormMessage('Erreur de connexion au serveur', 'error');
+    } finally {
+        // Désactiver l'état de chargement
+        const submitBtn = form.querySelector('.submit-btn');
+        if (submitBtn) {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }
     }
 }
 
+// Soumission du formulaire d'inscription admin
+async function submitAdminSignup(form) {
+    const formData = new FormData(form);
+    const data = {
+        nom: formData.get('nom'),
+        email: formData.get('email'),
+        password: formData.get('password'),
+        password_confirmation: formData.get('password_confirmation')
+    };
     
-    async function submitAdminSignup(data) {
     try {
-        console.log('Début de submitAdminSignup avec données:', data);
-        showFormMessage('Création du compte administrateur en cours...', 'success');
+        showFormMessage('Création du compte en cours...', 'success');
         
-        // Préparer les données en FormData
-        const formData = new FormData();
-        formData.append('nom', data.nom);
-        formData.append('email', data.email);
-        formData.append('password', data.password);
-        formData.append('password_confirmation', data.password_confirmation);
-
-        // Ajouter le token CSRF
-        const token = document.querySelector('input[name="_token"]').value;
-        formData.append('_token', token);
-        
-        console.log('Token CSRF utilisé:', token);
-
-        // Ajouter l'en-tête pour indiquer que nous attendons du JSON
-        const headers = {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json',
-        };
-
-        // Requête AJAX vers /register
-        console.log('Envoi de la requête vers /register...');
         const response = await fetch('/register', {
             method: 'POST',
-            body: formData,
-            headers: headers
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.getElementById('csrf-token-signup').value,
+            },
+            body: JSON.stringify(data)
         });
-
-        console.log('Réponse reçue:', response.status, response.statusText);
-
-        // Vérifier le type de contenu de la réponse
-        const contentType = response.headers.get('content-type');
-        
-        if (contentType && contentType.includes('application/json')) {
-            // Si c'est du JSON, traiter normalement
-            const responseData = await response.json();
             
             if (response.ok) {
-                console.log('Inscription réussie !', responseData);
-                showFormMessage(responseData.message || 'Compte administrateur créé avec succès ! Redirection...', 'success');
-                setTimeout(() => {
-                    window.location.href = responseData.redirect || '/admin/dashboard';
-                }, 1500);
-            } else {
-                console.log('Erreur de réponse:', responseData);
-                
-                if (responseData.errors) {
-                    Object.values(responseData.errors).forEach(error => {
-                        showFormMessage(error[0], 'error');
-                    });
-                } else {
-                    showFormMessage(responseData.message || 'Erreur lors de la création du compte', 'error');
-                }
-            }
-        } else {
-            // Si ce n'est pas du JSON, c'est probablement une redirection ou une page HTML
-            console.log('Réponse non-JSON reçue, redirection probable');
-            
-            if (response.redirected) {
-                // Si le serveur a redirigé, suivre la redirection
-                window.location.href = response.url;
-            } else if (response.ok) {
-                // Si la réponse est OK mais pas JSON, rediriger manuellement
-                showFormMessage('Compte créé avec succès ! Redirection...', 'success');
+            showFormMessage('Compte admin créé avec succès !', 'success');
                 setTimeout(() => {
                     window.location.href = '/admin/dashboard';
-                }, 1500);
+            }, 2000);
             } else {
-                // Lire le texte de la réponse pour debugger
                 const textResponse = await response.text();
-                console.error('Réponse HTML reçue:', textResponse.substring(0, 200));
-                showFormMessage('Erreur serveur inattendue. Veuillez vérifier la console.', 'error');
+            if (textResponse.includes('email déjà utilisé')) {
+                showFormMessage('Cette adresse email est déjà utilisée', 'error');
+            } else {
+                showFormMessage('Erreur lors de la création du compte', 'error');
             }
         }
     } catch (error) {
-        console.error('Erreur d\'inscription admin:', error);
+        console.error('Erreur d\'inscription:', error);
         showFormMessage('Erreur de connexion au serveur', 'error');
+    } finally {
+        // Désactiver l'état de chargement
+        const submitBtn = form.querySelector('.submit-btn');
+        if (submitBtn) {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }
     }
 }
+
+// Fonction pour afficher les messages
+function showFormMessage(message, type) {
+    // Supprimer les anciens messages
+    const existingMessages = document.querySelectorAll('.form-message');
+    existingMessages.forEach(msg => msg.remove());
     
-    // Optimisations de performance
-    function initPerformanceOptimizations() {
-        // Optimisation des animations
-        const animatedElements = document.querySelectorAll('.logo-symbol, .submit-btn, .switch-btn, .type-option');
-        animatedElements.forEach(el => {
-            el.style.willChange = 'transform';
-        });
-        
-        // Debounce pour les événements de resize
-        let resizeTimeout;
-        window.addEventListener('resize', function() {
-            if (resizeTimeout) {
-                clearTimeout(resizeTimeout);
+    // Créer le nouveau message
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `form-message ${type}`;
+    messageDiv.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+        <span>${message}</span>
+    `;
+    
+    // Trouver le conteneur approprié pour insérer le message
+    let container = document.querySelector('.auth-form.active');
+    if (!container) {
+        container = document.querySelector('.form-wrapper');
+    }
+    if (!container) {
+        container = document.querySelector('.auth-container');
+    }
+    if (!container) {
+        container = document.body;
+    }
+    
+    // Insérer le message au début du conteneur
+    container.insertBefore(messageDiv, container.firstChild);
+    
+    // Animation d'apparition
+    setTimeout(() => {
+        messageDiv.style.opacity = '1';
+        messageDiv.style.transform = 'translateY(0)';
+    }, 10);
+    
+    // Supprimer le message après 5 secondes
+    setTimeout(() => {
+        if (messageDiv.parentNode) {
+            messageDiv.style.opacity = '0';
+            messageDiv.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 300);
+        }
+    }, 5000);
+}
+
+// Animations
+function initAnimations() {
+    // Animation des éléments au scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
             }
-            resizeTimeout = setTimeout(function() {
-                // Actions après redimensionnement
-            }, 100);
+        });
+    }, { threshold: 0.1 });
+
+    // Observer les éléments d'info
+    const infoElements = document.querySelectorAll('.feature-item, .stat');
+    infoElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all 0.6s ease';
+        observer.observe(el);
+    });
+}
+
+// Éléments interactifs
+function initInteractiveElements() {
+    // Boutons clear input
+    const clearButtons = document.querySelectorAll('.clear-input');
+    clearButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const input = this.parentNode.querySelector('input');
+            if (input) {
+                input.value = '';
+                input.focus();
+                clearFieldError(input);
+            }
+        });
+    });
+    
+    // Animation des boutons
+    const buttons = document.querySelectorAll('.submit-btn, .type-option, .switch-btn');
+    buttons.forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
         });
         
-        // Lazy loading des images (si ajoutées plus tard)
-        if ('IntersectionObserver' in window) {
-            const imageObserver = new IntersectionObserver((entries, observer) => {
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Animation des cartes d'info
+    const featureItems = document.querySelectorAll('.feature-item');
+    featureItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-4px)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+}
+
+// Optimisations de performance
+function initPerformanceOptimizations() {
+    // Lazy loading des images
+    const images = document.querySelectorAll('img[data-src]');
+    const imageObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const img = entry.target;
@@ -653,124 +524,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
             
-            document.querySelectorAll('img[data-src]').forEach(img => {
-                imageObserver.observe(img);
-            });
-        }
-    }
+    images.forEach(img => imageObserver.observe(img));
     
-    // Gestion des erreurs et fallbacks
-    window.addEventListener('error', function(e) {
-        console.warn('Erreur JavaScript détectée:', e.error);
+    // Debounce pour les inputs
+    const inputs = document.querySelectorAll('.form-input');
+    inputs.forEach(input => {
+        let timeout;
+        input.addEventListener('input', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                clearFieldError(this);
+            }, 500);
+        });
     });
-    
-    // Monitoring des performances
-    if ('performance' in window) {
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                const perfData = performance.getEntriesByType('navigation')[0];
-                if (perfData) {
-                    console.log('🚀 CRATECH - Temps de chargement de l\'authentification:', perfData.loadEventEnd - perfData.loadEventStart, 'ms');
-                }
-            }, 0);
-        });
-    }
-    
-    // Support pour les préférences de réduction de mouvement
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        document.documentElement.style.setProperty('--transition', 'none');
-    }
-    
-    // Fonction de test pour vérifier l'attachement des formulaires
-    function testFormAttachment() {
-        console.log('🧪 Test d\'attachement des formulaires...');
-        
-        const forms = {
-            'employeeLoginForm': document.getElementById('employeeLoginForm'),
-            'adminLoginForm': document.getElementById('adminLoginForm'),
-            'adminSignupForm': document.getElementById('adminSignupForm')
-        };
-        
-        Object.entries(forms).forEach(([name, form]) => {
-            if (form) {
-                console.log(`✅ ${name} trouvé`);
-                
-                // Vérifier si l'événement submit est attaché
-                const submitEvent = form.onsubmit;
-                if (submitEvent) {
-                    console.log(`✅ ${name} a un événement submit`);
-                } else {
-                    console.log(`⚠️ ${name} n'a PAS d'événement submit`);
-                }
-            } else {
-                console.error(`❌ ${name} NON TROUVÉ`);
-            }
-        });
-        
-        // Test de clic sur le bouton d'inscription admin
-        const adminSignupBtn = document.querySelector('#adminSignupForm button[type="submit"]');
-        if (adminSignupBtn) {
-            console.log('✅ Bouton d\'inscription admin trouvé');
-            console.log('Bouton:', adminSignupBtn);
-        } else {
-            console.error('❌ Bouton d\'inscription admin NON TROUVÉ');
-        }
-    }
-    
-    // Initialisation réussie
-    console.log('🚀 CRATECH - Interface d\'authentification élégante initialisée avec succès ! ✨');
-    
-    // Ajouter des styles CSS dynamiques élégants
-    const dynamicStyles = document.createElement('style');
-    dynamicStyles.textContent = `
-        /* Styles dynamiques pour les interactions élégantes */
-        .submit-btn:active,
-        .switch-btn:active {
-            transform: translateY(1px);
-        }
-        
-        .input-container:focus-within {
-            transform: scale(1.02);
-        }
-        
-        /* États de chargement élégants */
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        
-        /* Effets de hover élégants supplémentaires */
-        .type-option:hover {
-            transform: translateY(-2px);
-        }
-        
-        .feature-item:hover {
-            transform: translateX(10px) scale(1.02);
-        }
-        
-        /* Animation du logo au chargement */
-        .logo-symbol {
-            animation: logoFloat 3s ease-in-out infinite;
-        }
-        
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-        }
-        
-        /* Styles pour les boutons de basculement admin */
-        .admin-switch-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            justify-content: center;
-        }
-        
-        .admin-switch-buttons .switch-btn {
-            flex: 1;
-            max-width: 200px;
-        }
-    `;
-    
-    document.head.appendChild(dynamicStyles);
-});
+}

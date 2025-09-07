@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer une Activité - CRATECH Admin</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-cube"></i>
+                    <span>CRATECH</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Tableau de bord</h3>
+                    <a href="/admin/dashboard.html" class="nav-item">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Vue d'ensemble</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Gestion</h3>
+                    <a href="/admin/users.html" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                    <a href="/admin/activities.html" class="nav-item active">
+                        <i class="fas fa-tasks"></i>
+                        <span>Activités</span>
+                    </a>
+                    <a href="#reports" class="nav-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Rapports</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Système</h3>
+                    <a href="#settings" class="nav-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Paramètres</span>
+                    </a>
+                    <a href="#help" class="nav-item">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Aide</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Créer une Activité</h1>
+                </div>
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="action-btn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                        <button class="action-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="current-time">
+                        <i class="fas fa-clock"></i>
+                        <span id="current-time"></span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Activities Content -->
+            <div class="users-content">
+                <div class="form-container">
+                    <div class="form-header">
+                        <h2>
+                            <i class="fas fa-plus-circle"></i>
+                            Nouvelle Activité
+                        </h2>
+                        <p>Créez une nouvelle activité pour votre organisation</p>
+                    </div>
+
+                    <form id="createActivityForm" class="form-grid">
+                        <input type="hidden" id="csrf-token" name="_token" value="">
+                        
+                        <div class="form-group">
+                            <label for="nom_act" class="form-label">
+                                <i class="fas fa-tag"></i>
+                                Nom de l'activité *
+                            </label>
+                            <input type="text" id="nom_act" name="nom_act" class="form-input" required 
+                                   placeholder="Ex: Développement Web, Marketing Digital...">
+                            <div class="form-error" id="nom_act_error"></div>
+                        </div>
+
+                        <div class="form-group form-group-full">
+                            <label for="description" class="form-label">
+                                <i class="fas fa-align-left"></i>
+                                Description
+                            </label>
+                            <textarea id="description" name="description" class="form-textarea" rows="4" 
+                                      placeholder="Décrivez cette activité en détail..."></textarea>
+                            <div class="form-error" id="description_error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status" class="form-label">
+                                <i class="fas fa-toggle-on"></i>
+                                Statut *
+                            </label>
+                            <select id="status" name="status" class="form-select" required>
+                                <option value="">Sélectionner un statut</option>
+                                <option value="actif" selected>Actif</option>
+                                <option value="inactif">Inactif</option>
+                            </select>
+                            <div class="form-error" id="status_error"></div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="window.location.href='/admin/activities.html'">
+                                <i class="fas fa-arrow-left"></i>
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Créer l'Activité
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/admin.js"></script>
+    <script>
+        // Initialisation du token CSRF
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/csrf-token', { credentials: 'same-origin' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('csrf-token').value = data.token || data.csrf_token || '';
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la récupération du token CSRF:', error);
+                });
+        });
+
+        // Gestion du formulaire
+        document.getElementById('createActivityForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            // Désactiver le bouton et afficher le loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Création...';
+            
+            // Nettoyer les erreurs précédentes
+            clearFormErrors();
+            
+            fetch('/admin/activities', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.getElementById('csrf-token').value,
+                    'Accept': 'application/json',
+                },
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccessMessage('Activité créée avec succès !');
+                    setTimeout(() => {
+                        window.location.href = '/admin/activities.html';
+                    }, 1500);
+                } else {
+                    showErrorMessage(data.message || 'Erreur lors de la création de l\'activité');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showErrorMessage('Erreur de connexion. Veuillez réessayer.');
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        });
+
+        function clearFormErrors() {
+            const errorElements = document.querySelectorAll('.form-error');
+            errorElements.forEach(el => el.textContent = '');
+        }
+
+        function showSuccessMessage(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification notification-success';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-check-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--success);
+                color: white;
+                border-radius: 12px;
+                padding: 1rem;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                min-width: 300px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function showErrorMessage(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification notification-error';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--danger);
+                color: white;
+                border-radius: 12px;
+                padding: 1rem;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                min-width: 300px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+            setTimeout(() => notification.remove(), 5000);
+        }
+    </script>
+</body>
+</html>

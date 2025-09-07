@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRATECH - CRA Employé</title>
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/employe.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Compte rendu d'activité</h1>
+            <div class="controls">
+                <button id="prevMonth" aria-label="Mois précédent">‹</button>
+                <select id="monthSelect"></select>
+                <select id="yearSelect"></select>
+                <button id="nextMonth" aria-label="Mois suivant">›</button>
+            </div>
+        </header>
+
+        <section class="legend">
+            <span>Choix: </span>
+            <button class="chip" data-value="0">0</button>
+            <button class="chip" data-value="0.5">0.5</button>
+            <button class="chip" data-value="1">1</button>
+            <span class="hint">Après modification, veuillez cliquer sur « sauvegarder ».</span>
+        </section>
+
+        <main>
+            <div id="calendar"></div>
+        </main>
+
+        <footer class="footer">
+            <button id="saveBtn" class="primary">sauvegarder</button>
+        </footer>
+    </div>
+
+    <input type="hidden" id="csrf-token" value="">
+
+    <script src="/js/employe.js"></script>
+</body>
+</html>
+
+

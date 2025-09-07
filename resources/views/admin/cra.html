@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#7C3AED">
+    <title>CRATECH - Gestion des CRA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <!-- Logo -->
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-symbol">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <span class="logo-text">CRATECH</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="nav-title">Menu Principal</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="/admin/dashboard" class="nav-link">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>Tableau de bord</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/users" class="nav-link">
+                                <i class="fas fa-users"></i>
+                                <span>Utilisateurs</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/validators" class="nav-link">
+                                <i class="fas fa-user-check"></i>
+                                <span>Validateurs</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/assignments" class="nav-link">
+                                <i class="fas fa-tasks"></i>
+                                <span>Affectations</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/reporting" class="nav-link">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Reporting</span>
+                            </a>
+                        </li>
+                        <li class="nav-item active">
+                            <a href="/admin/cra" class="nav-link">
+                                <i class="fas fa-file-alt"></i>
+                                <span>CRA</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/projects" class="nav-link">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>Projets</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-title">Compte</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="/admin/profile" class="nav-link">
+                                <i class="fas fa-user-cog"></i>
+                                <span>Mon Compte</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/logout" class="nav-link">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Déconnexion</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-content">
+                    <div class="header-left">
+                        <h1 class="page-title">Gestion des CRA</h1>
+                        <p class="page-subtitle">Consultez et gérez tous les Comptes Rendus d'Activité</p>
+                    </div>
+                    
+                    <div class="header-right">
+                        <button class="btn btn-secondary" onclick="refreshData()">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Actualiser</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="dashboard-content">
+                <!-- Quick Stats -->
+                <section class="quick-stats">
+                    <div class="stats-grid">
+                        <div class="stat-card pending">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" id="pending-count">0</h3>
+                                <p class="stat-label">En Attente</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card validated">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" id="validated-count">0</h3>
+                                <p class="stat-label">Validés</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card rejected">
+                            <div class="stat-icon">
+                                <i class="fas fa-times-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" id="rejected-count">0</h3>
+                                <p class="stat-label">Refusés</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card total">
+                            <div class="stat-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" id="total-count">0</h3>
+                                <p class="stat-label">Total CRA</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Filters -->
+                <section class="filters-section">
+                    <div class="filters-container">
+                        <div class="filter-group">
+                            <label for="status-filter">Statut :</label>
+                            <select id="status-filter" class="filter-select">
+                                <option value="">Tous les statuts</option>
+                                <option value="en_attente">En Attente</option>
+                                <option value="valide">Validé</option>
+                                <option value="refuse">Refusé</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="user-filter">Utilisateur :</label>
+                            <select id="user-filter" class="filter-select">
+                                <option value="">Tous les utilisateurs</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="date-filter">Période :</label>
+                            <select id="date-filter" class="filter-select">
+                                <option value="">Toutes les périodes</option>
+                                <option value="this_month">Ce mois</option>
+                                <option value="last_month">Mois dernier</option>
+                                <option value="this_year">Cette année</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="search-input">Rechercher :</label>
+                            <input type="text" id="search-input" class="filter-input" placeholder="ID CRA, utilisateur...">
+                        </div>
+                        
+                        <button class="btn btn-secondary" id="clear-filters">
+                            <i class="fas fa-times"></i>
+                            <span>Effacer</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- CRA Table -->
+                <section class="table-section">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID CRA</th>
+                                    <th>Utilisateur</th>
+                                    <th>Période</th>
+                                    <th>Statut</th>
+                                    <th>Validateur</th>
+                                    <th>Date de création</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cras-table-body">
+                                <tr>
+                                    <td colspan="7" class="loading-row">
+                                        <div class="loading-state">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                            <span>Chargement des CRA...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination-container" id="pagination-container">
+                        <!-- Pagination will be loaded here -->
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Action Modal -->
+    <div id="action-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Action sur le CRA</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-message">Êtes-vous sûr de vouloir effectuer cette action ?</p>
+                <div id="modal-details" class="modal-details"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                <button class="btn btn-primary" id="confirm-action">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/admin.js"></script>
+    <script>
+        // Global variables
+        let crasData = null;
+        let currentCraId = null;
+        let currentAction = null;
+        let csrfToken = '';
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCSRFToken();
+            loadCrasData();
+            initializeFilters();
+            initializeModal();
+        });
+
+        // Load CSRF token
+        async function loadCSRFToken() {
+            try {
+                const response = await fetch('/csrf-token');
+                const data = await response.json();
+                csrfToken = data.token;
+            } catch (error) {
+                console.error('Error loading CSRF token:', error);
+            }
+        }
+
+        // Load CRAs data
+        async function loadCrasData() {
+            try {
+                const response = await fetch('/admin/api/cra');
+                crasData = await response.json();
+                populateCrasTable();
+                populatePagination();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading CRAs data:', error);
+                showError('Erreur lors du chargement des CRA');
+            }
+        }
+
+        // Populate CRAs table
+        function populateCrasTable() {
+            if (!crasData || !crasData.cras) return;
+
+            const tbody = document.getElementById('cras-table-body');
+            
+            if (crasData.cras.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="fas fa-file-alt"></i>
+                            <h4>Aucun CRA</h4>
+                            <p>Aucun CRA trouvé.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const crasHTML = crasData.cras.map(cra => `
+                <tr>
+                    <td>
+                        <div class="cra-id">
+                            <span class="id-number">#${cra.id_CRA}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-details">
+                                <span class="user-name">${cra.utilisateur?.nom_user || 'N/A'}</span>
+                                <span class="user-email">${cra.utilisateur?.email_user || ''}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="period-info">
+                            <span class="period-month">${formatDate(cra.dateMois)}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${cra.status}">
+                            ${getStatusText(cra.status)}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="validator-info">
+                            ${cra.cra_affectations && cra.cra_affectations.length > 0 ? 
+                                `<div class="user-info">
+                                    <div class="user-avatar validator-avatar">
+                                        <i class="fas fa-user-check"></i>
+                                    </div>
+                                    <span class="user-name">${cra.cra_affectations[0].validateur?.nom_user || 'N/A'}</span>
+                                </div>` : 
+                                '<span class="no-validator">Non assigné</span>'
+                            }
+                        </div>
+                    </td>
+                    <td>
+                        <div class="date-info">
+                            <span class="date-created">${formatDateTime(cra.created_at)}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-view" onclick="viewCra(${cra.id_CRA})" title="Consulter">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            ${cra.status === 'en_attente' ? `
+                                <button class="btn-action btn-validate" onclick="validateCra(${cra.id_CRA})" title="Valider">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn-action btn-reject" onclick="rejectCra(${cra.id_CRA})" title="Refuser">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            tbody.innerHTML = crasHTML;
+        }
+
+        // Populate pagination
+        function populatePagination() {
+            if (!crasData || !crasData.pagination) return;
+
+            const container = document.getElementById('pagination-container');
+            const { current_page, last_page, total, from, to } = crasData.pagination;
+
+            if (last_page <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = `
+                <div class="pagination-info">
+                    Affichage de ${from} à ${to} sur ${total} CRA
+                </div>
+                <div class="pagination-links">
+            `;
+
+            // Previous button
+            if (current_page > 1) {
+                paginationHTML += `<button class="pagination-btn" onclick="loadPage(${current_page - 1})">Précédent</button>`;
+            }
+
+            // Page numbers
+            for (let i = 1; i <= last_page; i++) {
+                if (i === current_page) {
+                    paginationHTML += `<button class="pagination-btn active">${i}</button>`;
+                } else {
+                    paginationHTML += `<button class="pagination-btn" onclick="loadPage(${i})">${i}</button>`;
+                }
+            }
+
+            // Next button
+            if (current_page < last_page) {
+                paginationHTML += `<button class="pagination-btn" onclick="loadPage(${current_page + 1})">Suivant</button>`;
+            }
+
+            paginationHTML += '</div>';
+            container.innerHTML = paginationHTML;
+        }
+
+        // Update stats
+        function updateStats() {
+            if (!crasData || !crasData.cras) return;
+
+            const pending = crasData.cras.filter(cra => cra.status === 'en_attente').length;
+            const validated = crasData.cras.filter(cra => cra.status === 'valide').length;
+            const rejected = crasData.cras.filter(cra => cra.status === 'refuse').length;
+            const total = crasData.pagination.total;
+
+            document.getElementById('pending-count').textContent = pending;
+            document.getElementById('validated-count').textContent = validated;
+            document.getElementById('rejected-count').textContent = rejected;
+            document.getElementById('total-count').textContent = total;
+        }
+
+        // Load specific page
+        async function loadPage(page) {
+            try {
+                const response = await fetch(`/admin/api/cra?page=${page}`);
+                crasData = await response.json();
+                populateCrasTable();
+                populatePagination();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading page:', error);
+                showError('Erreur lors du chargement de la page');
+            }
+        }
+
+        // Initialize filters
+        function initializeFilters() {
+            document.getElementById('status-filter').addEventListener('change', filterTable);
+            document.getElementById('user-filter').addEventListener('change', filterTable);
+            document.getElementById('date-filter').addEventListener('change', filterTable);
+            document.getElementById('search-input').addEventListener('input', filterTable);
+            document.getElementById('clear-filters').addEventListener('click', clearFilters);
+        }
+
+        // Filter table
+        function filterTable() {
+            const statusFilter = document.getElementById('status-filter').value;
+            const userFilter = document.getElementById('user-filter').value;
+            const dateFilter = document.getElementById('date-filter').value;
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            
+            const rows = document.querySelectorAll('.data-table tbody tr');
+            
+            rows.forEach(row => {
+                if (row.classList.contains('loading-row') || row.classList.contains('empty-state')) {
+                    return;
+                }
+
+                const status = row.cells[3].textContent.toLowerCase();
+                const userText = row.cells[1].textContent.toLowerCase();
+                const craId = row.cells[0].textContent.toLowerCase();
+                
+                const statusMatch = !statusFilter || status.includes(statusFilter);
+                const userMatch = !userFilter || userText.includes(userFilter);
+                const searchMatch = !searchInput || userText.includes(searchInput) || craId.includes(searchInput);
+                
+                row.style.display = (statusMatch && userMatch && searchMatch) ? '' : 'none';
+            });
+        }
+
+        // Clear filters
+        function clearFilters() {
+            document.getElementById('status-filter').value = '';
+            document.getElementById('user-filter').value = '';
+            document.getElementById('date-filter').value = '';
+            document.getElementById('search-input').value = '';
+            filterTable();
+        }
+
+        // Initialize modal
+        function initializeModal() {
+            document.getElementById('confirm-action').addEventListener('click', confirmAction);
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('action-modal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+
+        // View CRA
+        function viewCra(craId) {
+            window.location.href = `/admin/cra/${craId}/view`;
+        }
+
+        // Validate CRA
+        function validateCra(craId) {
+            currentCraId = craId;
+            currentAction = 'validate';
+            showActionModal('Valider le CRA', 'Êtes-vous sûr de vouloir valider ce CRA ?', 'Valider');
+        }
+
+        // Reject CRA
+        function rejectCra(craId) {
+            currentCraId = craId;
+            currentAction = 'reject';
+            showActionModal('Refuser le CRA', 'Êtes-vous sûr de vouloir refuser ce CRA ?', 'Refuser');
+        }
+
+        // Show action modal
+        function showActionModal(title, message, actionText) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('confirm-action').textContent = actionText;
+            document.getElementById('action-modal').style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('action-modal').style.display = 'none';
+            currentCraId = null;
+            currentAction = null;
+        }
+
+        // Confirm action
+        async function confirmAction() {
+            if (!currentCraId || !currentAction) return;
+
+            const endpoint = currentAction === 'validate' ? 'validate' : 'reject';
+            
+            try {
+                const response = await fetch(`/admin/cra/${currentCraId}/${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess(result.message);
+                    closeModal();
+                    loadCrasData(); // Reload data
+                } else {
+                    showError(result.message || 'Erreur lors de l\'action');
+                }
+            } catch (error) {
+                console.error('Error performing action:', error);
+                showError('Erreur lors de l\'exécution de l\'action');
+            }
+        }
+
+        // Refresh data
+        function refreshData() {
+            loadCrasData();
+            showSuccess('Données actualisées avec succès');
+        }
+
+        // Utility functions
+        function getStatusText(status) {
+            const statusMap = {
+                'en_attente': 'En Attente',
+                'valide': 'Validé',
+                'refuse': 'Refusé'
+            };
+            return statusMap[status] || status;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+        }
+
+        function formatDateTime(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function showSuccess(message) {
+            // You can implement a toast notification here
+            alert('Succès: ' + message);
+        }
+
+        function showError(message) {
+            // You can implement a toast notification here
+            alert('Erreur: ' + message);
+        }
+    </script>
+
+    <style>
+        /* Enhanced styles for CRA interface */
+        .quick-stats {
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card.pending { border-left: 4px solid #F59E0B; }
+        .stat-card.validated { border-left: 4px solid #10B981; }
+        .stat-card.rejected { border-left: 4px solid #EF4444; }
+        .stat-card.total { border-left: 4px solid #7C3AED; }
+
+        .stat-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .cra-id {
+            display: flex;
+            align-items: center;
+        }
+
+        .id-number {
+            font-weight: 600;
+            color: #7C3AED;
+            font-size: 0.875rem;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .user-email {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .period-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .period-month {
+            font-weight: 500;
+            color: #374151;
+            text-transform: capitalize;
+        }
+
+        .validator-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .no-validator {
+            color: #6b7280;
+            font-style: italic;
+            font-size: 0.875rem;
+        }
+
+        .date-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .date-created {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .btn-view {
+            background: #E5E7EB;
+            color: #374151;
+        }
+
+        .btn-view:hover {
+            background: #D1D5DB;
+        }
+
+        .btn-validate {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .btn-validate:hover {
+            background: #A7F3D0;
+        }
+
+        .btn-reject {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .btn-reject:hover {
+            background: #FECACA;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-badge.status-en_attente {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-badge.status-valide {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-badge.status-refuse {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .modal-details {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #F9FAFB;
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#7C3AED">
+    <title>CRATECH - Gestion des Validateurs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <!-- Logo -->
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-symbol">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <span class="logo-text">CRATECH</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="nav-title">Menu Principal</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="/admin/dashboard" class="nav-link">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>Tableau de bord</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/users" class="nav-link">
+                                <i class="fas fa-users"></i>
+                                <span>Utilisateurs</span>
+                            </a>
+                        </li>
+                        <li class="nav-item active">
+                            <a href="/admin/validators" class="nav-link">
+                                <i class="fas fa-user-check"></i>
+                                <span>Validateurs</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/assignments" class="nav-link">
+                                <i class="fas fa-tasks"></i>
+                                <span>Affectations</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/reporting" class="nav-link">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Reporting</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/cra" class="nav-link">
+                                <i class="fas fa-file-alt"></i>
+                                <span>CRA</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/projects" class="nav-link">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>Projets</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-title">Compte</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="/admin/profile" class="nav-link">
+                                <i class="fas fa-user-cog"></i>
+                                <span>Mon Compte</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/logout" class="nav-link">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Déconnexion</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-content">
+                    <div class="header-left">
+                        <h1 class="page-title">Gestion des Validateurs</h1>
+                        <p class="page-subtitle">Gérez les validateurs du système</p>
+                    </div>
+                    
+                    <div class="header-right">
+                        <button class="btn btn-primary" onclick="window.location.href='/admin/validators/create'">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Nouveau Validateur</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="dashboard-content">
+                <!-- Stats Cards -->
+                <section class="stats-section">
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="stat-icon">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" id="total-validators">0</h3>
+                                <p class="stat-label">Total Validateurs</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card success">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" id="active-validators">0</h3>
+                                <p class="stat-label">Validateurs Actifs</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card warning">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number" id="inactive-validators">0</h3>
+                                <p class="stat-label">Validateurs Inactifs</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Filters -->
+                <section class="filters-section">
+                    <div class="filters-container">
+                        <div class="filter-group">
+                            <label for="status-filter">Statut :</label>
+                            <select id="status-filter" class="filter-select">
+                                <option value="">Tous les statuts</option>
+                                <option value="actif">Actif</option>
+                                <option value="inactif">Inactif</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="search-input">Rechercher :</label>
+                            <input type="text" id="search-input" class="filter-input" placeholder="Nom ou email...">
+                        </div>
+                        
+                        <button class="btn btn-secondary" id="clear-filters">
+                            <i class="fas fa-times"></i>
+                            <span>Effacer</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Validators Table -->
+                <section class="table-section">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Email</th>
+                                    <th>Statut</th>
+                                    <th>Utilisateurs validés</th>
+                                    <th>Date de création</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="validators-table-body">
+                                <tr>
+                                    <td colspan="6" class="loading-row">
+                                        <div class="loading-state">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                            <span>Chargement des validateurs...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination-container" id="pagination-container">
+                        <!-- Pagination will be loaded here -->
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmer la suppression</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer ce validateur ?</p>
+                <p class="text-muted">Cette action est irréversible.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                <button class="btn btn-danger" id="confirm-delete">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/admin.js"></script>
+    <script>
+        // Global variables
+        let validatorsData = null;
+        let currentValidatorId = null;
+        let csrfToken = '';
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCSRFToken();
+            loadValidatorsData();
+            initializeFilters();
+            initializeModal();
+        });
+
+        // Load CSRF token
+        async function loadCSRFToken() {
+            try {
+                const response = await fetch('/csrf-token');
+                const data = await response.json();
+                csrfToken = data.token;
+            } catch (error) {
+                console.error('Error loading CSRF token:', error);
+            }
+        }
+
+        // Load validators data
+        async function loadValidatorsData() {
+            try {
+                const response = await fetch('/admin/api/validators');
+                validatorsData = await response.json();
+                populateValidatorsTable();
+                populatePagination();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading validators data:', error);
+                showError('Erreur lors du chargement des validateurs');
+            }
+        }
+
+        // Populate validators table
+        function populateValidatorsTable() {
+            if (!validatorsData || !validatorsData.validators) return;
+
+            const tbody = document.getElementById('validators-table-body');
+            
+            if (validatorsData.validators.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <i class="fas fa-user-check"></i>
+                            <h4>Aucun validateur</h4>
+                            <p>Aucun validateur trouvé.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const validatorsHTML = validatorsData.validators.map(validator => `
+                <tr>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar validator-avatar">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <span class="user-name">${validator.nom_user}</span>
+                        </div>
+                    </td>
+                    <td>${validator.email_user}</td>
+                    <td>
+                        <span class="status-badge status-${validator.status}">
+                            ${capitalizeFirst(validator.status)}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge">${validator.validés ? validator.validés.length : 0}</span>
+                    </td>
+                    <td>${formatDate(validator.created_at)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-edit" onclick="editValidator(${validator.id_user})" title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-delete" onclick="deleteValidator(${validator.id_user})" title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            tbody.innerHTML = validatorsHTML;
+        }
+
+        // Populate pagination
+        function populatePagination() {
+            if (!validatorsData || !validatorsData.pagination) return;
+
+            const container = document.getElementById('pagination-container');
+            const { current_page, last_page, total, from, to } = validatorsData.pagination;
+
+            if (last_page <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = `
+                <div class="pagination-info">
+                    Affichage de ${from} à ${to} sur ${total} validateurs
+                </div>
+                <div class="pagination-links">
+            `;
+
+            // Previous button
+            if (current_page > 1) {
+                paginationHTML += `<button class="pagination-btn" onclick="loadPage(${current_page - 1})">Précédent</button>`;
+            }
+
+            // Page numbers
+            for (let i = 1; i <= last_page; i++) {
+                if (i === current_page) {
+                    paginationHTML += `<button class="pagination-btn active">${i}</button>`;
+                } else {
+                    paginationHTML += `<button class="pagination-btn" onclick="loadPage(${i})">${i}</button>`;
+                }
+            }
+
+            // Next button
+            if (current_page < last_page) {
+                paginationHTML += `<button class="pagination-btn" onclick="loadPage(${current_page + 1})">Suivant</button>`;
+            }
+
+            paginationHTML += '</div>';
+            container.innerHTML = paginationHTML;
+        }
+
+        // Update stats
+        function updateStats() {
+            if (!validatorsData || !validatorsData.validators) return;
+
+            const total = validatorsData.pagination.total;
+            const active = validatorsData.validators.filter(v => v.status === 'actif').length;
+            const inactive = validatorsData.validators.filter(v => v.status === 'inactif').length;
+
+            document.getElementById('total-validators').textContent = total;
+            document.getElementById('active-validators').textContent = active;
+            document.getElementById('inactive-validators').textContent = inactive;
+        }
+
+        // Load specific page
+        async function loadPage(page) {
+            try {
+                const response = await fetch(`/admin/api/validators?page=${page}`);
+                validatorsData = await response.json();
+                populateValidatorsTable();
+                populatePagination();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading page:', error);
+                showError('Erreur lors du chargement de la page');
+            }
+        }
+
+        // Initialize filters
+        function initializeFilters() {
+            document.getElementById('status-filter').addEventListener('change', filterTable);
+            document.getElementById('search-input').addEventListener('input', filterTable);
+            document.getElementById('clear-filters').addEventListener('click', clearFilters);
+        }
+
+        // Filter table
+        function filterTable() {
+            const statusFilter = document.getElementById('status-filter').value.toLowerCase();
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            
+            const rows = document.querySelectorAll('.data-table tbody tr');
+            
+            rows.forEach(row => {
+                if (row.classList.contains('loading-row') || row.classList.contains('empty-state')) {
+                    return;
+                }
+
+                const status = row.cells[2].textContent.toLowerCase();
+                const name = row.cells[0].textContent.toLowerCase();
+                const email = row.cells[1].textContent.toLowerCase();
+                
+                const statusMatch = !statusFilter || status.includes(statusFilter);
+                const searchMatch = !searchInput || name.includes(searchInput) || email.includes(searchInput);
+                
+                row.style.display = (statusMatch && searchMatch) ? '' : 'none';
+            });
+        }
+
+        // Clear filters
+        function clearFilters() {
+            document.getElementById('status-filter').value = '';
+            document.getElementById('search-input').value = '';
+            filterTable();
+        }
+
+        // Initialize modal
+        function initializeModal() {
+            document.getElementById('confirm-delete').addEventListener('click', confirmDelete);
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('delete-modal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+
+        // Edit validator
+        function editValidator(validatorId) {
+            window.location.href = `/admin/validators/${validatorId}/edit`;
+        }
+
+        // Delete validator
+        function deleteValidator(validatorId) {
+            currentValidatorId = validatorId;
+            document.getElementById('delete-modal').style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('delete-modal').style.display = 'none';
+            currentValidatorId = null;
+        }
+
+        // Confirm delete
+        async function confirmDelete() {
+            if (!currentValidatorId) return;
+
+            try {
+                const response = await fetch(`/admin/validators/${currentValidatorId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess(result.message);
+                    closeModal();
+                    loadValidatorsData(); // Reload data
+                } else {
+                    showError(result.message || 'Erreur lors de la suppression');
+                }
+            } catch (error) {
+                console.error('Error deleting validator:', error);
+                showError('Erreur lors de la suppression du validateur');
+            }
+        }
+
+        // Utility functions
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR');
+        }
+
+        function showSuccess(message) {
+            // You can implement a toast notification here
+            alert('Succès: ' + message);
+        }
+
+        function showError(message) {
+            // You can implement a toast notification here
+            alert('Erreur: ' + message);
+        }
+    </script>
+</body>
+</html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#3B82F6">
-    <title>CRATECH - Gestion des Utilisateurs</title>
+    <title>CRATECH - Gestion des Activités</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -38,61 +38,45 @@
 
                 <div class="nav-section">
                     <h3 class="nav-section-title">Gestion</h3>
-                    <a href="/admin/users.html" class="nav-item active">
-                                <i class="fas fa-users"></i>
-                                <span>Utilisateurs</span>
-                            </a>
-                    <a href="/admin/activities.html" class="nav-item">
-                                <i class="fas fa-tasks"></i>
+                    <a href="/admin/users.html" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                    <a href="/admin/activities.html" class="nav-item active">
+                        <i class="fas fa-tasks"></i>
                         <span>Activités</span>
                     </a>
                     <a href="#reports" class="nav-item">
-                                <i class="fas fa-file-alt"></i>
+                        <i class="fas fa-file-alt"></i>
                         <span>Rapports</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <h3 class="nav-section-title">Configuration</h3>
+                    <h3 class="nav-section-title">Système</h3>
                     <a href="#settings" class="nav-item">
                         <i class="fas fa-cog"></i>
                         <span>Paramètres</span>
                     </a>
-                    <a href="#backup" class="nav-item">
-                        <i class="fas fa-database"></i>
-                        <span>Sauvegarde</span>
+                    <a href="#help" class="nav-item">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Aide</span>
                     </a>
                 </div>
             </nav>
-
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="user-avatar">
-                        <i class="fas fa-user-shield"></i>
-                    </div>
-                    <div class="user-info">
-                        <span class="user-name">Admin CRATECH</span>
-                        <span class="user-role">Administrateur</span>
-                    </div>
-                </div>
-                <a href="/logout" class="logout-btn">
-                                <i class="fas fa-sign-out-alt"></i>
-                                <span>Déconnexion</span>
-                            </a>
-                </div>
         </aside>
 
         <!-- Main Content -->
         <main class="admin-main">
             <!-- Header -->
             <header class="admin-header">
-                    <div class="header-left">
+                <div class="header-left">
                     <button class="sidebar-toggle">
                         <i class="fas fa-bars"></i>
                     </button>
-                        <h1 class="page-title">Gestion des Utilisateurs</h1>
-                    </div>
-                    <div class="header-right">
+                    <h1 class="page-title">Gestion des Activités</h1>
+                </div>
+                <div class="header-right">
                     <div class="header-actions">
                         <button class="action-btn">
                             <i class="fas fa-bell"></i>
@@ -109,115 +93,101 @@
                 </div>
             </header>
 
-            <!-- Users Content -->
+            <!-- Activities Content -->
             <div class="users-content">
                 <!-- Stats Cards -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">
-                            <i class="fas fa-users"></i>
+                            <i class="fas fa-tasks"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" data-target="1247">0</h3>
-                            <p class="stat-label">Total utilisateurs</p>
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>+12% ce mois</span>
-                            </div>
+                            <h3 id="totalActivities">0</h3>
+                            <p>Total Activités</p>
                         </div>
                     </div>
-
                     <div class="stat-card">
                         <div class="stat-icon">
-                            <i class="fas fa-user-shield"></i>
+                            <i class="fas fa-check-circle"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" data-target="45">0</h3>
-                            <p class="stat-label">Administrateurs</p>
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>+2 ce mois</span>
-                            </div>
+                            <h3 id="activeActivities">0</h3>
+                            <p>Activités Actives</p>
                         </div>
                     </div>
-
                     <div class="stat-card">
                         <div class="stat-icon">
-                            <i class="fas fa-user-check"></i>
+                            <i class="fas fa-pause-circle"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" data-target="89">0</h3>
-                            <p class="stat-label">Validateurs</p>
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>+5 ce mois</span>
-                            </div>
+                            <h3 id="inactiveActivities">0</h3>
+                            <p>Activités Inactives</p>
                         </div>
                     </div>
-
                     <div class="stat-card">
                         <div class="stat-icon">
-                            <i class="fas fa-user-clock"></i>
+                            <i class="fas fa-user-tie"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" data-target="1113">0</h3>
-                            <p class="stat-label">Employés & Sous-traitants</p>
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>+15 ce mois</span>
-                            </div>
+                            <h3 id="assignedUsers">0</h3>
+                            <p>Utilisateurs Assignés</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Filters and Actions -->
+                <!-- Filters Section -->
                 <div class="filters-section">
-                    <div class="filters-left">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchInput" placeholder="Rechercher un utilisateur...">
+                    <div class="filters-header">
+                        <h2>Filtres et Recherche</h2>
+                        <div class="filters-actions">
+                            <button class="btn btn-primary" onclick="window.location.href='/admin/activities/create.html'">
+                                <i class="fas fa-plus"></i>
+                                Ajouter une Activité
+                            </button>
                         </div>
-                        <div class="filter-dropdown">
-                            <select id="roleFilter">
-                                <option value="">Tous les rôles</option>
-                                <option value="administrateur">Administrateurs</option>
-                                <option value="validateur">Validateurs</option>
-                                <option value="employé">Employés</option>
-                                <option value="sous-traitant">Sous-traitants</option>
-                            </select>
+                    </div>
+                    
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label for="searchInput">Rechercher</label>
+                            <div class="search-input">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="Rechercher par nom, description...">
+                            </div>
                         </div>
-                        <div class="filter-dropdown">
+                        <div class="filter-group">
+                            <label for="statusFilter">Statut</label>
                             <select id="statusFilter">
                                 <option value="">Tous les statuts</option>
-                                <option value="actif">Actifs</option>
-                                <option value="inactif">Inactifs</option>
+                                <option value="actif">Actif</option>
+                                <option value="inactif">Inactif</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="sortBy">Trier par</label>
+                            <select id="sortBy">
+                                <option value="nom_act">Nom</option>
+                                <option value="created_at">Date de création</option>
+                                <option value="status">Statut</option>
                             </select>
                         </div>
                     </div>
-                    <div class="filters-right">
-                        <button class="btn btn-secondary" id="exportBtn">
-                            <i class="fas fa-download"></i>
-                            <span>Exporter</span>
-                        </button>
-                        <a href="/admin/users/create.html" class="btn btn-primary">
-                            <i class="fas fa-user-plus"></i>
-                            <span>Ajouter un utilisateur</span>
-                        </a>
-                    </div>
-                        </div>
-                        
-                <!-- Users Table -->
+                </div>
+
+                <!-- Activities Table -->
                 <div class="users-table-container">
                     <div class="table-header">
-                        <h2>Liste des Utilisateurs</h2>
+                        <h2>Liste des Activités</h2>
                         <div class="table-actions">
-                            <button class="table-action-btn" id="refreshBtn">
+                            <button class="btn btn-secondary" id="refreshBtn">
                                 <i class="fas fa-sync-alt"></i>
+                                Actualiser
                             </button>
-                            <button class="table-action-btn" id="viewToggle">
-                                <i class="fas fa-th"></i>
-                        </button>
-                    </div>
+                            <button class="btn btn-secondary" id="exportBtn">
+                                <i class="fas fa-download"></i>
+                                Exporter
+                            </button>
+                        </div>
                     </div>
 
                     <div class="table-wrapper">
@@ -229,43 +199,45 @@
                                     </th>
                                     <th>ID</th>
                                     <th>Nom</th>
-                                    <th>Email</th>
-                                    <th>Rôle</th>
+                                    <th>Description</th>
                                     <th>Statut</th>
-                                    <th>Date de création</th>
+                                    <th>Utilisateurs Assignés</th>
+                                    <th>Date de Création</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="usersTableBody">
-                                <!-- Les utilisateurs seront chargés ici -->
+                            <tbody id="activitiesTableBody">
+                                <!-- Les activités seront chargées ici -->
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <!-- Pagination -->
                     <div class="pagination">
-                        <button class="pagination-btn" id="prevBtn" disabled>
-                            <i class="fas fa-chevron-left"></i>
-                            <span>Précédent</span>
-                        </button>
                         <div class="pagination-info">
                             <span>Page <span id="currentPage">1</span> sur <span id="totalPages">1</span></span>
                         </div>
-                        <button class="pagination-btn" id="nextBtn">
-                            <span>Suivant</span>
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
+                        <div class="pagination-controls">
+                            <button class="btn btn-secondary" id="prevBtn" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                                Précédent
+                            </button>
+                            <button class="btn btn-secondary" id="nextBtn" disabled>
+                                Suivant
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                    </div>
-            </main>
+            </div>
+        </main>
     </div>
 
     <!-- Modal de confirmation -->
-    <div class="modal" id="confirmModal">
+    <div id="confirmModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Confirmer l'action</h3>
+                <h3 id="modalTitle">Confirmation</h3>
                 <button class="modal-close">
                     <i class="fas fa-times"></i>
                 </button>
@@ -275,12 +247,12 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="cancelBtn">Annuler</button>
-                <button class="btn btn-primary" id="confirmBtn">Confirmer</button>
+                <button class="btn btn-danger" id="confirmBtn">Confirmer</button>
             </div>
         </div>
     </div>
 
     <script src="/js/admin.js"></script>
-    <script src="/js/users.js"></script>
+    <script src="/js/activities.js"></script>
 </body>
 </html>
