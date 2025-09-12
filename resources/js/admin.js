@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initTimeDisplay();
     initQuickActions();
     initNotifications();
+    initLogoutConfirm();
 });
 
 // Initialisation du dashboard
@@ -53,14 +54,9 @@ function initSidebar() {
     navItems.forEach(item => {
         item.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
-            
-            // Empêcher le défaut UNIQUEMENT pour les ancres internes (hash) ou liens vides
+            // Empêcher le défaut uniquement pour les ancres internes (hash) ou liens vides
             if (!href || href.startsWith('#')) {
                 e.preventDefault();
-                console.log('Navigation bloquée pour:', href);
-            } else {
-                console.log('Navigation autorisée vers:', href);
-                // Laisser la navigation se faire normalement
             }
             
             // Retirer la classe active de tous les éléments
@@ -372,3 +368,49 @@ function initPerformanceOptimizations() {
 document.addEventListener('DOMContentLoaded', function() {
     initPerformanceOptimizations();
 });
+
+// Confirmation de déconnexion (modal)
+function showConfirmModal(message, onConfirm) {
+    // Créer modal
+    const overlay = document.createElement('div');
+    overlay.className = 'modal';
+    overlay.innerHTML = `
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-sign-out-alt" style="color:#EF4444;margin-right:.5rem;"></i>Confirmer la déconnexion</h3>
+            <button class="modal-close" aria-label="Fermer">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:1rem;color:#374151;">${message || 'Voulez-vous vraiment vous déconnecter ?'}</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="logoutCancelBtn">Annuler</button>
+            <button class="btn btn-danger" id="logoutConfirmBtn"><i class="fas fa-power-off"></i> Se déconnecter</button>
+        </div>
+    </div>`;
+
+    document.body.appendChild(overlay);
+
+    const close = () => { overlay.remove(); };
+    overlay.querySelector('.modal-close').addEventListener('click', close);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    overlay.querySelector('#logoutCancelBtn').addEventListener('click', close);
+    overlay.querySelector('#logoutConfirmBtn').addEventListener('click', () => { try { onConfirm && onConfirm(); } finally { close(); } });
+}
+
+function initLogoutConfirm() {
+    try {
+        const bind = (el) => {
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                showConfirmModal('Voulez-vous vraiment vous déconnecter ?', () => {
+                    window.location.href = '/logout';
+                });
+            });
+        };
+        // Liens de déconnexion connus
+        document.querySelectorAll('a[href="/logout"], .logout-btn[href="/logout"]').forEach(bind);
+    } catch (err) {
+        console.warn('Init logout confirm failed:', err);
+    }
+}

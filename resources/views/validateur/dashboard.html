@@ -3,250 +3,431 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#3B82F6">
     <title>CRATECH - Dashboard Validateur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
-    <link rel="stylesheet" href="/css/validateur.css">
+    <link rel="stylesheet" href="/css/admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="validateur-layout">
-        <!-- Header -->
-        <header class="validateur-header">
-            <div class="validateur-header-left">
-                <a href="/validateur/dashboard" class="validateur-logo">
-                    <div class="validateur-logo-icon">V</div>
-                    <span class="validateur-logo-text">CRATECH</span>
-                </a>
-            </div>
-            <div class="validateur-header-right">
-                <div class="validateur-user-info">
-                    <i class="fas fa-user-circle"></i>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-section">
+                    <div class="logo-icon">C</div>
+                    <span class="logo-text">CRATECH</span>
+                </div>
+                <div class="admin-badge employe-badge">
+                    <i class="fas fa-check-double"></i>
                     <span>Validateur</span>
                 </div>
-                <a href="/logout" class="validateur-logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Déconnexion
-                </a>
             </div>
-        </header>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Mon Espace</h3>
+                    <a href="/validateur/dashboard" class="nav-item active">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Validation des CRA</span>
+                    </a>
+                    <a href="/validateur/history" class="nav-item">
+                        <i class="fas fa-history"></i>
+                        <span>Historique des CRA</span>
+                    </a>
+                    <a href="/validateur/assigned" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs assignés</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Compte</h3>
+                    <a href="/validateur/account.html" class="nav-item">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Mon Compte</span>
+                    </a>
+                    <a href="/logout" class="nav-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
 
         <!-- Main Content -->
-        <main class="validateur-main">
-            <div class="page-header">
-                <h1 class="page-title">Dashboard Validateur</h1>
-                <p class="page-subtitle">Gérez et validez les comptes rendus d'activité</p>
-            </div>
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="breadcrumb">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Dashboard Validateur</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="current-time">
+                        <i class="fas fa-clock"></i>
+                        <span id="current-time"></span>
+                    </div>
+                    <div class="user-menu">
+                        <button class="user-menu-trigger">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span class="user-name" id="headerUserName">Validateur</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
 
-            <!-- Stats Cards -->
-            <div class="dashboard-grid">
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <div class="card-icon orange">
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
                             <i class="fas fa-clock"></i>
                         </div>
-                        <h3 class="card-title">En Attente</h3>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="statPending" data-target="0">0</h3>
+                            <p class="stat-label">En attente</p>
+                            <div class="stat-change negative">
+                                <i class="fas fa-arrow-down"></i>
+                                <span id="pendingTrend">Aujourd'hui</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-content">
-                        <div class="card-value">12</div>
-                        <p class="card-description">CRA en attente de validation</p>
-                    </div>
-                    <div class="card-actions">
-                        <a href="#" class="btn-primary">
-                            <i class="fas fa-eye"></i>
-                            Voir les détails
-                        </a>
-                    </div>
-                </div>
 
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <div class="card-icon green">
+                    <div class="stat-card">
+                        <div class="stat-icon">
                             <i class="fas fa-check-circle"></i>
                         </div>
-                        <h3 class="card-title">Validés</h3>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="statValidated" data-target="0">0</h3>
+                            <p class="stat-label">Validés ce mois</p>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span id="validatedTrend">Ce mois</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-content">
-                        <div class="card-value">48</div>
-                        <p class="card-description">CRA validés ce mois</p>
-                    </div>
-                    <div class="card-actions">
-                        <a href="#" class="btn-primary">
-                            <i class="fas fa-chart-line"></i>
-                            Voir les statistiques
-                        </a>
-                    </div>
-                </div>
 
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <div class="card-icon red">
+                    <div class="stat-card">
+                        <div class="stat-icon">
                             <i class="fas fa-times-circle"></i>
                         </div>
-                        <h3 class="card-title">Rejetés</h3>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="statRejected" data-target="0">0</h3>
+                            <p class="stat-label">Rejetés ce mois</p>
+                            <div class="stat-change negative">
+                                <i class="fas fa-arrow-down"></i>
+                                <span id="rejectedTrend">Ce mois</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-content">
-                        <div class="card-value">3</div>
-                        <p class="card-description">CRA rejetés ce mois</p>
-                    </div>
-                    <div class="card-actions">
-                        <a href="#" class="btn-primary">
-                            <i class="fas fa-list"></i>
-                            Voir la liste
-                        </a>
-                    </div>
-                </div>
 
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <div class="card-icon blue">
+                    <div class="stat-card">
+                        <div class="stat-icon">
                             <i class="fas fa-users"></i>
                         </div>
-                        <h3 class="card-title">Utilisateurs</h3>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="statActiveUsers" data-target="0">0</h3>
+                            <p class="stat-label">Utilisateurs actifs</p>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span id="usersTrend">Affect��s</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Validations -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-list-check"></i>
+                            CRA en attente de validation
+                        </h2>
+                        <button class="card-action" id="refreshBtn" title="Rafraîchir"><i class="fas fa-sync-alt"></i></button>
                     </div>
                     <div class="card-content">
-                        <div class="card-value">156</div>
-                        <p class="card-description">Utilisateurs actifs</p>
-                    </div>
-                    <div class="card-actions">
-                        <a href="#" class="btn-primary">
-                            <i class="fas fa-user-cog"></i>
-                            Gérer les utilisateurs
-                        </a>
+                        <div class="cra-list-card" style="box-shadow:none;border:1px solid var(--gray-200);">
+                            <div class="cra-list" id="validationList">
+                                <div class="cra-item"><em>Chargement...</em></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Validation Table -->
-            <div class="validation-container">
-                <div class="validation-header">
-                    <h3 class="validation-title">CRA en attente de validation</h3>
-                    <div class="validation-filters">
-                        <select class="filter-select">
-                            <option>Tous les mois</option>
-                            <option>Janvier 2024</option>
-                            <option>Février 2024</option>
-                            <option>Mars 2024</option>
-                        </select>
-                        <select class="filter-select">
-                            <option>Tous les utilisateurs</option>
-                            <option>Employés</option>
-                            <option>Sous-traitants</option>
-                        </select>
-                    </div>
+                
                 </div>
-                <div class="table-content">
-                    <table class="validation-table">
-                        <thead>
-                            <tr>
-                                <th>Utilisateur</th>
-                                <th>Période</th>
-                                <th>Statut</th>
-                                <th>Date de soumission</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div>
-                                        <strong>Jean Dupont</strong><br>
-                                        <small>Employé</small>
-                                    </div>
-                                </td>
-                                <td>Janvier 2024</td>
-                                <td><span class="status-badge status-pending">En attente</span></td>
-                                <td>15 Jan 2024</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <a href="#" class="btn-view">
-                                            <i class="fas fa-eye"></i>
-                                            Voir
-                                        </a>
-                                        <button class="btn-approve">
-                                            <i class="fas fa-check"></i>
-                                            Valider
-                                        </button>
-                                        <button class="btn-reject">
-                                            <i class="fas fa-times"></i>
-                                            Rejeter
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div>
-                                        <strong>Marie Martin</strong><br>
-                                        <small>Sous-traitant</small>
-                                    </div>
-                                </td>
-                                <td>Janvier 2024</td>
-                                <td><span class="status-badge status-pending">En attente</span></td>
-                                <td>16 Jan 2024</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <a href="#" class="btn-view">
-                                            <i class="fas fa-eye"></i>
-                                            Voir
-                                        </a>
-                                        <button class="btn-approve">
-                                            <i class="fas fa-check"></i>
-                                            Valider
-                                        </button>
-                                        <button class="btn-reject">
-                                            <i class="fas fa-times"></i>
-                                            Rejeter
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Empty State (masqué par défaut) -->
-            <div class="empty-state" style="display: none;">
-                <div class="empty-state-icon">
-                    <i class="fas fa-clipboard-check"></i>
-                </div>
-                <h3 class="empty-state-title">Aucun CRA en attente</h3>
-                <p class="empty-state-description">Tous les comptes rendus d'activité ont été traités.</p>
-            </div>
         </main>
     </div>
 
+    <script src="/js/admin.js"></script>
     <script>
-        // Scripts pour la gestion des validations
+        // Utilitaires
+        const state = { csrf: null };
+        async function getCsrfToken() {
+            if (state.csrf) return state.csrf;
+            try {
+                const res = await fetch('/csrf-token', { credentials: 'same-origin' });
+                const data = await res.json();
+                state.csrf = data.token;
+            } catch (e) { console.warn('CSRF fetch error', e); }
+            return state.csrf;
+        }
+
+        function formatMonthYear(dateStr) {
+            try {
+                const d = new Date(dateStr);
+                return d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+            } catch (_) { return dateStr; }
+        }
+        function formatDateTime(dt) {
+            try {
+                const d = new Date(dt);
+                return d.toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            } catch (_) { return dt; }
+        }
+
+        // Chargement des infos utilisateur (header)
+        async function loadHeaderUser() {
+            try {
+                const res = await fetch('/account/me', { credentials: 'same-origin' });
+                const data = await res.json();
+                if (data && data.success && data.user) {
+                    const name = data.user.nom || data.user.name || 'Validateur';
+                    const el = document.getElementById('headerUserName');
+                    if (el) el.textContent = name;
+                }
+            } catch (e) {}
+        }
+
+        // Stats
+        async function loadStats() {
+            const els = {
+                pending: document.getElementById('statPending'),
+                validated: document.getElementById('statValidated'),
+                rejected: document.getElementById('statRejected'),
+                users: document.getElementById('statActiveUsers')
+            };
+            try {
+                const res = await fetch('/validateur/api/stats', { credentials: 'same-origin' });
+                const data = await res.json();
+                if (data && data.success) {
+                    const s = data.stats || { pending: 0, validated_this_month: 0, rejected_this_month: 0, active_users: 0 };
+                    if (els.pending) els.pending.textContent = s.pending;
+                    if (els.validated) els.validated.textContent = s.validated_this_month;
+                    if (els.rejected) els.rejected.textContent = s.rejected_this_month;
+                    if (els.users) els.users.textContent = s.active_users;
+                }
+            } catch (e) {
+                console.warn('Erreur stats', e);
+            }
+        }
+
+        // Liste des CRA en attente
+        function renderPendingList(items) {
+            const list = document.getElementById('validationList');
+            if (!list) return;
+            list.innerHTML = '';
+            if (!items || items.length === 0) {
+                list.innerHTML = '<div class="cra-item"><em>Aucun CRA en attente</em></div>';
+                return;
+            }
+            items.forEach(item => {
+                const monthDate = new Date(item.dateMois);
+                const monthIndex = monthDate.getMonth(); // 0-11
+                const year = monthDate.getFullYear();
+                const el = document.createElement('div');
+                el.className = 'cra-item';
+                el.innerHTML = `
+                    <div class="cra-info">
+                        <div class="cra-date">${formatMonthYear(item.dateMois)} - ${item.user?.nom_user || 'Utilisateur'}</div>
+                        <div class="cra-status">
+                            <span class="status-badge warning">En attente</span>
+                            <span class="submission-status submitted">Soumis le ${formatDateTime(item.submittedAT)}</span>
+                        </div>
+                    </div>
+                    <div class="cra-actions">
+                        <a href="/validateur/voir-cra.html?cra=${item.cra_id}&month=${monthIndex}&year=${year}" class="btn btn-secondary btn-small">
+                            <i class="fas fa-eye"></i> Voir
+                        </a>
+                        <button class="btn btn-primary btn-small action-validate" data-id="${item.cra_id}">
+                            <i class="fas fa-check"></i> Valider
+                        </button>
+                        <button class="btn btn-danger btn-small action-reject" data-id="${item.cra_id}">
+                            <i class="fas fa-times"></i> Rejeter
+                        </button>
+                    </div>`;
+                list.appendChild(el);
+            });
+        }
+
+        async function loadPending() {
+            try {
+                const res = await fetch('/validateur/api/pending', { credentials: 'same-origin' });
+                const data = await res.json();
+                if (data && data.success) {
+                    renderPendingList(data.cras || []);
+                } else {
+                    renderPendingList([]);
+                }
+            } catch (e) {
+                console.warn('Erreur pending', e);
+                renderPendingList([]);
+            }
+        }
+
+        // Actions valider / rejeter (délégation)
+        document.addEventListener('click', async function(e) {
+            const validateBtn = e.target.closest && e.target.closest('.action-validate');
+            const rejectBtn = e.target.closest && e.target.closest('.action-reject');
+            if (!validateBtn && !rejectBtn) return;
+            const craId = (validateBtn || rejectBtn).getAttribute('data-id');
+            if (!craId) return;
+            const url = validateBtn ? `/validateur/api/cra/${craId}/validate` : `/validateur/api/cra/${craId}/reject`;
+            try {
+                const token = await getCsrfToken();
+                const res = await fetch(url, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token || ''
+                    }
+                });
+                const data = await res.json();
+                if (data && data.success) {
+                    // Recharger liste + stats
+                    await loadPending();
+                    await loadStats();
+                } else {
+                    alert(data?.message || 'Action échouée');
+                }
+            } catch (err) {
+                console.warn('Action erreur', err);
+                alert('Erreur lors de l\'action');
+            }
+        });
+
+        // Refresh bouton
         document.addEventListener('DOMContentLoaded', function() {
-            // Gestion des boutons de validation
-            document.querySelectorAll('.btn-approve').forEach(button => {
-                button.addEventListener('click', function() {
-                    if (confirm('Êtes-vous sûr de vouloir valider ce CRA ?')) {
-                        // Logique de validation
-                        console.log('CRA validé');
-                    }
-                });
-            });
-
-            document.querySelectorAll('.btn-reject').forEach(button => {
-                button.addEventListener('click', function() {
-                    if (confirm('Êtes-vous sûr de vouloir rejeter ce CRA ?')) {
-                        // Logique de rejet
-                        console.log('CRA rejeté');
-                    }
-                });
-            });
-
-            // Gestion des filtres
-            document.querySelectorAll('.filter-select').forEach(select => {
-                select.addEventListener('change', function() {
-                    // Logique de filtrage
-                    console.log('Filtre changé:', this.value);
-                });
+            const btn = document.getElementById('refreshBtn');
+            if (btn) btn.addEventListener('click', async function() {
+                btn.classList.add('spinning');
+                await Promise.all([loadStats(), loadPending()]);
+                setTimeout(() => btn.classList.remove('spinning'), 300);
             });
         });
+
+        function renderHistory(items){
+            const body = document.getElementById('historyTableBody');
+            if (!body) return;
+            body.innerHTML = '';
+            if (!items || items.length === 0) {
+                body.innerHTML = '<tr><td colspan="5"><em>Aucun historique</em></td></tr>';
+                return;
+            }
+            items.forEach(row => {
+                const d = new Date(row.dateMois);
+                const monthStr = d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+                const actionAt = row.actionAt ? new Date(row.actionAt).toLocaleString('fr-FR') : '';
+                const badge = row.status === 'valide' ? 'success' : 'danger';
+                const label = row.status === 'valide' ? 'Validé' : 'Refusé';
+                const monthIndex = d.getMonth();
+                const year = d.getFullYear();
+                body.innerHTML += `
+                    <tr>
+                        <td>${row.user?.nom_user || ''}</td>
+                        <td>${monthStr}</td>
+                        <td><span class="status-badge ${badge}">${label}</span></td>
+                        <td>${actionAt}</td>
+                        <td>
+                            <a class="btn btn-secondary btn-small" href="/validateur/voir-cra.html?cra=${row.cra_id}&month=${monthIndex}&year=${year}">
+                                <i class="fas fa-eye"></i>
+                                Voir
+                            </a>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        async function loadHistory(){
+            try {
+                const res = await fetch('/validateur/api/history', { credentials: 'same-origin' });
+                const payload = await res.json();
+                renderHistory(payload && payload.success ? payload.history : []);
+            } catch (e) {
+                renderHistory([]);
+            }
+        }
+
+        function renderAssigned(items){
+            const body = document.getElementById('assignedTableBody');
+            if (!body) return;
+            body.innerHTML = '';
+            if (!items || items.length === 0) {
+                body.innerHTML = '<tr><td colspan="5"><em>Aucun utilisateur assigné</em></td></tr>';
+                return;
+            }
+            items.forEach(u => {
+                const statusBadge = u.status === 'actif' ? 'success' : 'warning';
+                const createdAt = u.created_at ? new Date(u.created_at).toLocaleDateString('fr-FR') : '';
+                body.innerHTML += `
+                    <tr>
+                        <td>${u.nom_user}</td>
+                        <td>${u.email_user || ''}</td>
+                        <td><span class="status-badge ${statusBadge}">${u.status}</span></td>
+                        <td>${u.pending || 0}</td>
+                        <td>${createdAt}</td>
+                    </tr>`;
+            });
+        }
+
+        async function loadAssigned(){
+            try {
+                const res = await fetch('/validateur/api/assigned-users', { credentials: 'same-origin' });
+                const payload = await res.json();
+                renderAssigned(payload && payload.success ? payload.users : []);
+            } catch (e) {
+                renderAssigned([]);
+            }
+        }
+
+        // Refresh boutons secondaires
+        document.addEventListener('DOMContentLoaded', function(){
+            const h = document.getElementById('refreshHistory');
+            const a = document.getElementById('refreshAssigned');
+            if (h) h.addEventListener('click', async function(){
+                h.classList.add('spinning');
+                await loadHistory();
+                setTimeout(()=>h.classList.remove('spinning'), 300);
+            });
+            if (a) a.addEventListener('click', async function(){
+                a.classList.add('spinning');
+                await loadAssigned();
+                setTimeout(()=>a.classList.remove('spinning'), 300);
+            });
+        });
+
+        // Boot
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadHeaderUser();
+            await Promise.all([loadStats(), loadPending(), loadHistory(), loadAssigned()]);
+        });
+
+        // Exemple d'actions (legacy demo remplacé par API)
     </script>
 </body>
 </html>

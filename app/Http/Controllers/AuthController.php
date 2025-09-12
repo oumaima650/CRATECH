@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use App\Mail\CompteCreeMail;
 
 class AuthController extends Controller
@@ -332,23 +334,140 @@ class AuthController extends Controller
     }
 
     /**
-     * Traiter la demande de mot de passe oublié
+     * Mot de passe oublié en 2 étapes sur la même route (POST /forgot-password)
+     * Étape 1 (demande de code): id_user, email
+     * Étape 2 (vérification + reset): id_user, email, code, password, password_confirmation
      */
     public function forgotPassword(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
+        // Étape 2: si un code OU un nouveau mot de passe sont fournis, on vérifie et on réinitialise
+        if ($request->has('code') || $request->has('password')) {
+            try {
+                $request->validate([
+                    'id_user' => 'required|integer',
+                    'email' => 'required|email',
+                    'code' => 'required|digits:6',
+                    'password' => 'required|string|min:8|confirmed',
+                ]);
 
-        $user = Utilisateur::where('email_user', $request->email)->first();
-        
-        if ($user) {
-            // Ici vous pourriez implémenter l'envoi d'email
-            // Pour l'instant, on affiche juste un message
-            return back()->with('success', 'Si un compte existe avec cet email, vous recevrez un lien de réinitialisation.');
-        } else {
-            // Pour des raisons de sécurité, on affiche le même message
-            return back()->with('success', 'Si un compte existe avec cet email, vous recevrez un lien de réinitialisation.');
+                $user = Utilisateur::where('id_user', $request->id_user)
+                    ->where('email_user', $request->email)
+                    ->first();
+
+                if (!$user) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Aucun utilisateur ne correspond à cet identifiant et email."
+                    ], 404);
+                }
+
+                $cacheKey = 'pwreset:' . $request->id_user . ':' . strtolower($request->email);
+                $data = Cache::get($cacheKey);
+                if (!$data || !isset($data['code']) || $data['code'] !== $request->code) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Code invalide ou expiré.'
+                    ], 400);
+                }
+
+                // Mettre à jour le mot de passe
+                $user->motdepasse_user = Hash::make($request->password);
+                $user->save();
+
+                // Nettoyer le cache et connecter l'utilisateur
+                Cache::forget($cacheKey);
+                Auth::login($user);
+
+                // Déterminer la redirection selon le rôle
+                $redirect = '/login';
+                switch ($user->role) {
+                    case 'administrateur':
+                        $redirect = '/admin/dashboard';
+                        break;
+                    case 'validateur':
+                        $redirect = '/validateur/dashboard';
+                        break;
+                    case 'employé':
+                    case 'sous-traitant':
+                        $redirect = '/employe/dashboard';
+                        break;
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Mot de passe mis à jour avec succès',
+                    'redirect' => $redirect
+                ]);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Données invalides',
+                    'errors' => $e->errors()
+                ], 422);
+            } catch (\Exception $e) {
+                Log::error('Erreur vérification code / reset: ' . $e->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur interne, veuillez réessayer plus tard.'
+                ], 500);
+            }
+        }
+
+        // Étape 1: générer et envoyer le code
+        try {
+            $request->validate([
+                'id_user' => 'required|integer',
+                'email' => 'required|email',
+            ]);
+
+            $user = Utilisateur::where('id_user', $request->id_user)
+                ->where('email_user', $request->email)
+                ->first();
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Aucun utilisateur ne correspond à cet identifiant et email."
+                ], 404);
+            }
+
+            // Générer un code à 6 chiffres
+            $code = (string) random_int(100000, 999999);
+            $cacheKey = 'pwreset:' . $request->id_user . ':' . strtolower($request->email);
+            Cache::put($cacheKey, ['code' => $code], now()->addMinutes(10));
+
+            // Envoyer le code par email
+            try {
+                $subject = 'CRATECH - Code de réinitialisation (10 min)';
+                $body = "Bonjour {$user->nom_user},\n\n" .
+                        "Votre code de réinitialisation est: {$code}\n" .
+                        "Ce code est valable 10 minutes.\n\n" .
+                        "Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.\n\n" .
+                        "Cordialement,\nL'équipe CRATECH";
+                Mail::raw($body, function ($message) use ($user, $subject) {
+                    $message->to($user->email_user)->subject($subject);
+                });
+            } catch (\Exception $mailEx) {
+                Log::error('Erreur envoi email code reset: ' . $mailEx->getMessage());
+                // On ne bloque pas, le code est quand même stocké en cache
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Code envoyé à votre adresse email.'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Données invalides',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Erreur génération code reset: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur interne, veuillez réessayer plus tard.'
+            ], 500);
         }
     }
     

@@ -17,13 +17,10 @@ return new class extends Migration
             $table->foreign('id_CRA')->references('id_CRA')->on('c_r_a_s')->onDelete('cascade');
             $table->date('date');
             $table->text('description')->nullable(); // description is an optional field to provide details about the day's activities.
-            $table->enum('type', ['1', '0' , '0.5'])->default('0'); // Assuming '1' is presence, '0' is absence, and '0,5' is half-day
+            $table->enum('type', ['1', '0', '0.5'])->default('0'); // '1' is presence, '0' is absence, and '0.5' is half-day
             $table->unsignedBigInteger('id_activité');
             $table->foreign('id_activité')->references('id_activité')->on('activités')->onDelete('cascade');
             $table->timestamps();
-            
-            // Contrainte unique pour éviter les doublons
-            $table->unique(['id_CRA', 'date', 'id_activité'], 'unique_cra_date_activity');
         });
     }
 

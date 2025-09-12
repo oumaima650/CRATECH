@@ -296,6 +296,26 @@ public function users()
         ]);
     }
 
+    // ========== ACTIVITIES ==========
+
+    public function updateActivityStatus($id, Request $request)
+    {
+        $activity = Activité::findOrFail($id);
+        
+        $request->validate([
+            'status' => 'required|in:actif,inactif',
+        ]);
+
+        $activity->status = $request->status;
+        $activity->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Statut de l\'activité mis à jour avec succès',
+            'activity' => $activity
+        ]);
+    }
+
     // ========== ASSIGNMENTS ==========
     public function assignments()
     {

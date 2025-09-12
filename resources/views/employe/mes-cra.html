@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#3B82F6">
-    <title>CRATECH - Dashboard Employé</title>
+    <title>CRATECH - Mes CRA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -26,7 +26,7 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <h3 class="nav-section-title">Mon Espace</h3>
-                    <a href="#dashboard" class="nav-item active">
+                    <a href="/employe/dashboard.html" class="nav-item">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Compte Rendu d'Activité</span>
                     </a>
@@ -34,7 +34,7 @@
 
                 <div class="nav-section">
                     <h3 class="nav-section-title">Historique</h3>
-                    <a href="/employe/mes-cra.html" class="nav-item">
+                    <a href="/employe/mes-cra.html" class="nav-item active">
                         <i class="fas fa-history"></i>
                         <span>Mes CRA</span>
                     </a>
@@ -63,8 +63,8 @@
                         <i class="fas fa-bars"></i>
                     </button>
                     <div class="breadcrumb">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Compte rendu d'activité</span>
+                        <i class="fas fa-history"></i>
+                        <span>Mes CRA</span>
                     </div>
                 </div>
                 <div class="header-right">
@@ -84,82 +84,39 @@
                 </div>
             </header>
 
-            <!-- CRA Content -->
-            <div class="cra-content" id="craContent">
-                <!-- Header Card -->
+            <!-- Mes CRA Content -->
+            <div class="mes-cra-content">
                 <div class="cra-header-card">
                     <div class="card-header">
                         <h2 class="card-title">
-                            <i class="fas fa-calendar-alt"></i>
-                            Compte Rendu d'Activité
+                            <i class="fas fa-history"></i>
+                            Mes CRA
                         </h2>
-                        <div class="cra-controls">
-                            <button class="nav-btn" id="prevMonth">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <div class="month-year-selector">
-                                <select class="form-select" id="monthSelect">
-                                    <!-- Month options will be populated dynamically -->
-                                </select>
-                                <select class="form-select" id="yearSelect">
-                                <!-- Years will be populated dynamically -->
-                            </select>
-                            </div>
-                            <button class="nav-btn" id="nextMonth">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
+                        <a href="/employe/dashboard.html" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            Retour au CRA
+                        </a>
+                    </div>
+                </div>
+
+                <div class="cra-list-card">
+                    <div class="cra-list-container">
+                        <div class="loading-spinner" id="craListLoading" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Chargement des CRA...
+                        </div>
+                        <div class="cra-list" id="craList">
+                            <!-- CRA list will be populated here -->
                         </div>
                     </div>
                 </div>
-
-
-                <!-- CRA Table Card -->
-                <div class="calendar-card">
-                    <div class="cra-table-container">
-                        <table id="craTable" class="cra-table">
-                            <thead>
-                                <tr id="craTableHeader">
-                                    <th class="project-header">Projet</th>
-                                    <!-- Days will be generated here -->
-                                </tr>
-                            </thead>
-                            <tbody id="craTableBody">
-                                <!-- Project rows will be generated here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="cra-actions">
-                        <button class="btn btn-secondary btn-lg" id="exportCRA">
-                            <i class="fas fa-download"></i>
-                            Exporter
-                        </button>
-                        <button class="btn btn-primary btn-lg" id="submitCRA">
-                            <i class="fas fa-paper-plane"></i>
-                            Soumettre le CRA
-                        </button>
-                    </div>
-                </div>
             </div>
+        </main>
+    </div>
 
-        </div>
+    <input type="hidden" id="csrf-token" value="">
 
-        <!-- Modal for day value selection -->
-        <div id="dayValueModal" class="modal" style="display: none;">
-            <div class="modal-content modal-compact">
-                <div class="value-options-compact">
-                    <button class="value-option-compact" data-value="0">0</button>
-                    <button class="value-option-compact" data-value="0.5">0.5</button>
-                    <button class="value-option-compact" data-value="1">1</button>
-                </div>
-            </div>
-        </div>
-
-        <input type="hidden" id="csrf-token" value="">
-
-        <script src="/js/admin.js"></script>
-        <script src="/js/employe.js"></script>
-    </body>
+    <script src="/js/admin.js"></script>
+    <script src="/js/mes-cra.js"></script>
+</body>
 </html>
-
-

@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#3B82F6">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>CRATECH - Gestion des Activités</title>
+    <title>CRATECH - Utilisateurs Assignés</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -15,7 +14,6 @@
 </head>
 <body>
     <div class="admin-container">
-        <!-- Sidebar -->
          <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
@@ -77,18 +75,16 @@
                     <button class="sidebar-toggle">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h1 class="page-title">Gestion des Activités</h1>
+                    <div class="breadcrumb">
+                        <a href="/admin/activities.html" class="breadcrumb-link">
+                            <i class="fas fa-tasks"></i>
+                            Activités
+                        </a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span class="breadcrumb-current" id="activityName">Utilisateurs Assignés</span>
+                    </div>
                 </div>
                 <div class="header-right">
-                    <div class="header-actions">
-                        <button class="action-btn">
-                            <i class="fas fa-bell"></i>
-                            <span class="notification-badge">3</span>
-                        </button>
-                        <button class="action-btn">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
                     <div class="current-time">
                         <i class="fas fa-clock"></i>
                         <span id="current-time"></span>
@@ -96,47 +92,44 @@
                 </div>
             </header>
 
-            <!-- Activities Content -->
+            <!-- Activity Users Content -->
             <div class="users-content">
+                <!-- Activity Info Card -->
+                <div class="activity-info-card">
+                    <div class="activity-header">
+                        <div class="activity-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="activity-details">
+                            <h2 id="activityTitle">Nom de l'activité</h2>
+                            <p class="activity-meta">
+                                <span class="activity-id">ID: <span id="activityId">-</span></span>
+                                <span class="activity-status">
+                                    <span class="status-badge" id="activityStatus">Actif</span>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Stats Cards -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">
-                            <i class="fas fa-tasks"></i>
+                            <i class="fas fa-users"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="totalActivities" data-target="0">0</h3>
-                            <p class="stat-label">Total Activités</p>
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>+5% ce mois</span>
-                            </div>
+                            <h3 class="stat-number" id="totalAssigned">0</h3>
+                            <p class="stat-label">Total Assignés</p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-user"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="activeActivities" data-target="0">0</h3>
-                            <p class="stat-label">Actives</p>
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>+3 ce mois</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-pause-circle"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 class="stat-number" id="inactiveActivities" data-target="0">0</h3>
-                            <p class="stat-label">Inactives</p>
-                            <div class="stat-change negative">
-                                <i class="fas fa-arrow-down"></i>
-                                <span>-1 ce mois</span>
-                            </div>
+                            <h3 class="stat-number" id="employeesCount">0</h3>
+                            <p class="stat-label">Employés</p>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -144,58 +137,43 @@
                             <i class="fas fa-user-tie"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="assignedUsers" data-target="0">0</h3>
-                            <p class="stat-label">Assignations</p>
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>+8 ce mois</span>
-                            </div>
+                            <h3 class="stat-number" id="contractorsCount">0</h3>
+                            <p class="stat-label">Sous-traitants</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Filters and Actions -->
+                <!-- Actions Section -->
                 <div class="filters-section">
                     <div class="filters-left">
                         <div class="search-box">
                             <i class="fas fa-search"></i>
-                            <input type="text" id="searchInput" placeholder="Rechercher une activité...">
+                            <input type="text" id="searchInput" placeholder="Rechercher un utilisateur...">
                         </div>
                         <div class="filter-dropdown">
-                            <select id="statusFilter">
-                                <option value="">Tous les statuts</option>
-                                <option value="actif">Actives</option>
-                                <option value="inactif">Inactives</option>
-                            </select>
-                        </div>
-                        <div class="filter-dropdown">
-                            <select id="sortBy">
-                                <option value="nom_act">Trier par nom</option>
-                                <option value="created_at">Trier par date</option>
-                                <option value="status">Trier par statut</option>
+                            <select id="roleFilter">
+                                <option value="">Tous les rôles</option>
+                                <option value="employé">Employés</option>
+                                <option value="sous-traitant">Sous-traitants</option>
                             </select>
                         </div>
                     </div>
                     <div class="filters-right">
-                        <button class="btn btn-primary" onclick="window.location.href='/admin/activities/create.html'">
-                            <i class="fas fa-plus"></i>
-                            Ajouter une Activité
+                        <button class="btn btn-primary" id="addUserBtn">
+                            <i class="fas fa-user-plus"></i>
+                            Assigner un utilisateur
                         </button>
                     </div>
                 </div>
 
-                <!-- Activities Table -->
+                <!-- Assigned Users Table -->
                 <div class="users-table-container">
                     <div class="table-header">
-                        <h2>Liste des Activités</h2>
+                        <h2>Utilisateurs Assignés</h2>
                         <div class="table-actions">
                             <button class="btn btn-secondary" id="refreshBtn">
                                 <i class="fas fa-sync-alt"></i>
                                 Actualiser
-                            </button>
-                            <button class="btn btn-secondary" id="exportBtn">
-                                <i class="fas fa-download"></i>
-                                Exporter
                             </button>
                         </div>
                     </div>
@@ -209,15 +187,15 @@
                                     </th>
                                     <th>ID</th>
                                     <th>Nom</th>
-                                    <th>Description</th>
-                                    <th>Statut</th>
-                                    <th>Utilisateurs Assignés</th>
-                                    <th>Date de Création</th>
+                                    <th>Email</th>
+                                    <th>Rôle</th>
+                                    <th>Validateur</th>
+                                    <th>Date d'assignation</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="activitiesTableBody">
-                                <!-- Les activités seront chargées ici -->
+                            <tbody id="assignedUsersTableBody">
+                                <!-- Les utilisateurs assignés seront chargés ici -->
                             </tbody>
                         </table>
                     </div>
@@ -241,73 +219,84 @@
         </main>
     </div>
 
-    <!-- Modal de confirmation de suppression -->
-    <div class="modal" id="deleteActivityModal" style="display: none;">
-        <div class="modal-content">
+    <!-- Modal d'assignation d'utilisateurs -->
+    <div class="modal" id="assignUserModal" style="display: none;">
+        <div class="modal-content modal-large">
             <div class="modal-header">
-                <h3><i class="fas fa-exclamation-triangle" style="color: #EF4444; margin-right: 0.5rem;"></i>Supprimer l'activité</h3>
-                <button class="modal-close" onclick="closeDeleteActivityModal()">
+                <h3>Assigner des utilisateurs</h3>
+                <button class="modal-close" onclick="closeAssignUserModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="delete-warning">
-                    <div class="warning-icon">
-                        <i class="fas fa-tasks"></i>
+                <div class="modal-search">
+                    <input type="text" id="modalSearchInput" placeholder="Rechercher un utilisateur..." class="form-control">
+                    <select id="modalRoleFilter" class="form-control">
+                        <option value="">Tous les rôles</option>
+                        <option value="employé">Employé</option>
+                        <option value="sous-traitant">Sous-traitant</option>
+                    </select>
+                </div>
+                
+                <div class="modal-users-container">
+                    <div class="modal-users-header">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="selectAllModalUsers">
+                            <span class="checkmark"></span>
+                            Sélectionner tout
+                        </label>
+                        <span class="selected-count">0 utilisateur(s) sélectionné(s)</span>
                     </div>
-                    <div class="warning-content">
-                        <p><strong>Êtes-vous sûr de vouloir supprimer cette activité ?</strong></p>
-                        <p id="deleteActivityName" class="user-to-delete"></p>
-                        <div class="warning-message">
-                            <i class="fas fa-exclamation-circle"></i>
-                            Cette action est <strong>irréversible</strong>. Toutes les données associées à cette activité seront définitivement perdues.
+                    
+                    <div class="modal-users-table-container">
+                        <table class="modal-users-table">
+                            <thead>
+                                <tr>
+                                    <th width="50"></th>
+                                    <th>Nom</th>
+                                    <th>Email</th>
+                                    <th>Rôle</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalUsersTableBody">
+                                <!-- Les utilisateurs seront chargés ici -->
+                            </tbody>
+                        </table>
+                        
+                        <div id="modalNoUsersMessage" class="no-users-message" style="display: none;">
+                            <i class="fas fa-users"></i>
+                            <p>Aucun utilisateur disponible</p>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeDeleteActivityModal()">Annuler</button>
-                <button class="btn btn-danger" id="confirmDeleteActivityBtn" onclick="confirmActivityDeletion()">
-                    <i class="fas fa-trash"></i> Supprimer définitivement
-                </button>
+                <button class="btn btn-secondary" onclick="closeAssignUserModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="assignSelectedUsersToActivity()" id="assignSelectedBtn">Assigner</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal de confirmation de changement de statut -->
-    <div class="modal" id="statusChangeModal" style="display: none;">
+    <!-- Modal de confirmation -->
+    <div class="modal" id="confirmModal" style="display: none !important;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="statusChangeTitle"><i class="fas fa-exchange-alt" style="color: #F59E0B; margin-right: 0.5rem;"></i>Changer le statut</h3>
-                <button class="modal-close" onclick="closeStatusChangeModal()">
+                <h3>Confirmer l'action</h3>
+                <button class="modal-close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="status-change-warning">
-                    <div class="status-icon">
-                        <i class="fas fa-tasks"></i>
-                    </div>
-                    <div class="status-content">
-                        <p><strong id="statusChangeQuestion">Êtes-vous sûr de vouloir changer le statut ?</strong></p>
-                        <p id="statusChangeActivityName" class="activity-to-change"></p>
-                        <div class="status-message">
-                            <i class="fas fa-info-circle"></i>
-                            <span id="statusChangeDescription">Cette action changera le statut de l'activité.</span>
-                        </div>
-                    </div>
-                </div>
+                <p id="confirmMessage">Êtes-vous sûr de vouloir effectuer cette action ?</p>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeStatusChangeModal()">Annuler</button>
-                <button class="btn btn-warning" id="confirmStatusChangeBtn" onclick="confirmStatusChange()">
-                    <i class="fas fa-exchange-alt"></i> <span id="statusChangeButtonText">Confirmer</span>
-                </button>
+                <button class="btn btn-secondary" id="cancelBtn">Annuler</button>
+                <button class="btn btn-primary" id="confirmBtn">Confirmer</button>
             </div>
         </div>
     </div>
 
     <script src="/js/admin.js"></script>
-    <script src="/js/activities.js"></script>
+    <script src="/js/activity-users.js"></script>
 </body>
 </html>

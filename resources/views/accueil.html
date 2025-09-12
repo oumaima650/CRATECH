@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRATECH - Plateforme Professionnelle de Gestion CRA</title>
+    <title>CRATECH - Gestion complète des CRA (Employés, Validateurs, Admin)</title>
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/accueil.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -19,74 +19,62 @@
                     <span class="logo-text">CRATECH</span>
                 </a>
                 <nav class="nav">
+                    <a href="#modules" class="nav-link">Modules</a>
                     <a href="#features" class="nav-link">Fonctionnalités</a>
-                    <a href="#pricing" class="nav-link">Tarifs</a>
-                    <a href="#testimonials" class="nav-link">Témoignages</a>
+                    <a href="#security" class="nav-link">Sécurité</a>
+                    <a href="#integrations" class="nav-link">Intégrations</a>
                     <a href="#contact" class="nav-link">Contact</a>
                 </nav>
             </div>
             
             <div class="header-right">
-                <a href="/auth/login" class="btn-login">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Connexion
-                </a>
+                
                 <a href="/auth/login" class="btn-demo">
                     <i class="fas fa-play"></i>
-                    Démo gratuite
+                    Connexion / Inscription
                 </a>
             </div>
         </div>
     </header>
 
-        <!-- Hero Section -->
+    <!-- Hero Section -->
     <section class="hero" id="accueil">
         <div class="hero-container">
             <div class="hero-content">
                 <div class="hero-badge">
                     <i class="fas fa-crown"></i>
-                    <span>Plateforme Premium</span>
+                    <span>Gestion complète des CRA</span>
                 </div>
                 <h1 class="hero-title">
-                    La solution <span class="gradient-text">professionnelle</span><br>
-                    pour vos comptes rendus d'activité
+                    Saisissez, validez et pilotez vos <span class="gradient-text">Comptes Rendus d'Activité</span>
                 </h1>
                 <p class="hero-subtitle">
-                    Automatisez, gérez et optimisez vos CRA avec notre plateforme 
-                    utilisée par plus de 500 entreprises en France.
+                    CRATECH centralise la saisie mensuelle des CRA par les employés, la validation par les validateurs,
+                    et l'administration complète par les équipes RH/IT. Suivi temps réel, historiques et reporting inclus.
                 </p>
                 <div class="hero-stats">
                     <div class="stat">
-                        <span class="stat-number">500+</span>
-                        <span class="stat-label">Entreprises</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">50K+</span>
-                        <span class="stat-label">Utilisateurs</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">99.9%</span>
+                        <span class="stat-number">99%</span>
                         <span class="stat-label">Disponibilité</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">Rôles gérés</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">24h</span>
+                        <span class="stat-label">Accès</span>
                     </div>
                 </div>
                 <div class="hero-actions">
-                    <a href="#pricing" class="btn-primary">
+                    <a href="/auth/login" class="btn-primary">
                         <i class="fas fa-rocket"></i>
-                        Commencer maintenant
+                        Démarrer
                     </a>
-                    <a href="#demo" class="btn-secondary">
-                        <i class="fas fa-play-circle"></i>
-                        Voir la démo
+                    <a href="#modules" class="btn-secondary">
+                        <i class="fas fa-layer-group"></i>
+                        Voir les modules
                     </a>
-                </div>
-                <div class="hero-trust">
-                    <p>Recommandé par les leaders du secteur</p>
-                    <div class="trust-logos">
-                        <div class="trust-logo">TechCorp</div>
-                        <div class="trust-logo">InnovateLab</div>
-                        <div class="trust-logo">FutureSoft</div>
-                        <div class="trust-logo">ProSolutions</div>
-                    </div>
                 </div>
             </div>
             <div class="hero-visual">
@@ -95,7 +83,7 @@
                         <div class="dashboard-nav">
                             <div class="nav-item active">Dashboard</div>
                             <div class="nav-item">CRA</div>
-                            <div class="nav-item">Rapports</div>
+                            <div class="nav-item">Reporting</div>
                         </div>
                         <div class="user-avatar">
                             <i class="fas fa-user"></i>
@@ -103,28 +91,28 @@
                     </div>
                     <div class="dashboard-content">
                         <div class="stats-grid">
-                            <div class="stat-card">
+                            <div class="stat-card" style="opacity:.2;transform:translateY(10px)">
                                 <div class="stat-icon">
-                    <i class="fas fa-chart-line"></i>
+                                    <i class="fas fa-list-check"></i>
                                 </div>
                                 <div class="stat-info">
-                                    <span class="stat-value">87%</span>
-                                    <span class="stat-label">Efficacité</span>
+                                    <span class="stat-value">12</span>
+                                    <span class="stat-label">CRA en attente</span>
                                 </div>
                             </div>
-                            <div class="stat-card">
+                            <div class="stat-card" style="opacity:.2;transform:translateY(10px)">
                                 <div class="stat-icon">
-                                    <i class="fas fa-clock"></i>
+                                    <i class="fas fa-check-circle"></i>
                                 </div>
                                 <div class="stat-info">
-                                    <span class="stat-value">-65%</span>
-                                    <span class="stat-label">Temps</span>
+                                    <span class="stat-value">48</span>
+                                    <span class="stat-label">Validés ce mois</span>
                                 </div>
                             </div>
                         </div>
                         <div class="chart-container">
                             <div class="chart-header">
-                                <h3>Évolution des CRA</h3>
+                                <h3>Historique de validation</h3>
                                 <div class="chart-legend">
                                     <span class="legend-item">
                                         <span class="legend-color"></span>
@@ -144,304 +132,178 @@
                     </div>
                 </div>
             </div>
-            </div>
-        </section>
+        </div>
+    </section>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
+    <!-- Modules Section -->
+    <section class="features" id="modules">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Fonctionnalités professionnelles</h2>
-                <p class="section-subtitle">
-                    Tout ce dont vous avez besoin pour gérer efficacement vos comptes rendus d'activité
-                </p>
+                <h2 class="section-title">Modules CRATECH</h2>
+                <p class="section-subtitle">Des rôles clairs pour un workflow fiable</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <h3 class="feature-title">Automatisation intelligente</h3>
-                    <p class="feature-description">
-                        IA avancée pour la génération automatique de CRA basés sur vos activités réelles.
-                    </p>
-                    <div class="feature-badge">IA</div>
+                    <div class="feature-icon"><i class="fas fa-user"></i></div>
+                    <h3 class="feature-title">Employés</h3>
+                    <ul class="feature-description">
+                        <li>Saisie mensuelle du CRA sur activités/projets assignés</li>
+                        <li>Brouillon, auto-enregistrement, soumission</li>
+                        <li>Historique des CRA, export</li>
+                    </ul>
+                    <div class="feature-badge">Saisie</div>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Sécurité enterprise</h3>
-                    <p class="feature-description">
-                        Chiffrement AES-256, conformité RGPD et certifications ISO 27001.
-                    </p>
-                    <div class="feature-badge">Sécurisé</div>
+                    <div class="feature-icon"><i class="fas fa-user-check"></i></div>
+                    <h3 class="feature-title">Validateurs</h3>
+                    <ul class="feature-description">
+                        <li>Liste des utilisateurs assignés</li>
+                        <li>Validation/Refus des CRA (valide/refusé/en attente)</li>
+                        <li>Historique des actions, consultation détaillée</li>
+                    </ul>
+                    <div class="feature-badge">Contrôle</div>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <h3 class="feature-title">Analytics avancés</h3>
-                    <p class="feature-description">
-                        Tableaux de bord personnalisables avec métriques en temps réel.
-                    </p>
-                    <div class="feature-badge">Analytics</div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-users-cog"></i>
-                    </div>
-                    <h3 class="feature-title">Gestion multi-rôles</h3>
-                    <p class="feature-description">
-                        Administrateurs, validateurs, employés avec permissions granulaires.
-                    </p>
-                    <div class="feature-badge">Multi-rôles</div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Mobile-first</h3>
-                    <p class="feature-description">
-                        Application native iOS/Android pour la saisie mobile optimisée.
-                    </p>
-                    <div class="feature-badge">Mobile</div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-plug"></i>
-                    </div>
-                    <h3 class="feature-title">Intégrations</h3>
-                    <p class="feature-description">
-                        API REST, webhooks et intégrations avec vos outils existants.
-                    </p>
-                    <div class="feature-badge">API</div>
+                    <div class="feature-icon"><i class="fas fa-user-shield"></i></div>
+                    <h3 class="feature-title">Administrateurs</h3>
+                    <ul class="feature-description">
+                        <li>Gestion des utilisateurs et des rôles</li>
+                        <li>Gestion des activités/projets et affectations</li>
+                        <li>Reporting et supervision globale</li>
+                    </ul>
+                    <div class="feature-badge">Admin</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Pricing Section -->
-    <section class="pricing" id="pricing">
+    <!-- Features Section (réelles fonctionnalités) -->
+    <section class="features" id="features">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Tarifs transparents</h2>
-                <p class="section-subtitle">
-                    Choisissez le plan qui correspond à vos besoins
-                </p>
+                <h2 class="section-title">Fonctionnalités clés</h2>
+                <p class="section-subtitle">Fonctionnalités alignées avec l'application CRATECH</p>
             </div>
-            <div class="pricing-grid">
-                <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3 class="plan-name">Starter</h3>
-                        <div class="plan-price">
-                            <span class="currency">€</span>
-                            <span class="amount">29</span>
-                            <span class="period">/mois</span>
-                        </div>
-                        <p class="plan-description">Parfait pour les petites équipes</p>
-                    </div>
-                    <div class="pricing-features">
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Jusqu'à 10 utilisateurs</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Gestion CRA de base</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Support email</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Rapports mensuels</span>
-                        </div>
-                    </div>
-                    <a href="/auth/login" class="btn-pricing">Commencer</a>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <h3 class="feature-title">CRA mensuel</h3>
+                    <p class="feature-description">Saisie au jour le jour, auto-save, soumission et statut par mois (en attente, validé, refusé).</p>
+                    <div class="feature-badge">CRA</div>
                 </div>
-
-                <div class="pricing-card featured">
-                    <div class="pricing-badge">Populaire</div>
-                    <div class="pricing-header">
-                        <h3 class="plan-name">Professional</h3>
-                        <div class="plan-price">
-                            <span class="currency">€</span>
-                            <span class="amount">79</span>
-                            <span class="period">/mois</span>
-                        </div>
-                        <p class="plan-description">Pour les entreprises en croissance</p>
-                    </div>
-                    <div class="pricing-features">
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Jusqu'à 50 utilisateurs</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>IA et automatisation</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Analytics avancés</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Support prioritaire</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Intégrations API</span>
-                        </div>
-                    </div>
-                    <a href="/auth/login" class="btn-pricing">Commencer</a>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <h3 class="feature-title">Workflow de validation</h3>
+                    <p class="feature-description">Interface Validateur dédiée: liste des CRA soumis, actions valider/refuser, historique.</p>
+                    <div class="feature-badge">Workflow</div>
                 </div>
-
-                <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3 class="plan-name">Enterprise</h3>
-                        <div class="plan-price">
-                            <span class="currency">€</span>
-                            <span class="amount">199</span>
-                            <span class="period">/mois</span>
-                        </div>
-                        <p class="plan-description">Pour les grandes organisations</p>
-                    </div>
-                    <div class="pricing-features">
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Utilisateurs illimités</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Fonctionnalités premium</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Support dédié 24/7</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>Formation personnalisée</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check"></i>
-                            <span>SLA 99.9%</span>
-                        </div>
-                    </div>
-                    <a href="/auth/login" class="btn-pricing">Nous contacter</a>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-project-diagram"></i></div>
+                    <h3 class="feature-title">Activités & Projets</h3>
+                    <p class="feature-description">Assignation des utilisateurs aux activités/projets, contrôle par statut d'activité.</p>
+                    <div class="feature-badge">Projets</div>
                 </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-user-tag"></i></div>
+                    <h3 class="feature-title">Affectation des validateurs</h3>
+                    <p class="feature-description">Affecter un validateur à chaque employé/sous-traitant directement depuis l'admin.</p>
+                    <div class="feature-badge">Affectation</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-envelope"></i></div>
+                    <h3 class="feature-title">Notifications email</h3>
+                    <p class="feature-description">Envoi d'email au validateur lors de la soumission d'un CRA en attente.</p>
+                    <div class="feature-badge">Email</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+                    <h3 class="feature-title">Reporting & Dashboard</h3>
+                    <p class="feature-description">Statistiques d'activité, utilisateurs actifs, en attente, historiques récents.</p>
+                    <div class="feature-badge">Stats</div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-    <!-- Testimonials Section -->
-    <section class="testimonials" id="testimonials">
+    <!-- Security Section -->
+    <section class="features" id="security">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Ils nous font confiance</h2>
-                <p class="section-subtitle">
-                    Découvrez pourquoi 500+ entreprises nous font confiance
-                </p>
+                <h2 class="section-title">Sécurité & Authentification</h2>
+                <p class="section-subtitle">Protection des données et conformité</p>
             </div>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="stars">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "CRATECH a révolutionné notre gestion des CRA. Nous avons réduit le temps de saisie de 70%."
-                        </p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="author-info">
-                            <h4 class="author-name">Marie Dubois</h4>
-                            <p class="author-title">DRH, TechCorp</p>
-                        </div>
-                    </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3 class="feature-title">CSRF & Sessions</h3>
+                    <p class="feature-description">Protection CSRF, routes sécurisées et gestion des sessions intégrées.</p>
+                    <div class="feature-badge">CSRF</div>
                 </div>
-                
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="stars">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "Interface intuitive et fonctionnalités puissantes. Notre équipe a adopté la solution en 2 jours."
-                        </p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="author-info">
-                            <h4 class="author-name">Jean Martin</h4>
-                            <p class="author-title">CEO, InnovateLab</p>
-                        </div>
-                    </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-user-lock"></i></div>
+                    <h3 class="feature-title">Rôles & Accès</h3>
+                    <p class="feature-description">Accès différenciés par rôle (administrateur, validateur, employé/sous-traitant).</p>
+                    <div class="feature-badge">RBAC</div>
                 </div>
-                
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <div class="stars">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "Support client exceptionnel et plateforme ultra-fiable. Nous recommandons vivement."
-                        </p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="author-info">
-                            <h4 class="author-name">Sophie Laurent</h4>
-                            <p class="author-title">CFO, FutureSoft</p>
-                        </div>
-                    </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-key"></i></div>
+                    <h3 class="feature-title">SSO (Keycloak)</h3>
+                    <p class="feature-description">Prêt pour une intégration SSO via Keycloak (configuration prévue).</p>
+                    <div class="feature-badge">SSO</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Integrations & API -->
+    <section class="features" id="integrations">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Intégrations & API</h2>
+                <p class="section-subtitle">Connectez CRATECH à votre écosystème</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-plug"></i></div>
+                    <h3 class="feature-title">API publiques</h3>
+                    <p class="feature-description">Points d'accès en lecture pour lister utilisateurs et activités.</p>
+                    <div class="feature-badge">API</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-database"></i></div>
+                    <h3 class="feature-title">Données standardisées</h3>
+                    <p class="feature-description">Modèles structurés (CRA, activités, affectations) prêts pour BI.</p>
+                    <div class="feature-badge">Data</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-code-branch"></i></div>
+                    <h3 class="feature-title">Extensible</h3>
+                    <p class="feature-description">Architecture modulaire pour étendre les workflows et exports.</p>
+                    <div class="feature-badge">Extensible</div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="cta">
+    <section class="cta" id="contact">
         <div class="container">
             <div class="cta-content">
-                <h2 class="cta-title">Prêt à transformer votre gestion des CRA ?</h2>
-                <p class="cta-subtitle">
-                    Rejoignez plus de 500 entreprises qui font confiance à CRATECH
-                </p>
+                <h2 class="cta-title">Prêt à déployer CRATECH ?</h2>
+                <p class="cta-subtitle">Connectez-vous et commencez à centraliser vos CRA dès aujourd'hui</p>
                 <div class="cta-actions">
                     <a href="/auth/login" class="btn-primary">
                         <i class="fas fa-rocket"></i>
-                        Commencer l'essai gratuit
+                        Se connecter
                     </a>
-                    <a href="#contact" class="btn-secondary">
-                        <i class="fas fa-phone"></i>
-                        Planifier une démo
+                    <a href="#modules" class="btn-secondary">
+                        <i class="fas fa-layer-group"></i>
+                        Découvrir les modules
                     </a>
                 </div>
                 <p class="cta-note">
                     <i class="fas fa-shield-alt"></i>
-                    Essai gratuit 14 jours • Aucune carte de crédit requise
+                    Sécurisé • Rôles & accès • Historisation
                 </p>
             </div>
         </div>
@@ -450,7 +312,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-        <div class="footer-content">
+            <div class="footer-content">
                 <div class="footer-section">
                     <div class="footer-logo">
                         <div class="logo-icon">C</div>
@@ -469,23 +331,23 @@
                 <div class="footer-section">
                     <h3 class="footer-title">Produit</h3>
                     <ul class="footer-links">
+                        <li><a href="#modules">Modules</a></li>
                         <li><a href="#features">Fonctionnalités</a></li>
-                        <li><a href="#pricing">Tarifs</a></li>
-                        <li><a href="#">API</a></li>
-                        <li><a href="#">Intégrations</a></li>
+                        <li><a href="#integrations">Intégrations</a></li>
+                        <li><a href="#security">Sécurité</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-section">
                     <h3 class="footer-title">Support</h3>
                     <ul class="footer-links">
-                        <li><a href="#">Documentation</a></li>
-                        <li><a href="#">Centre d'aide</a></li>
-                        <li><a href="#">Contact</a></li>
+                        <li><a href="/auth/login">Assistance</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#contact">Contact</a></li>
                         <li><a href="#">Statut</a></li>
                     </ul>
-            </div>
-            
+                </div>
+                
                 <div class="footer-section">
                     <h3 class="footer-title">Entreprise</h3>
                     <ul class="footer-links">
@@ -493,13 +355,13 @@
                         <li><a href="#">Carrières</a></li>
                         <li><a href="#">Presse</a></li>
                         <li><a href="#">Partenaires</a></li>
-                </ul>
+                    </ul>
                 </div>
             </div>
             
             <div class="footer-bottom">
                 <div class="footer-bottom-content">
-                    <p>&copy; 2024 CRATECH. Tous droits réservés.</p>
+                    <p>&copy; 2025 CRATECH. Tous droits réservés.</p>
                     <div class="footer-legal">
                         <a href="#">Mentions légales</a>
                         <a href="#">Confidentialité</a>
@@ -512,4 +374,4 @@
 
     <script src="/js/accueil.js"></script>
 </body>
-</html> 
+</html>

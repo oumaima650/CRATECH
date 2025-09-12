@@ -3,28 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Créer une Activité - CRATECH Admin</title>
+    <meta name="theme-color" content="#3B82F6">
+    <title>CRATECH - Créer une Activité</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="admin-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
+    <div class="admin-container">
+         <!-- Sidebar -->
+        <aside class="admin-sidebar">
             <div class="sidebar-header">
-                <div class="logo">
-                    <i class="fas fa-cube"></i>
-                    <span>CRATECH</span>
+                <div class="logo-section">
+                    <div class="logo-icon">C</div>
+                    <span class="logo-text">CRATECH</span>
                 </div>
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <div class="admin-badge">
+                    <i class="fas fa-crown"></i>
+                    <span>Administrateur</span>
+                </div>
             </div>
-            
+
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <h3 class="nav-section-title">Tableau de bord</h3>
-                    <a href="/admin/dashboard.html" class="nav-item">
+                    <a href="/admin/dashboard.html" class="nav-item ">
                         <i class="fas fa-chart-pie"></i>
                         <span>Vue d'ensemble</span>
                     </a>
@@ -38,31 +44,30 @@
                     </a>
                     <a href="/admin/activities.html" class="nav-item active">
                         <i class="fas fa-tasks"></i>
-                        <span>Activités</span>
+                        <span>Activité</span>
                     </a>
-                    <a href="#reports" class="nav-item">
-                        <i class="fas fa-file-alt"></i>
-                        <span>Rapports</span>
+                    <a href="/admin/cra.html" class="nav-item">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>CRA</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <h3 class="nav-section-title">Système</h3>
-                    <a href="#settings" class="nav-item">
-                        <i class="fas fa-cog"></i>
-                        <span>Paramètres</span>
+                    <h3 class="nav-section-title">Compte</h3>
+                    <a href="/admin/account.html" class="nav-item">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Compte</span>
                     </a>
-                    <a href="#help" class="nav-item">
-                        <i class="fas fa-question-circle"></i>
-                        <span>Aide</span>
+                    <a href="/login" class="nav-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Déconnexion</span>
                     </a>
                 </div>
             </nav>
+
         </aside>
 
-        <!-- Main Content -->
         <main class="admin-main">
-            <!-- Header -->
             <header class="admin-header">
                 <div class="header-left">
                     <button class="sidebar-toggle">
@@ -84,67 +89,69 @@
                         <i class="fas fa-clock"></i>
                         <span id="current-time"></span>
                     </div>
+                    <div class="user-menu">
+                        <button class="user-menu-trigger">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span class="user-name" id="headerUserName">Utilisateur</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
                 </div>
             </header>
 
-            <!-- Activities Content -->
-            <div class="users-content">
-                <div class="form-container">
-                    <div class="form-header">
-                        <h2>
-                            <i class="fas fa-plus-circle"></i>
-                            Nouvelle Activité
-                        </h2>
-                        <p>Créez une nouvelle activité pour votre organisation</p>
+            <div class="users-content" style="max-width:1100px;margin:0 auto;">
+                <div class="users-table-container" style="overflow:visible;">
+                    <div class="table-header" style="border-bottom:none;padding-bottom:0;">
+                        <div style="display:flex;align-items:center;gap:.75rem;">
+                            <div class="user-avatar-small" style="width:40px;height:40px;border-radius:10px;">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div>
+                                <h2 style="margin:0;">Créer une nouvelle activité</h2>
+                                <p style="margin:.25rem 0 0;color:var(--gray-600);">Renseignez les informations ci-dessous pour créer une nouvelle activité.</p>
+                            </div>
+                        </div>
                     </div>
-
-                    <form id="createActivityForm" class="form-grid">
-                        <input type="hidden" id="csrf-token" name="_token" value="">
-                        
-                        <div class="form-group">
-                            <label for="nom_act" class="form-label">
-                                <i class="fas fa-tag"></i>
-                                Nom de l'activité *
-                            </label>
-                            <input type="text" id="nom_act" name="nom_act" class="form-input" required 
-                                   placeholder="Ex: Développement Web, Marketing Digital...">
-                            <div class="form-error" id="nom_act_error"></div>
-                        </div>
-
-                        <div class="form-group form-group-full">
-                            <label for="description" class="form-label">
-                                <i class="fas fa-align-left"></i>
-                                Description
-                            </label>
-                            <textarea id="description" name="description" class="form-textarea" rows="4" 
-                                      placeholder="Décrivez cette activité en détail..."></textarea>
-                            <div class="form-error" id="description_error"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="status" class="form-label">
-                                <i class="fas fa-toggle-on"></i>
-                                Statut *
-                            </label>
-                            <select id="status" name="status" class="form-select" required>
-                                <option value="">Sélectionner un statut</option>
-                                <option value="actif" selected>Actif</option>
-                                <option value="inactif">Inactif</option>
-                            </select>
-                            <div class="form-error" id="status_error"></div>
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-secondary" onclick="window.location.href='/admin/activities.html'">
-                                <i class="fas fa-arrow-left"></i>
-                                Annuler
-                            </button>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i>
-                                Créer l'Activité
-                            </button>
-                        </div>
-                    </form>
+                    <div class="table-wrapper" style="padding: 1.5rem;">
+                        <form id="createActivityForm" class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+                            <input type="hidden" name="_token" id="csrf-token" value="">
+                            
+                            <div class="form-row" style="grid-column:span 1;">
+                                <label for="nom_act" style="font-weight:600;color:var(--gray-800);">Nom de l'activité</label>
+                                <div style="position:relative;">
+                                    <i class="fas fa-tag" style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--gray-400);"></i>
+                                    <input style="padding-left:2.5rem;" type="text" id="nom_act" name="nom_act" placeholder="Ex: Développement Web, Marketing Digital..." required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row" style="grid-column:span 1;">
+                                <label for="status" style="font-weight:600;color:var(--gray-800);">Statut</label>
+                                <select id="status" name="status" required>
+                                    <option value="">Sélectionner un statut</option>
+                                    <option value="actif" selected>Actif</option>
+                                    <option value="inactif">Inactif</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-row" style="grid-column:span 2;">
+                                <label for="description" style="font-weight:600;color:var(--gray-800);">Description</label>
+                                <textarea id="description" name="description" rows="4" placeholder="Décrivez cette activité en détail..."></textarea>
+                            </div>
+                            
+                            <div class="form-actions" style="grid-column:span 2;display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--gray-200);">
+                                <button type="button" class="btn btn-secondary" onclick="window.location.href='/admin/activities.html'">
+                                    <i class="fas fa-arrow-left"></i>
+                                    <span>Retour à la liste</span>
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    <span>Créer l'Activité</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </main>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#3B82F6">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>CRATECH - Gestion des Utilisateurs</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,6 +16,7 @@
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
+         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="logo-section">
@@ -30,7 +32,7 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <h3 class="nav-section-title">Tableau de bord</h3>
-                    <a href="/admin/dashboard.html" class="nav-item">
+                    <a href="/admin/dashboard.html" class="nav-item ">
                         <i class="fas fa-chart-pie"></i>
                         <span>Vue d'ensemble</span>
                     </a>
@@ -39,47 +41,32 @@
                 <div class="nav-section">
                     <h3 class="nav-section-title">Gestion</h3>
                     <a href="/admin/users.html" class="nav-item active">
-                                <i class="fas fa-users"></i>
-                                <span>Utilisateurs</span>
-                            </a>
-                    <a href="/admin/activities.html" class="nav-item">
-                                <i class="fas fa-tasks"></i>
-                        <span>Activités</span>
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs</span>
                     </a>
-                    <a href="#reports" class="nav-item">
-                                <i class="fas fa-file-alt"></i>
-                        <span>Rapports</span>
+                    <a href="/admin/activities.html" class="nav-item">
+                        <i class="fas fa-tasks"></i>
+                        <span>Activité</span>
+                    </a>
+                    <a href="/admin/cra.html" class="nav-item">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>CRA</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <h3 class="nav-section-title">Configuration</h3>
-                    <a href="#settings" class="nav-item">
-                        <i class="fas fa-cog"></i>
-                        <span>Paramètres</span>
+                    <h3 class="nav-section-title">Compte</h3>
+                    <a href="/admin/account.html" class="nav-item">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Compte</span>
                     </a>
-                    <a href="#backup" class="nav-item">
-                        <i class="fas fa-database"></i>
-                        <span>Sauvegarde</span>
+                    <a href="/login" class="nav-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Déconnexion</span>
                     </a>
                 </div>
             </nav>
 
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="user-avatar">
-                        <i class="fas fa-user-shield"></i>
-                    </div>
-                    <div class="user-info">
-                        <span class="user-name">Admin CRATECH</span>
-                        <span class="user-role">Administrateur</span>
-                    </div>
-                </div>
-                <a href="/logout" class="logout-btn">
-                                <i class="fas fa-sign-out-alt"></i>
-                                <span>Déconnexion</span>
-                            </a>
-                </div>
         </aside>
 
         <!-- Main Content -->
@@ -118,7 +105,7 @@
                             <i class="fas fa-users"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" data-target="1247">0</h3>
+                            <h3 class="stat-number" id="totalUsers" data-target="0">0</h3>
                             <p class="stat-label">Total utilisateurs</p>
                             <div class="stat-change positive">
                                 <i class="fas fa-arrow-up"></i>
@@ -132,7 +119,7 @@
                             <i class="fas fa-user-shield"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" data-target="45">0</h3>
+                            <h3 class="stat-number" id="administrators" data-target="0">0</h3>
                             <p class="stat-label">Administrateurs</p>
                             <div class="stat-change positive">
                                 <i class="fas fa-arrow-up"></i>
@@ -146,7 +133,7 @@
                             <i class="fas fa-user-check"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" data-target="89">0</h3>
+                            <h3 class="stat-number" id="validators" data-target="0">0</h3>
                             <p class="stat-label">Validateurs</p>
                             <div class="stat-change positive">
                                 <i class="fas fa-arrow-up"></i>
@@ -160,7 +147,7 @@
                             <i class="fas fa-user-clock"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" data-target="1113">0</h3>
+                            <h3 class="stat-number" id="employees" data-target="0">0</h3>
                             <p class="stat-label">Employés & Sous-traitants</p>
                             <div class="stat-change positive">
                                 <i class="fas fa-arrow-up"></i>
@@ -231,6 +218,7 @@
                                     <th>Nom</th>
                                     <th>Email</th>
                                     <th>Rôle</th>
+                                    <th>Validateur</th>
                                     <th>Statut</th>
                                     <th>Date de création</th>
                                     <th>Actions</th>
@@ -262,7 +250,7 @@
     </div>
 
     <!-- Modal de confirmation -->
-    <div class="modal" id="confirmModal">
+    <div class="modal" id="confirmModal" style="display: none !important;">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Confirmer l'action</h3>
@@ -279,6 +267,64 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de sélection de validateur -->
+    <div class="modal" id="validatorSelectionModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Affecter un validateur</h3>
+                <button class="modal-close" onclick="closeValidatorSelectionModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Choisir un validateur :</label>
+                    <div class="validators-list" id="validatorsList">
+                        <!-- Les validateurs seront chargés ici -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeValidatorSelectionModal()">Annuler</button>
+                <button class="btn btn-primary" id="confirmValidatorBtn" onclick="confirmValidatorSelection()">Affecter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div class="modal" id="deleteConfirmModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle" style="color: #EF4444; margin-right: 0.5rem;"></i>Supprimer l'utilisateur</h3>
+                <button class="modal-close" onclick="closeDeleteConfirmModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <div class="warning-icon">
+                        <i class="fas fa-user-times"></i>
+                    </div>
+                    <div class="warning-content">
+                        <p><strong>Êtes-vous sûr de vouloir supprimer cet utilisateur ?</strong></p>
+                        <p id="deleteUserName" class="user-to-delete"></p>
+                        <div class="warning-message">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Cette action est <strong>irréversible</strong>. Toutes les données associées à cet utilisateur seront définitivement perdues.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeleteConfirmModal()">Annuler</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmUserDeletion()">
+                    <i class="fas fa-trash"></i> Supprimer définitivement
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <script src="/js/admin.js"></script>
     <script src="/js/users.js"></script>

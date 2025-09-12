@@ -35,6 +35,9 @@ function initActivitiesPage() {
 
 // Normaliser une chaîne (minuscules, sans accents)
 function normalizeString(str) {
+    if (!str || typeof str !== 'string') {
+        return '';
+    }
     return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
@@ -63,10 +66,10 @@ function filterAndRenderActivities() {
     const sortBy = document.getElementById('sortBy').value;
 
     filteredActivities = activitiesData.filter(activity => {
-        const nom = normalizeString(activity.nom_act || '');
-        const description = normalizeString(activity.description || '');
-        const id = normalizeString(activity.id_activité || '');
-        const status = normalizeString(activity.status || '');
+        const nom = normalizeString(String(activity.nom_act || ''));
+        const description = normalizeString(String(activity.description || ''));
+        const id = normalizeString(String(activity.id_activité || ''));
+        const status = normalizeString(String(activity.status || ''));
 
         const matchesSearch = !searchTerm ||
             nom.includes(searchTerm) ||
@@ -146,13 +149,21 @@ function fetchActivitiesAndRender() {
         .then(res => res.json())
         .then(data => {
             activitiesData = (data.activities || []).map(a => ({
-                id_activité: a.id_activité,
-                nom_act: a.nom_act,
-                description: a.description,
-                status: a.status,
-                created_at: a.created_at,
+                id_activité: a.id_activité || '',
+                nom_act: a.nom_act || '',
+                description: a.description || '',
+                status: a.status || 'inactif',
+                created_at: a.created_at || '',
                 assigned_users: a.assigned_users || 0
             }));
+            
+            // Mettre à jour les statistiques avec les données de l'API
+            if (data.stats) {
+                updateStatsFromAPI(data.stats);
+            }
+            
+            console.log('Activités chargées:', activitiesData);
+            console.log('Statistiques:', data.stats);
             filterAndRenderActivities();
         })
         .catch(err => {
@@ -176,50 +187,54 @@ function renderActivitiesTable() {
         emptyRow.innerHTML = `<td colspan="8" style="text-align:center;color:var(--gray-500);padding:2rem;">Aucune activité trouvée</td>`;
         tbody.appendChild(emptyRow);
     } else {
-        pageActivities.forEach(activity => tbody.appendChild(createActivityRow(activity)));
+        pageActivities.forEach((activity, index) => tbody.appendChild(createActivityRow(activity, index)));
     }
 }
 
 // Créer une ligne d'activité
-function createActivityRow(activity) {
+function createActivityRow(activity, index) {
     const row = document.createElement('tr');
+    const rowNumber = ((currentPage - 1) * activitiesPerPage) + index + 1;
+    
     row.innerHTML = `
         <td>
             <input type="checkbox" class="user-checkbox">
         </td>
         <td>
-            <span class="user-id">${activity.id_activité}</span>
+            <span class="user-id">${rowNumber}</span>
         </td>
         <td>
             <div class="user-info">
                 <div class="user-avatar-small">
                     <i class="fas fa-tasks"></i>
                 </div>
-                <span class="user-name">${activity.nom_act}</span>
+                <span class="user-name">${activity.nom_act || ''}</span>
             </div>
         </td>
         <td>
             <span class="user-email">${activity.description || 'Aucune description'}</span>
         </td>
         <td>
-            <span class="status-badge status-${activity.status}">${getStatusLabel(activity.status)}</span>
+            <span class="status-badge status-${activity.status || 'inactif'}">${getStatusLabel(activity.status)}</span>
         </td>
         <td>
-            <span class="assigned-users">${activity.assigned_users}</span>
+            <div class="assigned-users-cell">
+                <button class="btn btn-sm btn-outline" onclick="viewAssignedUsers('${activity.id_activité}', '${activity.nom_act}')" title="Voir les utilisateurs assignés">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <span class="assigned-count">${activity.assigned_users || 0}</span>
+            </div>
         </td>
         <td>
             <span class="date-created">${formatDate(activity.created_at)}</span>
         </td>
         <td>
             <div class="action-buttons">
-                <button class="action-btn edit-btn" onclick="editActivity('${activity.id_activité}')">
-                    <i class="fas fa-edit"></i>
-                </button>
                 <button class="action-btn ${activity.status === 'actif' ? 'deactivate-btn' : 'activate-btn'}"
                         onclick="toggleActivityStatus('${activity.id_activité}', '${activity.status}')">
                     <i class="fas ${activity.status === 'actif' ? 'fa-pause' : 'fa-play'}"></i>
                 </button>
-                <button class="action-btn delete-btn" onclick="deleteActivity('${activity.id_activité}')">
+                <button class="action-btn delete-btn" onclick="showDeleteActivityConfirmation('${activity.id_activité}', '${activity.nom_act}')">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -231,26 +246,59 @@ function createActivityRow(activity) {
 
 // Obtenir le label du statut
 function getStatusLabel(status) {
+    if (!status) return 'Inactif';
     return status === 'actif' ? 'Actif' : 'Inactif';
 }
 
 // Formater la date
 function formatDate(dateString) {
+    if (!dateString) return 'N/A';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'N/A';
     return date.toLocaleDateString('fr-FR');
 }
 
-// Mettre à jour les statistiques
+// Mettre à jour les statistiques depuis l'API
+function updateStatsFromAPI(stats) {
+    updateStatNumber('totalActivities', stats.total);
+    updateStatNumber('activeActivities', stats.active);
+    updateStatNumber('inactiveActivities', stats.inactive);
+    updateStatNumber('assignedUsers', stats.assignments);
+}
+
+// Mettre à jour les statistiques (calcul local)
 function updateStats() {
     const totalActivities = activitiesData.length;
     const activeActivities = activitiesData.filter(a => a.status === 'actif').length;
     const inactiveActivities = activitiesData.filter(a => a.status === 'inactif').length;
     const assignedUsers = activitiesData.reduce((sum, a) => sum + (a.assigned_users || 0), 0);
 
-    document.getElementById('totalActivities').textContent = totalActivities;
-    document.getElementById('activeActivities').textContent = activeActivities;
-    document.getElementById('inactiveActivities').textContent = inactiveActivities;
-    document.getElementById('assignedUsers').textContent = assignedUsers;
+    // Mettre à jour les éléments avec animation
+    updateStatNumber('totalActivities', totalActivities);
+    updateStatNumber('activeActivities', activeActivities);
+    updateStatNumber('inactiveActivities', inactiveActivities);
+    updateStatNumber('assignedUsers', assignedUsers);
+}
+
+// Fonction pour animer les nombres de statistiques
+function updateStatNumber(elementId, value) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    element.setAttribute('data-target', value);
+    element.textContent = value;
+    
+    // Animation du compteur
+    let current = 0;
+    const increment = value / 50;
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= value) {
+            current = value;
+            clearInterval(timer);
+        }
+        element.textContent = Math.floor(current);
+    }, 20);
 }
 
 // Mettre à jour la pagination
@@ -296,81 +344,174 @@ function editActivity(activityId) {
     window.location.href = `/admin/activities/${activityId}/edit`;
 }
 
-function toggleActivityStatus(activityId, currentStatus) {
-    const newStatus = currentStatus === 'actif' ? 'inactif' : 'actif';
-    const action = newStatus === 'actif' ? 'activer' : 'désactiver';
+let activityToToggle = null;
+let newStatusToSet = null;
 
-    showConfirmModal(
-        `${action.charAt(0).toUpperCase() + action.slice(1)} l'activité`,
-        `Êtes-vous sûr de vouloir ${action} cette activité ?`,
-        () => {
-            // Mettre à jour le statut
-            const activity = activitiesData.find(a => a.id_activité === activityId);
+function showStatusChangeConfirmation(activityId, currentStatus, activityName) {
+    activityToToggle = activityId;
+    newStatusToSet = currentStatus === 'actif' ? 'inactif' : 'actif';
+    
+    const modal = document.getElementById('statusChangeModal');
+    const activityNameElement = document.getElementById('statusChangeActivityName');
+    const questionElement = document.getElementById('statusChangeQuestion');
+    const descriptionElement = document.getElementById('statusChangeDescription');
+    const buttonTextElement = document.getElementById('statusChangeButtonText');
+    
+    activityNameElement.textContent = activityName;
+    
+    if (newStatusToSet === 'actif') {
+        questionElement.textContent = 'Êtes-vous sûr de vouloir activer cette activité ?';
+        descriptionElement.textContent = 'Cette activité sera disponible pour les employés.';
+        buttonTextElement.textContent = 'Activer';
+    } else {
+        questionElement.textContent = 'Êtes-vous sûr de vouloir désactiver cette activité ?';
+        descriptionElement.textContent = 'Cette activité ne sera plus disponible pour les employés.';
+        buttonTextElement.textContent = 'Désactiver';
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function closeStatusChangeModal() {
+    const modal = document.getElementById('statusChangeModal');
+    modal.style.display = 'none';
+    activityToToggle = null;
+    newStatusToSet = null;
+}
+
+function confirmStatusChange() {
+    if (!activityToToggle || !newStatusToSet) {
+        showNotification('Erreur: aucune activité sélectionnée', 'error');
+        return;
+    }
+
+    // Appel API pour changer le statut
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+    fetch(`/admin/activities/${activityToToggle}/status`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify({
+            status: newStatusToSet
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Mettre à jour le statut dans les données locales
+            const activity = activitiesData.find(a => a.id_activité === activityToToggle);
             if (activity) {
-                activity.status = newStatus;
-                filterAndRenderActivities();
-                showNotification(`Activité ${action}ée avec succès`, 'success');
+                activity.status = newStatusToSet;
+                filteredActivities = filteredActivities.map(a => 
+                    a.id_activité === activityToToggle ? {...a, status: newStatusToSet} : a
+                );
             }
+            
+            // Fermer la modal
+            closeStatusChangeModal();
+            
+            // Recharger le tableau
+            renderActivitiesTable();
+            updateStats();
+            
+            const action = newStatusToSet === 'actif' ? 'activée' : 'désactivée';
+            showNotification(`Activité ${action} avec succès`, 'success');
+        } else {
+            showNotification(data.message || 'Erreur lors du changement de statut', 'error');
         }
-    );
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        showNotification('Erreur lors du changement de statut', 'error');
+    });
+}
+
+function toggleActivityStatus(activityId, currentStatus) {
+    const activity = activitiesData.find(a => a.id_activité === activityId);
+    if (activity) {
+        showStatusChangeConfirmation(activityId, currentStatus, activity.nom_act);
+    }
+}
+
+let activityToDelete = null;
+
+function showDeleteActivityConfirmation(activityId, activityName) {
+    activityToDelete = activityId;
+    const modal = document.getElementById('deleteActivityModal');
+    const activityNameElement = document.getElementById('deleteActivityName');
+    
+    activityNameElement.textContent = activityName;
+    modal.style.display = 'flex';
+}
+
+function closeDeleteActivityModal() {
+    const modal = document.getElementById('deleteActivityModal');
+    modal.style.display = 'none';
+    activityToDelete = null;
+}
+
+function confirmActivityDeletion() {
+    if (!activityToDelete) {
+        showNotification('Erreur: aucune activité sélectionnée', 'error');
+        return;
+    }
+
+    // Appel API pour supprimer l'activité
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+    fetch(`/admin/activities/${activityToDelete}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Supprimer l'activité des données locales
+            activitiesData = activitiesData.filter(a => a.id_activité !== activityToDelete);
+            filteredActivities = filteredActivities.filter(a => a.id_activité !== activityToDelete);
+            
+            // Fermer la modal
+            closeDeleteActivityModal();
+            
+            // Recharger le tableau
+            renderActivitiesTable();
+            updatePagination();
+            updateStats();
+            
+            showNotification('Activité supprimée avec succès', 'success');
+        } else {
+            showNotification(data.message || 'Erreur lors de la suppression', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        showNotification('Erreur lors de la suppression de l\'activité', 'error');
+    });
 }
 
 function deleteActivity(activityId) {
-    showConfirmModal(
-        'Supprimer l\'activité',
-        'Êtes-vous sûr de vouloir supprimer cette activité ? Cette action est irréversible.',
-        () => {
-            // Supprimer l'activité
-            activitiesData = activitiesData.filter(a => a.id_activité !== activityId);
-            filterAndRenderActivities();
-            showNotification('Activité supprimée avec succès', 'success');
-        }
-    );
+    // Cette fonction est maintenant remplacée par showDeleteActivityConfirmation
+    const activity = activitiesData.find(a => a.id_activité === activityId);
+    if (activity) {
+        showDeleteActivityConfirmation(activityId, activity.nom_act);
+    }
 }
 
 // Modal de confirmation
 function initModal() {
-    const modal = document.getElementById('confirmModal');
-    const closeBtn = document.querySelector('.modal-close');
-    const cancelBtn = document.getElementById('cancelBtn');
-
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-
-    // Fermer en cliquant à l'extérieur
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
-    }
+    // Ne pas initialiser les modales pour éviter leur affichage automatique
+    return;
 }
 
 function showConfirmModal(title, message, onConfirm) {
-    const modal = document.getElementById('confirmModal');
-    if (!modal) return;
-
-    const titleElement = modal.querySelector('h3');
-    const messageElement = document.getElementById('confirmMessage');
-    const confirmBtn = document.getElementById('confirmBtn');
-
-    if (titleElement) titleElement.textContent = title;
-    if (messageElement) messageElement.textContent = message;
-
-    // Supprimer les anciens event listeners
-    if (confirmBtn) {
-        const newConfirmBtn = confirmBtn.cloneNode(true);
-        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-
-        // Ajouter le nouvel event listener
-        newConfirmBtn.addEventListener('click', () => {
-            onConfirm();
-            closeModal();
-        });
-    }
-
-    modal.style.display = 'flex';
+    // Ne pas afficher la modal automatiquement
+    return;
 }
 
 function closeModal() {
@@ -444,4 +585,10 @@ function getNotificationIcon(type) {
         case 'info': return 'fa-info-circle';
         default: return 'fa-bell';
     }
+}
+
+// Fonction pour voir les utilisateurs assignés à une activité
+function viewAssignedUsers(activityId, activityName) {
+    // Rediriger vers la page de gestion des utilisateurs assignés
+    window.location.href = `/admin/activities/${activityId}/users?name=${encodeURIComponent(activityName)}`;
 }
