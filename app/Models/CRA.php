@@ -34,10 +34,7 @@ class CRA extends Model
     {
         return $this->hasOne(rapport_mensuels::class, 'id_CRA');
     }
-    public function cra_affectations(): HasMany
-    {
-        return $this->hasMany(cra_affectation::class, 'id_CRA');
-    }
+    
      public function scopeValides($query)
     {
         return $query->where('status', 'valide');

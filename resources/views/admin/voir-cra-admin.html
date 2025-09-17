@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#3B82F6">
-    <title>CRATECH - Voir CRA (Validateur)</title>
+    <title>CRATECH - Voir CRA (Admin)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,38 +14,49 @@
 </head>
 <body>
     <div class="admin-container">
-       <!-- Sidebar -->
+        <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="logo-section">
                     <div class="logo-icon">C</div>
                     <span class="logo-text">CRATECH</span>
                 </div>
-               
+                <div class="admin-badge">
+                    <i class="fas fa-crown"></i>
+                    <span>Administrateur</span>
+                </div>
             </div>
 
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <h3 class="nav-section-title">Mon Espace</h3>
-                    <a href="/validateur/dashboard" class="nav-item active">
-                        <i class="fas fa-clipboard-check"></i>
-                        <span>Validation des CRA</span>
+                    <h3 class="nav-section-title">Tableau de bord</h3>
+                    <a href="/admin/dashboard.html" class="nav-item">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Vue d'ensemble</span>
                     </a>
-                    <a href="/validateur/history" class="nav-item">
-                        <i class="fas fa-history"></i>
-                        <span>Historique des CRA</span>
-                    </a>
-                    <a href="/validateur/assigned" class="nav-item">
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Gestion</h3>
+                    <a href="/admin/users.html" class="nav-item">
                         <i class="fas fa-users"></i>
-                        <span>Utilisateurs assignés</span>
+                        <span>Utilisateurs</span>
+                    </a>
+                    <a href="/admin/activities.html" class="nav-item">
+                        <i class="fas fa-tasks"></i>
+                        <span>Activité</span>
+                    </a>
+                    <a href="/admin/cra.html" class="nav-item">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>CRA</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
                     <h3 class="nav-section-title">Compte</h3>
-                    <a href="/validateur/account.html" class="nav-item">
+                    <a href="/admin/account.html" class="nav-item">
                         <i class="fas fa-user-cog"></i>
-                        <span>Mon Compte</span>
+                        <span>Compte</span>
                     </a>
                     <a href="/logout" class="nav-item">
                         <i class="fas fa-sign-out-alt"></i>
@@ -63,21 +74,15 @@
                     <button class="sidebar-toggle">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h1 class="page-title">Voir CRA</h1>
+                    <div class="breadcrumb">
+                        <i class="fas fa-eye"></i>
+                        <span>Voir CRA</span>
+                    </div>
                 </div>
                 <div class="header-right">
                     <div class="current-time">
                         <i class="fas fa-clock"></i>
                         <span id="current-time"></span>
-                    </div>
-                    <div class="user-menu">
-                        <button class="user-menu-trigger">
-                            <div class="user-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <span class="user-name" id="headerUserName">Validateur</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
                     </div>
                 </div>
             </header>
@@ -92,9 +97,9 @@
                             <span id="craTitle">Compte Rendu d'Activité</span>
                         </h2>
                         <div class="cra-controls">
-                            <a href="/validateur/dashboard" class="btn btn-secondary">
+                            <a href="/admin/cra.html" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i>
-                                Retour au Dashboard
+                                Retour à la liste CRA
                             </a>
                         </div>
                     </div>
@@ -133,6 +138,6 @@
     <input type="hidden" id="csrf-token" value="">
 
     <script src="/js/admin.js"></script>
-    <script src="/js/voir-cra.js"></script>
+    <script src="/js/voir-admin.js"></script>
 </body>
 </html>

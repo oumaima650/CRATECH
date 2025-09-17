@@ -175,10 +175,7 @@ class Utilisateur extends Authenticatable
     {
         return $this->hasMany(User_act::class, 'id_user');
     }
-    public function affectations(): HasMany
-    {
-        return $this->hasMany(Cra_affectation::class, 'id_validateur');
-    }
+    
     public function validateur(): BelongsTo
     {
         return $this->belongsTo(Utilisateur::class, 'id_validateur');

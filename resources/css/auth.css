@@ -1,4 +1,9 @@
 /* CRATECH - Page de Login Professionnelle Premium */
+/* Harmonisation des champs forgot password/login */
+.auth-form .form-group, .auth-form .input-container {
+    max-width: 420px;
+    width: 100%;
+}
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -790,4 +795,4 @@ body {
         flex-direction: column;
         gap: 1rem;
     }
-} 
+}

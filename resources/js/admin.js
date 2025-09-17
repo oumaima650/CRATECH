@@ -151,7 +151,17 @@ function initQuickActions() {
             // Actions selon le bouton
             switch(action) {
                 case 'Créer un utilisateur':
-                    window.location.href = '/admin/users/create';
+                case 'Comptes utilisateurs':
+                    window.location.href = '/admin/users.html';
+                    break;
+                case 'Activités':
+                    window.location.href = '/admin/activities.html';
+                    break;
+                case 'CRA':
+                    window.location.href = '/admin/cra.html';
+                    break;
+                case 'Reporting':
+                    window.location.href = '/admin/reporting.html';
                     break;
                 case 'Exporter les données':
                     showNotification('Export en cours...', 'info');
@@ -367,7 +377,58 @@ function initPerformanceOptimizations() {
 // Initialiser les optimisations
 document.addEventListener('DOMContentLoaded', function() {
     initPerformanceOptimizations();
+    loadDashboardStats();
 });
+
+// Charger les statistiques réelles du dashboard
+async function loadDashboardStats(){
+    try {
+        const els = {
+            usersActive: document.querySelector('.stats-grid .stat-card:nth-child(1) .stat-number'),
+            crasSubmitted: document.querySelector('.stats-grid .stat-card:nth-child(2) .stat-number'),
+            pending: document.querySelector('.stats-grid .stat-card:nth-child(3) .stat-number'),
+            validationRate: document.querySelector('.stats-grid .stat-card:nth-child(4) .stat-number'),
+            pendingBadge: document.querySelector('.dashboard-card .pending-count')
+        };
+
+        // Utilisateurs actifs
+        let usersActive = 0;
+        try {
+            const r = await fetch('/api/public/users', { credentials: 'same-origin' });
+            const j = await r.json();
+            usersActive = (j && j.stats && typeof j.stats.active === 'number') ? j.stats.active : 0;
+            if (els.usersActive) els.usersActive.textContent = usersActive;
+        } catch(e) {}
+
+        // Statuts CRA via parsing de la page admin/cra.html (aucune auth requise)
+        let total = 0, pending = 0, validated = 0;
+        try {
+            const res = await fetch('/admin/cra.html', { credentials: 'same-origin' });
+            const html = await res.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const rows = Array.from(doc.querySelectorAll('#craTbody tr'));
+            rows.forEach(tr => {
+                const badge = tr.querySelector('.status-badge');
+                if (!badge) return;
+                total += 1;
+                const cls = badge.className || '';
+                if (cls.includes('en_attente')) pending += 1;
+                if (cls.includes('valide')) validated += 1;
+            });
+        } catch(e) {}
+
+        const crasSubmitted = total; // approximation
+        const validationRate = crasSubmitted > 0 ? Math.round((validated / crasSubmitted) * 1000)/10 : 0;
+
+        if (els.crasSubmitted) els.crasSubmitted.textContent = crasSubmitted;
+        if (els.pending) els.pending.textContent = pending;
+        if (els.validationRate) els.validationRate.textContent = validationRate;
+        if (els.pendingBadge) els.pendingBadge.textContent = pending;
+    } catch (err) {
+        console.warn('Chargement stats dashboard échoué:', err);
+    }
+}
 
 // Confirmation de déconnexion (modal)
 function showConfirmModal(message, onConfirm) {

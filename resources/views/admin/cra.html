@@ -68,16 +68,15 @@
         <!-- Header -->
         <header class="admin-header">
             <div class="header-left">
-                <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
-                <div class="breadcrumb">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Gestion des CRA</span>
+                    <button class="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title">Gestion des CRA</h1>
                 </div>
-            </div>
-            <div class="header-right">
-                <button class="btn btn-primary" id="btnExport"><i class="fas fa-download"></i> Exporter</button>
-                <button class="btn btn-secondary" id="btnRefresh"><i class="fas fa-sync-alt"></i> Actualiser</button>
-            </div>
+            <div class="current-time">
+                        <i class="fas fa-clock"></i>
+                        <span id="current-time"></span>
+                    </div>
         </header>
 
         <!-- Content -->
@@ -140,15 +139,16 @@
                             <label for="fSearch">Rechercher</label>
                             <input type="text" id="fSearch" class="filter-input" placeholder="ID CRA, utilisateur...">
                         </div>
-                        <button class="btn btn-secondary" id="btnClear"><i class="fas fa-times"></i> Effacer</button>
+                        
                     </div>
                 </div>
             </div>
 
             <!-- Table -->
             <div class="dashboard-card">
-                <div class="card-header">
+                <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
                     <h2 class="card-title"><i class="fas fa-table"></i> Liste des CRA</h2>
+                    
                 </div>
                 <div class="card-content">
                     <div class="table-container">
@@ -181,298 +181,31 @@
 
 
 
+<!-- Confirmation Modal -->
+<div id="modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Confirmer</h3>
+            <button class="modal-close" id="modalClose" title="Fermer">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p id="modalMsg">Confirmer l'action ?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="modalCancel">Annuler</button>
+            <button class="btn btn-primary" id="modalConfirm">Confirmer</button>
+        </div>
+    </div>
+
+</div>
+
 <script src="/js/admin.js"></script>
+<!--
 <script>
-    // Etat global
-    const state = {
-        csrf: '',
-        page: 1,
-        lastPage: 1,
-        total: 0,
-        from: 0,
-        to: 0,
-        rows: [], // données brutes du backend (c_r_a_s)
-        filters: { status: '', user: '', search: '' },
-        pendingAction: { type: null, id: null }
-    };
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const bind = (id, evt, handler) => { const el = document.getElementById(id); if (el) el.addEventListener(evt, handler); };
-        // Liens UI
-        bind('btnRefresh','click', () => loadPage(state.page));
-        bind('btnExport','click', exportCSV);
-        bind('btnClear','click', clearFilters);
-        bind('fStatus','change', e => { state.filters.status = e.target.value; applyFilters(); });
-        bind('fUser','change', e => { state.filters.user = e.target.value; applyFilters(); });
-        bind('fSearch','input', e => { state.filters.search = e.target.value.toLowerCase(); applyFilters(); });
-
-        // Modal
-        bind('modalClose','click', closeModal);
-        bind('modalCancel','click', closeModal);
-        bind('modalConfirm','click', confirmAction);
-
-        // Démarrage
-        fetchCsrf().finally(() => loadPage(1));
-    });
-
-    async function fetchCsrf() {
-        try {
-            const res = await fetch('/csrf-token', { credentials: 'same-origin' });
-            const data = await res.json();
-            state.csrf = data.token || '';
-        } catch (_) {}
-    }
-
-    async function loadPage(page = 1) {
-        showLoading();
-        try {
-            // Fallback d'URLs pour minimiser les erreurs de route
-            const paths = [
-                `/admin/api/cra?page=${page}`,
-                `/api/cra?page=${page}`
-            ];
-            const json = await fetchWithFallback(paths);
-            const norm = normalize(json);
-
-            state.page = norm.pagination.current_page;
-            state.lastPage = norm.pagination.last_page;
-            state.total = norm.pagination.total;
-            state.from = norm.pagination.from;
-            state.to = norm.pagination.to;
-            state.rows = norm.cras; // uniquement table c_r_a_s (+ utilisateur)
-
-            renderUsersFilter(state.rows);
-            renderTable(state.rows);
-            renderPagination();
-            updateStats(state.rows);
-        } catch (err) {
-            renderError('Erreur lors du chargement des CRA');
-            console.error(err);
-        }
-    }
-
-    async function fetchWithFallback(urls) {
-        let lastErr;
-        for (const u of urls) {
-            try {
-                const res = await fetch(u, { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' });
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                return await res.json();
-            } catch (e) { lastErr = e; }
-        }
-        throw lastErr || new Error('Aucune route API valide');
-    }
-
-    function normalize(json) {
-        // Accepte formats: {cras:[...], pagination:{...}} ou Laravel paginator
-        let cras = [];
-        let pagination = { current_page: 1, last_page: 1, total: 0, from: 0, to: 0 };
-
-        if (Array.isArray(json.cras)) {
-            cras = json.cras;
-            if (json.pagination) pagination = json.pagination;
-        } else if (Array.isArray(json.data)) {
-            cras = json.data;
-            pagination = {
-                current_page: json.current_page || 1,
-                last_page: json.last_page || 1,
-                total: json.total || cras.length,
-                from: json.from || 1,
-                to: json.to || cras.length
-            };
-        } else if (json && json.cras && json.cras.data) {
-            cras = json.cras.data;
-            const p = json.cras;
-            pagination = {
-                current_page: p.current_page || 1,
-                last_page: p.last_page || 1,
-                total: p.total || cras.length,
-                from: p.from || 1,
-                to: p.to || cras.length
-            };
-        }
-        return { cras, pagination };
-    }
-
-    function renderUsersFilter(rows) {
-        const select = document.getElementById('fUser');
-        const names = new Set();
-        rows.forEach(r => { if (r.utilisateur && r.utilisateur.nom_user) names.add(r.utilisateur.nom_user); });
-        const current = select.value;
-        select.innerHTML = '<option value="">Tous</option>' + Array.from(names).sort().map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
-        if (names.has(current)) select.value = current; else select.value = '';
-    }
-
-    function renderTable(rows) {
-        const tbody = document.getElementById('craTbody');
-        if (!rows || rows.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="empty-state"><i class="fas fa-file-alt"></i> Aucun CRA</td></tr>`;
-            return;
-        }
-        const html = rows.map(r => {
-            const id = r.id_CRA;
-            const userName = r.utilisateur?.nom_user || 'N/A';
-            const userEmail = r.utilisateur?.email_user || '';
-            const period = formatMonthYear(r.dateMois);
-            const statusKey = r.status || '';
-            const statusText = getStatusText(statusKey);
-            const createdAt = formatDateTime(r.created_at);
-            const pending = statusKey === 'en_attente';
-            return `<tr>
-                <td><span class="id-number">#${escapeHtml(id)}</span></td>
-                <td>
-                    <div class="user-info">
-                        <div class="user-avatar"><i class="fas fa-user"></i></div>
-                        <div class="user-details">
-                            <span class="user-name">${escapeHtml(userName)}</span>
-                            <span class="user-email">${escapeHtml(userEmail)}</span>
-                        </div>
-                    </div>
-                </td>
-                <td><span class="period-month">${escapeHtml(period)}</span></td>
-                <td><span class="status-badge status-${escapeHtml(statusKey)}">${escapeHtml(statusText)}</span></td>
-                <td><span class="date-created">${escapeHtml(createdAt)}</span></td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn-action btn-view" title="Voir" onclick="viewCra(${id})"><i class="fas fa-eye"></i></button>
-                        ${pending ? `<button class="btn-action btn-validate" title="Valider" onclick="openAction('validate', ${id})"><i class="fas fa-check"></i></button>` : ''}
-                        ${pending ? `<button class="btn-action btn-reject" title="Refuser" onclick="openAction('reject', ${id})"><i class="fas fa-times"></i></button>` : ''}
-                    </div>
-                </td>
-            </tr>`;
-        }).join('');
-        tbody.innerHTML = html;
-        applyFilters();
-    }
-
-    function renderPagination() {
-        const el = document.getElementById('pagination');
-        if (state.lastPage <= 1) { el.innerHTML = ''; return; }
-        let html = `<div class="pagination-info">Affichage de ${state.from} à ${state.to} sur ${state.total} CRA</div><div class="pagination-links">`;
-        if (state.page > 1) html += `<button class="pagination-btn" onclick="loadPage(${state.page - 1})">Précédent</button>`;
-        for (let i=1;i<=state.lastPage;i++) html += `<button class="pagination-btn ${i===state.page?'active':''}" onclick="loadPage(${i})">${i}</button>`;
-        if (state.page < state.lastPage) html += `<button class="pagination-btn" onclick="loadPage(${state.page + 1})">Suivant</button>`;
-        html += '</div>';
-        el.innerHTML = html;
-    }
-
-    function updateStats(rows) {
-        const pending = rows.filter(r => r.status === 'en_attente').length;
-        const validated = rows.filter(r => r.status === 'valide').length;
-        const rejected = rows.filter(r => r.status === 'refuse').length;
-        document.getElementById('statPending').textContent = pending;
-        document.getElementById('statValidated').textContent = validated;
-        document.getElementById('statRejected').textContent = rejected;
-        document.getElementById('statTotal').textContent = state.total || rows.length;
-    }
-
-    // Filtres client
-    function applyFilters() {
-        const rows = Array.from(document.querySelectorAll('#craTbody tr'));
-        const { status, user, search } = state.filters;
-        rows.forEach(tr => {
-            const tds = tr.children;
-            if (!tds || tds.length < 6) return;
-            const idText = (tds[0].textContent || '').toLowerCase();
-            const userText = (tds[1].textContent || '').toLowerCase();
-            const statusText = (tds[3].textContent || '').toLowerCase();
-            const matchStatus = !status || statusText.includes(status);
-            const matchUser = !user || userText.includes(user.toLowerCase());
-            const matchSearch = !search || userText.includes(search) || idText.includes(search);
-            tr.style.display = (matchStatus && matchUser && matchSearch) ? '' : 'none';
-        });
-    }
-
-    function clearFilters() {
-        state.filters = { status: '', user: '', search: '' };
-        document.getElementById('fStatus').value = '';
-        document.getElementById('fUser').value = '';
-        document.getElementById('fSearch').value = '';
-        applyFilters();
-    }
-
-    // Actions
-    function viewCra(id) { window.location.href = `/admin/cra/${id}/view`; }
-    window.viewCra = viewCra;
-
-    function openAction(type, id) {
-        state.pendingAction = { type, id };
-        document.getElementById('modalTitle').textContent = type === 'validate' ? 'Valider le CRA' : 'Refuser le CRA';
-        document.getElementById('modalMsg').textContent = type === 'validate' ? 'Confirmer la validation de ce CRA ?' : 'Confirmer le refus de ce CRA ?';
-        openModal();
-    }
-    window.openAction = openAction;
-
-    function openModal(){ document.getElementById('modal').style.display = 'block'; }
-    function closeModal(){ document.getElementById('modal').style.display = 'none'; state.pendingAction = { type:null,id:null }; }
-
-    async function confirmAction() {
-        const { type, id } = state.pendingAction || {};
-        if (!type || !id) return;
-        const endpoint = type === 'validate' ? 'validate' : 'reject';
-        const paths = [
-            `/admin/cra/${id}/${endpoint}`,
-            `/cra/${id}/${endpoint}`,
-            `/validateur/api/cra/${id}/${endpoint}`
-        ];
-        try {
-            let lastErr;
-            for (const p of paths) {
-                try {
-                    const res = await fetch(p, {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': state.csrf || '' }
-                    });
-                    if (!res.ok) throw new Error('HTTP ' + res.status);
-                    const payload = await res.json().catch(() => ({ success: true }));
-                    if (payload.success === false) throw new Error(payload.message || 'Action échouée');
-                    closeModal();
-                    await loadPage(state.page);
-                    return;
-                } catch (e) { lastErr = e; }
-            }
-            alert((lastErr && lastErr.message) || 'Action échouée');
-        } catch (e) {
-            alert('Erreur lors de l\'action');
-        }
-    }
-
-    // Export CSV des lignes visibles
-    function exportCSV() {
-        const rows = Array.from(document.querySelectorAll('#craTbody tr')).filter(tr => tr.style.display !== 'none');
-        if (!rows.length) { alert('Aucune donnée à exporter'); return; }
-        const header = ['ID CRA','Utilisateur','Email','Période','Statut','Créé le'];
-        const data = rows.map(tr => {
-            const tds = tr.children;
-            return [
-                (tds[0].textContent || '').trim(),
-                (tds[1].querySelector('.user-name')?.textContent || '').trim(),
-                (tds[1].querySelector('.user-email')?.textContent || '').trim(),
-                (tds[2].textContent || '').trim(),
-                (tds[3].textContent || '').trim(),
-                (tds[4].textContent || '').trim()
-            ];
-        });
-        const csv = [header, ...data].map(row => row.map(v => {
-            const s = String(v ?? '');
-            return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
-        }).join(',')).join('\n');
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = `cras-${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
-        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-    }
-
-    // Helpers
-    function showLoading(){ document.getElementById('craTbody').innerHTML = `<tr><td colspan="6" class="loading-row"><div class="loading-state"><i class="fas fa-spinner fa-spin"></i><span> Chargement des CRA...</span></div></td></tr>`; }
-    function renderError(msg){ document.getElementById('craTbody').innerHTML = `<tr><td colspan="6" class="empty-state"><i class=\"fas fa-exclamation-triangle\"></i> ${escapeHtml(msg||'Erreur')}</td></tr>`; }
-    function escapeHtml(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
-    function getStatusText(k){ return ({'en_attente':'En attente','valide':'Validé','refuse':'Refusé'})[k] || k || ''; }
-    function formatMonthYear(dateStr){ if(!dateStr) return 'N/A'; const d = new Date(dateStr); if(!isNaN(d)) return d.toLocaleDateString('fr-FR',{month:'long',year:'numeric'}); const p=String(dateStr).split('-'); if(p.length>=2){const y=+p[0],m=+p[1];if(!isNaN(y)&&!isNaN(m)){const dt=new Date(y,m-1,1);return dt.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});}} return String(dateStr); }
-    function formatDateTime(dateStr){ if(!dateStr) return 'N/A'; const d = new Date(dateStr); return isNaN(d)? String(dateStr): d.toLocaleDateString('fr-FR')+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+    // JS CRA désactivé pour affichage PHP direct
+    // ... tout le code JS est commenté pour éviter le rechargement AJAX et l'erreur d'API
 </script>
+-->
 
 <style>
     .filters-container{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end}
@@ -483,10 +216,371 @@
     .pagination-links{display:flex;gap:.5rem;flex-wrap:wrap}
     .pagination-btn{padding:.5rem .75rem;border:1px solid #e5e7eb;background:#fff;border-radius:.5rem;cursor:pointer}
     .pagination-btn.active{background:#3B82F6;color:#fff;border-color:#3B82F6}
-    .btn-action{width:32px;height:32px;border:none;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.875rem}
-    .btn-view{background:#E5E7EB;color:#374151}
-    .btn-validate{background:#D1FAE5;color:#065F46}
-    .btn-reject{background:#FEE2E2;color:#991B1B}
+    .btn-action{width:32px;height:32px;border:none;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.875rem;margin:0 2px}
+    .btn-view{background:#3B82F6;color:#fff;transition:all 0.2s ease}
+    .btn-view:hover{background:#2563EB;transform:translateY(-1px)}
+    .btn-validate{background:#10B981;color:#fff;transition:all 0.2s ease}
+    .btn-validate:hover{background:#059669;transform:translateY(-1px)}
+    .btn-reject{background:#EF4444;color:#fff;transition:all 0.2s ease}
+    .btn-reject:hover{background:#DC2626;transform:translateY(-1px)}
+    .btn-export{background:#8B5CF6;color:#fff;transition:all 0.2s ease}
+    .btn-export:hover{background:#7C3AED;transform:translateY(-1px)}
+/* Espacement des colonnes pour la table CRA */
+    .table-container .data-table { width: 100%; border-collapse: separate; border-spacing: 12px 0; }
+    .table-container .data-table th, .table-container .data-table td { padding: 12px 16px; vertical-align: middle; }
+    .table-container .data-table thead th { background: var(--gray-50); color: var(--gray-700); font-weight: 600; }
+    .table-container .data-table tbody tr td { background: #fff; }
 </style>
+<script>
+(function(){
+  const tbody = document.getElementById('craTbody');
+  if (!tbody) return;
+  const els = {
+    statPending: document.getElementById('statPending'),
+    statValidated: document.getElementById('statValidated'),
+    statRejected: document.getElementById('statRejected'),
+    statTotal: document.getElementById('statTotal'),
+    fStatus: document.getElementById('fStatus'),
+    fUser: document.getElementById('fUser'),
+    fSearch: document.getElementById('fSearch'),
+    btnClear: document.getElementById('btnClear'),
+    pagination: document.getElementById('pagination'),
+    btnExportExcel: document.getElementById('btnExportExcel'),
+  };
+
+  // Extract data from rows
+  let allItems = Array.from(tbody.querySelectorAll('tr')).map(tr => {
+    const idText = tr.querySelector('.id-number')?.textContent || '';
+    const id = parseInt(idText.replace(/[^0-9]/g,'') || '0', 10);
+    const userName = tr.querySelector('.user-name')?.textContent?.trim() || '';
+    const userEmail = tr.querySelector('.user-email')?.textContent?.trim() || '';
+    const period = tr.querySelector('.period-month')?.textContent?.trim() || '';
+    const statusBadge = tr.querySelector('.status-badge');
+    const statusKey = statusBadge ? (statusBadge.className.split(' ').find(c=>c!== 'status-badge')||'') : '';
+    const createdAt = tr.querySelector('.date-created')?.textContent?.trim() || '';
+    return { id, userName, userEmail, period, statusKey, createdAt, tr, statusBadge };
+  });
+
+  // Populate user filter
+  const uniqueUsers = Array.from(new Set(allItems.map(x => x.userName).filter(Boolean))).sort((a,b)=>a.localeCompare(b, 'fr'));
+  if (els.fUser) {
+    els.fUser.innerHTML = '<option value="">Tous</option>' + uniqueUsers.map(u => `<option value="${u.replace(/"/g,'&quot;')}">${u}</option>`).join('');
+  }
+
+  // Stats
+  function updateStats(items){
+    const total = items.length;
+    const pending = items.filter(x=>x.statusKey === 'en_attente').length;
+    const validated = items.filter(x=>x.statusKey === 'valide').length;
+    const rejected = items.filter(x=>x.statusKey === 'refuse').length;
+    if (els.statTotal) { els.statTotal.dataset.target = total; els.statTotal.textContent = total; }
+    if (els.statPending) { els.statPending.dataset.target = pending; els.statPending.textContent = pending; }
+    if (els.statValidated) { els.statValidated.dataset.target = validated; els.statValidated.textContent = validated; }
+    if (els.statRejected) { els.statRejected.dataset.target = rejected; els.statRejected.textContent = rejected; }
+  }
+
+  // Filtering + pagination
+  const pageSize = 10;
+  let currentPage = 1;
+  function norm(s){ return (s||'').toString().toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,''); }
+
+  function getFiltered(){
+    const sStatus = els.fStatus?.value || '';
+    const sUser = els.fUser?.value || '';
+    const sText = norm(els.fSearch?.value || '');
+    return allItems.filter(item => {
+      const matchStatus = !sStatus || item.statusKey === sStatus;
+      const matchUser = !sUser || item.userName === sUser;
+      const hay = `${item.id} ${item.userName} ${item.userEmail} ${item.period} ${item.statusKey}`;
+      const matchText = !sText || norm(hay).includes(sText);
+      return matchStatus && matchUser && matchText;
+    });
+  }
+
+  function renderPage(page){
+    const items = getFiltered();
+    const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+    currentPage = Math.min(Math.max(1, page), totalPages);
+    const start = (currentPage-1)*pageSize;
+    const end = start + pageSize;
+    const visible = new Set(items.slice(start, end).map(x=>x.tr));
+    // Toggle row visibility
+    allItems.forEach(x => { x.tr.style.display = visible.has(x.tr) ? '' : 'none'; });
+    // Update stats on filtered set
+    updateStats(items);
+    // Render pagination controls
+    if (els.pagination){
+      els.pagination.innerHTML = '';
+      const makeBtn = (p, label, active=false) => `<button class="pagination-btn${active?' active':''}" data-page="${p}">${label}</button>`;
+      const parts = [];
+      if (totalPages > 1) {
+        parts.push(makeBtn(Math.max(1, currentPage-1), '«'));
+        const range = 3;
+        const from = Math.max(1, currentPage - range);
+        const to = Math.min(totalPages, currentPage + range);
+        for (let i=from;i<=to;i++) parts.push(makeBtn(i, i, i===currentPage));
+        parts.push(makeBtn(Math.min(totalPages, currentPage+1), '»'));
+      }
+      els.pagination.innerHTML = `<div class="pagination-links">${parts.join('')}</div>`;
+    }
+  }
+
+  // Wire filters
+  if (els.fStatus) els.fStatus.addEventListener('change', ()=>renderPage(1));
+  if (els.fUser) els.fUser.addEventListener('change', ()=>renderPage(1));
+  if (els.fSearch) {
+    let t; els.fSearch.addEventListener('input', ()=>{ clearTimeout(t); t=setTimeout(()=>renderPage(1), 150); });
+  }
+  if (els.btnClear) els.btnClear.addEventListener('click', ()=>{
+    if (els.fStatus) els.fStatus.value='';
+    if (els.fUser) els.fUser.value='';
+    if (els.fSearch) els.fSearch.value='';
+    renderPage(1);
+  });
+  if (els.pagination) els.pagination.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.pagination-btn');
+    if (!btn) return;
+    const p = parseInt(btn.getAttribute('data-page'),10);
+    if (!isNaN(p)) renderPage(p);
+  });
+
+  // CSRF token
+  let csrfToken = null;
+  async function ensureCsrf(){
+    if (csrfToken) return csrfToken;
+    try {
+      const r = await fetch('/csrf-token', { credentials: 'same-origin' });
+      const j = await r.json();
+      csrfToken = j && j.token;
+    } catch(e) { csrfToken = null; }
+    return csrfToken;
+  }
+
+  // Actions: validate / reject
+  document.addEventListener('click', async function(e){
+    const btnValidate = e.target.closest && e.target.closest('.action-validate');
+    const btnReject = e.target.closest && e.target.closest('.action-reject');
+    if (!btnValidate && !btnReject) return;
+    const btn = btnValidate || btnReject;
+    const craId = btn.getAttribute('data-id');
+    if (!craId) return;
+    const url = btnValidate ? `/admin/cra/${craId}/validate` : `/admin/cra/${craId}/reject`;
+    const actionLabel = btnValidate ? 'validé' : 'refusé';
+
+    try {
+      const token = await ensureCsrf();
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': token || ''
+        },
+        credentials: 'same-origin'
+      });
+      if (!res.ok) throw new Error('Action non autorisée ou erreur serveur');
+      // Update UI
+      const item = allItems.find(x=>String(x.id)===String(craId));
+      if (item && item.statusBadge) {
+        const newStatus = btnValidate ? 'valide' : 'refuse';
+        const newText = btnValidate ? 'Validé' : 'Refusé';
+        item.statusKey = newStatus;
+        item.statusBadge.className = `status-badge ${newStatus}`;
+        item.statusBadge.textContent = newText;
+      }
+      // Optionally disable buttons after action
+      btn.closest('.action-buttons')?.querySelectorAll('button').forEach(b=>{ if (!b.classList.contains('btn-view')) b.disabled = true; });
+      if (typeof showNotification === 'function') {
+        showNotification(`CRA #${craId} ${actionLabel}`, btnValidate ? 'success' : 'warning');
+      }
+      renderPage(currentPage);
+    } catch (err) {
+      if (typeof showNotification === 'function') showNotification(err.message || 'Erreur action', 'error');
+      else alert(err.message || 'Erreur action');
+    }
+  });
+
+  // Initial render
+  renderPage(1);
+
+    // Export Excel
+    if (els.btnExportExcel) {
+        els.btnExportExcel.addEventListener('click', function(){
+            window.location.href = '/admin/cra/export-excel';
+        });
+    }
+
+    // Masquer les boutons Valider/Rejeter si le CRA est refusé ou validé
+    setTimeout(()=>{
+        allItems.forEach(item => {
+            const actions = item.tr.querySelector('.action-buttons');
+            if (!actions) return;
+            if (item.statusKey === 'valide' || item.statusKey === 'refuse') {
+                actions.querySelectorAll('.action-validate, .action-reject').forEach(btn => btn.style.display = 'none');
+            } else {
+                actions.querySelectorAll('.action-validate, .action-reject').forEach(btn => btn.style.display = '');
+            }
+        });
+    }, 300);
+
+    // Export Excel du CRA sélectionné (exactement comme employe/mes-cra.html)
+    if (els.btnExportExcel) {
+        els.btnExportExcel.addEventListener('click', function(){
+            const visibleCra = allItems.find(x => x.tr.style.display !== 'none');
+            if (visibleCra && visibleCra.id) {
+                let month = 9, year = 2025;
+                if (visibleCra.period) {
+                    const m = visibleCra.period.match(/([0-9]{1,2})\s*\/\s*([0-9]{4})/);
+                    if (m) { month = parseInt(m[1],10); year = parseInt(m[2],10); }
+                }
+                
+                // Export comme mes-cra.js
+                exportCRALikeEmployee(visibleCra.id, month, year);
+            } else {
+                alert('Aucun CRA sélectionné à exporter.');
+            }
+        });
+    }
+
+    // Export exactement comme mes-cra.js
+    async function exportCRALikeEmployee(craId, monthNumber, year) {
+        try {
+            console.log('🔄 Export CRA:', craId, monthNumber, year);
+            
+            // Récupérer les données du CRA comme employe
+            const response = await fetch(`/admin/api/cra/${craId}/details-public`, {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Erreur lors de l\'export');
+            }
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Créer le fichier Excel comme mes-cra.js
+                const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+                const monthName = monthNames[monthNumber - 1]; // Convert to 0-based
+                generateExcelFileAdmin(data, monthName, year, craId);
+            } else {
+                alert('Erreur: ' + (data.message || 'Impossible d\'exporter le CRA'));
+            }
+        } catch (error) {
+            console.error('❌ Erreur export:', error);
+            alert('Erreur lors de l\'export: ' + error.message);
+        }
+    }
+
+    function generateExcelFileAdmin(craData, monthName, year, craId) {
+        const daysInMonth = new Date(year, new Date(monthName + ' 1, ' + year).getMonth() + 1, 0).getDate();
+        
+        // Créer le contenu HTML pour Excel (exactement comme mes-cra.js)
+        let htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
+        th, td { border: 1px solid #000; padding: 5px; text-align: center; }
+        .header { background-color: #E6E6FA; font-weight: bold; }
+        .project { background-color: #F0F8FF; text-align: left; font-weight: bold; }
+        .weekend { background-color: #F5F5F5; }
+        .total { background-color: #FFE4B5; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>CRA - ${monthName} ${year}</h2>
+    <table>
+        <thead>
+            <tr class="header">
+                <th class="project">Projet</th>`;
+        
+        // En-têtes des jours
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, new Date(monthName + ' 1, ' + year).getMonth(), day);
+            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+            const weekendClass = isWeekend ? ' weekend' : '';
+            htmlContent += `<th class="header${weekendClass}">${day}</th>`;
+        }
+        
+        htmlContent += '<th class="header total">Total</th></tr></thead><tbody>';
+        
+        // Lignes des projets
+        if (craData.projects && craData.projects.length > 0) {
+            craData.projects.forEach(project => {
+                htmlContent += `<tr><td class="project">${project.name}</td>`;
+                
+                let rowTotal = 0;
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dateKey = `${year}-${String(new Date(monthName + ' 1, ' + year).getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const cellKey = `${project.id}_${dateKey}`;
+                    const value = craData.data[cellKey] || '0';
+                    rowTotal += parseFloat(value);
+                    
+                    const date = new Date(year, new Date(monthName + ' 1, ' + year).getMonth(), day);
+                    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+                    const weekendClass = isWeekend ? ' weekend' : '';
+                    
+                    htmlContent += `<td class="${weekendClass}">${value}</td>`;
+                }
+                
+                htmlContent += `<td class="total">${rowTotal.toFixed(1)}</td></tr>`;
+            });
+        }
+        
+        htmlContent += '</tbody></table></body></html>';
+        
+        // Télécharger le fichier
+        const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `CRA_${monthName}_${year}_ID${craId}.xls`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        
+        console.log('✅ Fichier Excel généré et téléchargé');
+    }
+
+    // Redirection Voir CRA admin (comme employe/mes-cra.html)
+    document.addEventListener('click', function(e){
+        const btnView = e.target.closest && e.target.closest('.btn-view');
+        if (!btnView) return;
+        
+        const craId = btnView.getAttribute('data-id');
+        const period = btnView.getAttribute('data-period') || '';
+        
+        console.log('🔍 Debug bouton cliqué:', {
+            craId: craId,
+            period: period,
+            button: btnView
+        });
+        
+        if (!craId || craId === 'null') {
+            console.error('❌ CRA ID manquant ou null:', craId);
+            alert('Erreur: ID de CRA manquant');
+            return;
+        }
+        
+        let month = 9, year = 2025;
+        const m = period.match(/([0-9]{1,2})\s*\/\s*([0-9]{4})/);
+        if (m) { 
+            month = parseInt(m[1],10) - 1; // 0-based month like employe
+            year = parseInt(m[2],10); 
+        }
+        
+        const url = `/admin/voir-cra.html?cra=${craId}&month=${month}&year=${year}`;
+        console.log('🔗 Redirection vers:', url);
+        window.location.assign(url);
+    });
+})();
+</script>
 </body>
 </html>

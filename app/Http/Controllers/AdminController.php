@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use App\Mail\CompteCreeMail;
 
 class AdminController extends Controller
@@ -464,7 +465,28 @@ public function users()
     public function validateCra($id)
     {
         $cra = CRA::findOrFail($id);
-        $cra->update(['status' => 'valide']);
+        $cra->update(['status' => 'valide', 'updated_at' => now()]);
+
+        // Envoyer un email à l'utilisateur (même logique que l'interface validateur)
+        try {
+            $row = DB::table('c_r_a_s')
+                ->join('utilisateurs', 'c_r_a_s.id_user', '=', 'utilisateurs.id_user')
+                ->where('c_r_a_s.id_CRA', $id)
+                ->select('c_r_a_s.dateMois', 'utilisateurs.email_user', 'utilisateurs.nom_user')
+                ->first();
+            if ($row && $row->email_user) {
+                $date = \Carbon\Carbon::parse($row->dateMois);
+                $month = (int)$date->format('n');
+                $year = (int)$date->format('Y');
+                $subject = "Notification CRA - Mois {$month}/{$year} - Validé";
+                $body = "Bonjour {$row->nom_user},\n\nVotre CRA du mois {$month}/{$year} a été validé.\nStatut actuel: valide.\n\nCordialement,\nL'équipe Validation";
+                Mail::raw($body, function ($message) use ($row, $subject) {
+                    $message->to($row->email_user)->subject($subject);
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Erreur envoi email validation CRA (admin): ' . $e->getMessage());
+        }
 
         return response()->json([
             'success' => true,
@@ -475,7 +497,28 @@ public function users()
     public function rejectCra($id)
     {
         $cra = CRA::findOrFail($id);
-        $cra->update(['status' => 'refuse']);
+        $cra->update(['status' => 'refuse', 'updated_at' => now()]);
+
+        // Envoyer un email à l'utilisateur (même logique que l'interface validateur)
+        try {
+            $row = DB::table('c_r_a_s')
+                ->join('utilisateurs', 'c_r_a_s.id_user', '=', 'utilisateurs.id_user')
+                ->where('c_r_a_s.id_CRA', $id)
+                ->select('c_r_a_s.dateMois', 'utilisateurs.email_user', 'utilisateurs.nom_user')
+                ->first();
+            if ($row && $row->email_user) {
+                $date = \Carbon\Carbon::parse($row->dateMois);
+                $month = (int)$date->format('n');
+                $year = (int)$date->format('Y');
+                $subject = "Notification CRA - Mois {$month}/{$year} - Refusé";
+                $body = "Bonjour {$row->nom_user},\n\nVotre CRA du mois {$month}/{$year} a été refusé.\nStatut actuel: refusé.\n\nCordialement,\nL'équipe Validation";
+                Mail::raw($body, function ($message) use ($row, $subject) {
+                    $message->to($row->email_user)->subject($subject);
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error('Erreur envoi email refus CRA (admin): ' . $e->getMessage());
+        }
 
         return response()->json([
             'success' => true,

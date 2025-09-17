@@ -145,9 +145,14 @@ function initTableActions() {
 
 // Charger les activités depuis l'API et les rendre
 function fetchActivitiesAndRender() {
+    console.log('🔄 Fetching activities from API...');
     fetch('/api/public/activities', { credentials: 'same-origin' })
-        .then(res => res.json())
+        .then(res => {
+            console.log('API Response status:', res.status);
+            return res.json();
+        })
         .then(data => {
+            console.log('Raw API data:', data);
             activitiesData = (data.activities || []).map(a => ({
                 id_activité: a.id_activité || '',
                 nom_act: a.nom_act || '',
@@ -162,13 +167,36 @@ function fetchActivitiesAndRender() {
                 updateStatsFromAPI(data.stats);
             }
             
-            console.log('Activités chargées:', activitiesData);
+            console.log('✅ Activités chargées:', activitiesData.length, 'items');
+            console.log('Activités data:', activitiesData);
             console.log('Statistiques:', data.stats);
             filterAndRenderActivities();
         })
         .catch(err => {
-            console.error('Erreur de chargement des activités:', err);
+            console.error('❌ Erreur de chargement des activités:', err);
             showNotification("Impossible de charger les activités", 'error');
+            
+            // Fallback avec données de test
+            console.log('🔧 Using fallback test data');
+            activitiesData = [
+                {
+                    id_activité: '1',
+                    nom_act: 'Test Activity 1',
+                    description: 'Description test 1',
+                    status: 'actif',
+                    created_at: '2024-01-01',
+                    assigned_users: 2
+                },
+                {
+                    id_activité: '2', 
+                    nom_act: 'Test Activity 2',
+                    description: 'Description test 2',
+                    status: 'inactif',
+                    created_at: '2024-01-02',
+                    assigned_users: 1
+                }
+            ];
+            filterAndRenderActivities();
         });
 }
 
@@ -430,9 +458,29 @@ function confirmStatusChange() {
 }
 
 function toggleActivityStatus(activityId, currentStatus) {
-    const activity = activitiesData.find(a => a.id_activité === activityId);
+    console.log('toggleActivityStatus called with:', activityId, currentStatus);
+    console.log('activitiesData:', activitiesData);
+    console.log('Looking for activity with id_activité:', activityId);
+    
+    // Essayer différentes méthodes de recherche
+    let activity = activitiesData.find(a => a.id_activité === activityId);
+    if (!activity) {
+        activity = activitiesData.find(a => String(a.id_activité) === String(activityId));
+    }
+    if (!activity) {
+        activity = activitiesData.find(a => a.id === activityId);
+    }
+    
+    console.log('Found activity:', activity);
+    
     if (activity) {
         showStatusChangeConfirmation(activityId, currentStatus, activity.nom_act);
+    } else {
+        console.error('Activity not found in activitiesData');
+        console.log('Available activity IDs:', activitiesData.map(a => a.id_activité));
+        
+        // Fallback: utiliser directement l'ID sans chercher l'activité
+        showStatusChangeConfirmation(activityId, currentStatus, `Activité ${activityId}`);
     }
 }
 

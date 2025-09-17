@@ -16,6 +16,7 @@ class VoirCRAManager {
         this.craData = {};
         this.projects = [];
         this.craInfo = null;
+        this.isAdmin = false;
         
         this.init();
     }
@@ -26,14 +27,21 @@ class VoirCRAManager {
         // Get URL parameters
         this.parseURLParams();
         
+        // Detect admin context
+        this.isAdmin = window.location.pathname.includes('/admin/voir-cra.html');
+        
         // Load CSRF token
         await this.loadCSRFToken();
         
-        // Load user info
+        // Load user info (facultatif, surtout utile côté employé/validateur)
         await this.loadUserInfo();
         
         // Load CRA data
-        await this.loadCRAData();
+        if (this.isAdmin) {
+            await this.loadCRADataAdmin();
+        } else {
+            await this.loadCRAData();
+        }
         
         // Setup event listeners
         this.setupEventListeners();
@@ -43,15 +51,34 @@ class VoirCRAManager {
 
     parseURLParams() {
         const urlParams = new URLSearchParams(window.location.search);
-        this.craId = urlParams.get('cra');
-        this.currentMonth = parseInt(urlParams.get('month')) || 0;
-        this.currentYear = parseInt(urlParams.get('year')) || new Date().getFullYear();
+        this.craId = urlParams.get('cra') || urlParams.get('id') || null;
+        
+        // Si pas de craId dans l'URL, essayer de l'extraire depuis le hash ou autre
+        if (!this.craId) {
+            const hash = window.location.hash;
+            const hashMatch = hash.match(/cra[=:](\d+)/);
+            if (hashMatch) {
+                this.craId = hashMatch[1];
+            }
+        }
+        
+        // mois attendu en index 0-based (0..11)
+        const m = urlParams.get('month');
+        this.currentMonth = m !== null ? parseInt(m, 10) : 0;
+        this.currentYear = parseInt(urlParams.get('year'), 10) || new Date().getFullYear();
         
         console.log('📋 Paramètres URL:', {
             craId: this.craId,
             month: this.currentMonth,
-            year: this.currentYear
+            year: this.currentYear,
+            fullURL: window.location.href
         });
+        
+        // Debug: afficher l'URL complète pour diagnostic
+        if (!this.craId) {
+            console.warn('⚠️ Aucun craId trouvé dans l\'URL:', window.location.href);
+            console.warn('⚠️ Paramètres disponibles:', Object.fromEntries(urlParams.entries()));
+        }
     }
 
     async loadCSRFToken() {
@@ -107,7 +134,7 @@ class VoirCRAManager {
             const timeString = now.toLocaleTimeString('fr-FR', {
                 hour: '2-digit',
                 minute: '2-digit',
-                second: '2-digit'
+                
             });
             timeElement.textContent = timeString;
         }
@@ -116,6 +143,7 @@ class VoirCRAManager {
     async loadCRAData() {
         if (!this.craId) {
             console.error('❌ Aucun ID de CRA fourni');
+            alert('Aucun CRA spécifié dans l’URL.');
             return;
         }
 
@@ -172,14 +200,14 @@ class VoirCRAManager {
                 
                 // Utiliser les projets de la réponse seulement si aucune activité assignée n'a été chargée
                 if (!this.projects || this.projects.length === 0) {
-                    this.projects = craData.projects || [];
+                this.projects = craData.projects || [];
                 }
-
+                
                 // Si le mois/année ne sont pas fournis, les déduire du CRA
                 if ((isNaN(this.currentMonth) || isNaN(this.currentYear)) && this.craInfo && this.craInfo.dateMois) {
-                    const d = new Date(this.craInfo.dateMois);
-                    this.currentMonth = d.getMonth();
-                    this.currentYear = d.getFullYear();
+                const d = new Date(this.craInfo.dateMois);
+                this.currentMonth = d.getMonth();
+                this.currentYear = d.getFullYear();
                 }
                 
                 // Mettre à jour l'interface
@@ -193,6 +221,91 @@ class VoirCRAManager {
         } catch (error) {
             console.error('❌ Erreur lors du chargement du CRA:', error);
             alert('Erreur lors du chargement du CRA: ' + error.message);
+        }
+    }
+
+    // Chargement spécifique Admin (utilise l'API admin)
+    async loadCRADataAdmin() {
+        // Debug complet de l'URL et des paramètres
+        console.log('🔍 Debug URL complète:', window.location.href);
+        console.log('🔍 Search params:', window.location.search);
+        console.log('🔍 craId actuel:', this.craId);
+        
+        if (!this.craId) {
+            // Re-parser les paramètres au cas où
+            this.parseURLParams();
+            
+            if (!this.craId) {
+                console.error('❌ Aucun ID de CRA fourni');
+                alert('Aucun CRA spécifié dans l\'URL. URL: ' + window.location.href);
+                return;
+            }
+        }
+        try {
+            console.log('🔍 Chargement des données CRA (Admin):', this.craId);
+            
+            // Obtenir le token CSRF
+            const token = await this.getCSRFToken();
+            
+            const res = await fetch(`/admin/api/cra/${this.craId}/details-public`, {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: { 
+                    'Accept': 'application/json', 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': token || ''
+                }
+            });
+            
+            console.log('📡 Réponse API:', res.status, res.statusText);
+            
+            if (!res.ok) {
+                const errorText = await res.text();
+                console.error('❌ Erreur API:', errorText);
+                throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+            }
+            
+            const payload = await res.json();
+            console.log('📊 Données reçues (Admin):', payload);
+            
+            if (!payload || !payload.success) {
+                throw new Error(payload && payload.message || 'Erreur lors du chargement');
+            }
+            
+            this.craInfo = payload.cra;
+            this.craData = payload.data || {};
+            this.projects = payload.projects || [];
+            
+            console.log('📋 CRA Info (Admin):', this.craInfo);
+            console.log('📊 CRA Data (Admin):', this.craData);
+            console.log('🎯 Projects (Admin):', this.projects);
+            
+            // Déduire mois/année si manquants
+            if ((isNaN(this.currentMonth) || isNaN(this.currentYear)) && this.craInfo && this.craInfo.dateMois) {
+                const d = new Date(this.craInfo.dateMois);
+                this.currentMonth = d.getMonth();
+                this.currentYear = d.getFullYear();
+            }
+            
+            this.updateCRATitle();
+            this.updateCRAStatus();
+            this.buildCRATable();
+            this.applyCRAData();
+            
+        } catch (e) {
+            console.error('❌ Erreur chargement CRA (admin):', e);
+            alert('Erreur lors du chargement du CRA: ' + e.message);
+        }
+    }
+
+    async getCSRFToken() {
+        try {
+            const response = await fetch('/csrf-token', { credentials: 'same-origin' });
+            const data = await response.json();
+            return data.token;
+        } catch (error) {
+            console.error('Erreur lors de la récupération du token CSRF:', error);
+            return null;
         }
     }
 
@@ -381,6 +494,7 @@ class VoirCRAManager {
             return;
         }
 
+        // Client-side Excel export for all contexts (like mes-cra.js)
         const monthNames = [
             'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
             'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
@@ -391,7 +505,7 @@ class VoirCRAManager {
         const year = date.getFullYear();
         const daysInMonth = new Date(year, date.getMonth() + 1, 0).getDate();
         
-        // Create HTML table for better Excel formatting
+        // Create HTML table for Excel export
         let htmlContent = `
 <!DOCTYPE html>
 <html>
@@ -407,7 +521,7 @@ class VoirCRAManager {
     </style>
 </head>
 <body>
-    <h2>CRA - ${monthName} ${year}</h2>
+    <h2>CRA - ${monthName} ${year}${this.craInfo.user ? ' - ' + this.craInfo.user.nom_user : ''}</h2>
     <table>
         <thead>
             <tr class="header">
@@ -446,15 +560,17 @@ class VoirCRAManager {
         
         htmlContent += '</tbody></table></body></html>';
         
-        // Download file
+        // Download Excel file
         const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel;charset=utf-8;' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        const userIdSuffix = this.userId ? `_User${this.userId}` : '';
-        a.download = `CRA_${monthName}_${year}${userIdSuffix}_ID${this.craId}.xls`;
+        const userSuffix = this.craInfo.user ? `_${this.craInfo.user.nom_user}` : '';
+        a.download = `CRA_${monthName}_${year}${userSuffix}_ID${this.craId}.xls`;
         a.click();
         window.URL.revokeObjectURL(url);
+        
+        console.log('✅ Fichier Excel généré et téléchargé');
     }
 }
 

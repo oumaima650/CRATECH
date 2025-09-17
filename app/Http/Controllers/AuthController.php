@@ -340,14 +340,13 @@ class AuthController extends Controller
      */
     public function forgotPassword(Request $request)
     {
-        // Étape 2: si un code OU un nouveau mot de passe sont fournis, on vérifie et on réinitialise
-        if ($request->has('code') || $request->has('password')) {
+        // Étape 2: Vérifier le mot de passe reçu par email
+        if ($request->has('verify_password')) {
             try {
                 $request->validate([
                     'id_user' => 'required|integer',
                     'email' => 'required|email',
-                    'code' => 'required|digits:6',
-                    'password' => 'required|string|min:8|confirmed',
+                    'verify_password' => 'required|string|min:6'
                 ]);
 
                 $user = Utilisateur::where('id_user', $request->id_user)
@@ -361,42 +360,19 @@ class AuthController extends Controller
                     ], 404);
                 }
 
-                $cacheKey = 'pwreset:' . $request->id_user . ':' . strtolower($request->email);
-                $data = Cache::get($cacheKey);
-                if (!$data || !isset($data['code']) || $data['code'] !== $request->code) {
+                // Vérifier que le mot de passe saisi correspond à celui enregistré (envoyé par email)
+                if (!Hash::check($request->verify_password, $user->motdepasse_user)) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Code invalide ou expiré.'
+                        'message' => 'Mot de passe incorrect.'
                     ], 400);
                 }
 
-                // Mettre à jour le mot de passe
-                $user->motdepasse_user = Hash::make($request->password);
-                $user->save();
-
-                // Nettoyer le cache et connecter l'utilisateur
-                Cache::forget($cacheKey);
-                Auth::login($user);
-
-                // Déterminer la redirection selon le rôle
-                $redirect = '/login';
-                switch ($user->role) {
-                    case 'administrateur':
-                        $redirect = '/admin/dashboard';
-                        break;
-                    case 'validateur':
-                        $redirect = '/validateur/dashboard';
-                        break;
-                    case 'employé':
-                    case 'sous-traitant':
-                        $redirect = '/employe/dashboard';
-                        break;
-                }
-
+                // Succès → redirection vers la page de login
                 return response()->json([
                     'success' => true,
-                    'message' => 'Mot de passe mis à jour avec succès',
-                    'redirect' => $redirect
+                    'message' => 'Vérification réussie. Vous pouvez vous connecter.',
+                    'redirect' => '/login'
                 ]);
             } catch (\Illuminate\Validation\ValidationException $e) {
                 return response()->json([
@@ -405,7 +381,7 @@ class AuthController extends Controller
                     'errors' => $e->errors()
                 ], 422);
             } catch (\Exception $e) {
-                Log::error('Erreur vérification code / reset: ' . $e->getMessage());
+                Log::error('Erreur vérification mot de passe reset: ' . $e->getMessage());
                 return response()->json([
                     'success' => false,
                     'message' => 'Erreur interne, veuillez réessayer plus tard.'
@@ -413,7 +389,7 @@ class AuthController extends Controller
             }
         }
 
-        // Étape 1: générer et envoyer le code
+        // Étape 1 (initiale ou renvoi): générer un nouveau mot de passe, mettre à jour en base et envoyer un email (blade)
         try {
             $request->validate([
                 'id_user' => 'required|integer',
@@ -431,30 +407,30 @@ class AuthController extends Controller
                 ], 404);
             }
 
-            // Générer un code à 6 chiffres
-            $code = (string) random_int(100000, 999999);
-            $cacheKey = 'pwreset:' . $request->id_user . ':' . strtolower($request->email);
-            Cache::put($cacheKey, ['code' => $code], now()->addMinutes(10));
+            // Générer un nouveau mot de passe robuste
+            $newPassword = Str::random(10);
 
-            // Envoyer le code par email
+            // Mettre à jour le mot de passe en base (hashé)
+            $user->motdepasse_user = Hash::make($newPassword);
+            $user->save();
+
+            // Envoyer un email Blade contenant le nouveau mot de passe
             try {
-                $subject = 'CRATECH - Code de réinitialisation (10 min)';
-                $body = "Bonjour {$user->nom_user},\n\n" .
-                        "Votre code de réinitialisation est: {$code}\n" .
-                        "Ce code est valable 10 minutes.\n\n" .
-                        "Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.\n\n" .
-                        "Cordialement,\nL'équipe CRATECH";
-                Mail::raw($body, function ($message) use ($user, $subject) {
+                $subject = 'CRATECH - Nouveau mot de passe';
+                $data = [
+                    'user' => $user,
+                    'password' => $newPassword,
+                ];
+                Mail::send('emails.password-reset', $data, function ($message) use ($user, $subject) {
                     $message->to($user->email_user)->subject($subject);
                 });
             } catch (\Exception $mailEx) {
-                Log::error('Erreur envoi email code reset: ' . $mailEx->getMessage());
-                // On ne bloque pas, le code est quand même stocké en cache
+                Log::error('Erreur envoi email mot de passe régénéré: ' . $mailEx->getMessage());
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Code envoyé à votre adresse email.'
+                'message' => 'Un email avec un nouveau mot de passe a été envoyé. Saisissez-le pour vérification.'
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -463,7 +439,7 @@ class AuthController extends Controller
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
-            Log::error('Erreur génération code reset: ' . $e->getMessage());
+            Log::error('Erreur génération/envoi mot de passe: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur interne, veuillez réessayer plus tard.'
