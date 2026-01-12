@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,18 +8,46 @@
     <title>CRATECH - Utilisateurs Assignés</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Override global users-table fixed layout */
+        .users-table {
+            table-layout: auto !important;
+            width: 100% !important;
+        }
+
+        .users-table th,
+        .users-table td {
+            width: auto !important;
+            text-align: left !important;
+            padding: 1rem !important;
+        }
+
+        .users-table th:last-child,
+        .users-table td:last-child {
+            text-align: center !important;
+            width: 100px !important;
+        }
+
+        /* Ensure first column is wide enough */
+        .users-table th:first-child,
+        .users-table td:first-child {
+            min-width: 200px;
+        }
+    </style>
 </head>
+
 <body>
     <div class="admin-container">
-         <!-- Sidebar -->
+        <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="logo-section">
-                    <div class="logo-icon">C</div>
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                     <span class="logo-text">CRATECH</span>
                 </div>
                 <div class="admin-badge">
@@ -30,7 +59,7 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <h3 class="nav-section-title">Tableau de bord</h3>
-                    <a href="/admin/dashboard.html" class="nav-item ">
+                    <a href="/admin/dashboard.html" class="nav-item">
                         <i class="fas fa-chart-pie"></i>
                         <span>Vue d'ensemble</span>
                     </a>
@@ -38,11 +67,11 @@
 
                 <div class="nav-section">
                     <h3 class="nav-section-title">Gestion</h3>
-                    <a href="/admin/users.html" class="nav-item active">
+                    <a href="/admin/users.html" class="nav-item">
                         <i class="fas fa-users"></i>
                         <span>Utilisateurs</span>
                     </a>
-                    <a href="/admin/activities.html" class="nav-item">
+                    <a href="/admin/activities.html" class="nav-item active">
                         <i class="fas fa-tasks"></i>
                         <span>Activité</span>
                     </a>
@@ -75,14 +104,7 @@
                     <button class="sidebar-toggle">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <div class="breadcrumb">
-                        <a href="/admin/activities.html" class="breadcrumb-link">
-                            <i class="fas fa-tasks"></i>
-                            Activités
-                        </a>
-                        <i class="fas fa-chevron-right"></i>
-                        <span class="breadcrumb-current" id="activityName">Utilisateurs Assignés</span>
-                    </div>
+                    <h1 class="page-title" id="activityPageTitle">Utilisateurs - Chargement...</h1>
                 </div>
                 <div class="header-right">
                     <div class="current-time">
@@ -94,20 +116,19 @@
 
             <!-- Activity Users Content -->
             <div class="users-content">
-                <!-- Activity Info Card -->
-                <div class="activity-info-card">
-                    <div class="activity-header">
-                        <div class="activity-icon">
+                <!-- Activity Info Card (Reduced) -->
+                <div class="activity-info-card"
+                    style="background: white; padding: 1rem 1.5rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--gray-100); margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); color: var(--primary-blue); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
                             <i class="fas fa-tasks"></i>
                         </div>
-                        <div class="activity-details">
-                            <h2 id="activityTitle">Nom de l'activité</h2>
-                            <p class="activity-meta">
-                                <span class="activity-id">ID: <span id="activityId">-</span></span>
-                                <span class="activity-status">
-                                    <span class="status-badge" id="activityStatus">Actif</span>
-                                </span>
-                            </p>
+                        <div>
+                            <p
+                                style="font-size: 0.8rem; color: var(--gray-500); margin: 0; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">
+                                ID Activité</p>
+                            <h4 id="activityId" style="margin: 0; color: var(--gray-900); font-weight: 700;">-</h4>
                         </div>
                     </div>
                 </div>
@@ -115,43 +136,47 @@
                 <!-- Stats Cards -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #6366f1, #4338ca);">
                             <i class="fas fa-users"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="totalAssigned">0</h3>
+                            <h3 class="stat-number" id="totalAssigned" data-target="0">0</h3>
                             <p class="stat-label">Total Assignés</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-user"></i>
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                            <i class="fas fa-user-check"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="employeesCount">0</h3>
+                            <h3 class="stat-number" id="employeesCount" data-target="0">0</h3>
                             <p class="stat-label">Employés</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);">
                             <i class="fas fa-user-tie"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="contractorsCount">0</h3>
+                            <h3 class="stat-number" id="contractorsCount" data-target="0">0</h3>
                             <p class="stat-label">Sous-traitants</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Actions Section -->
-                <div class="filters-section">
-                    <div class="filters-left">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchInput" placeholder="Rechercher un utilisateur...">
+                <div class="filters-section"
+                    style="background: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--gray-100); margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div class="filters-left" style="display: flex; gap: 1rem; align-items: center; flex: 1;">
+                        <div class="search-box" style="position: relative; flex: 1; max-width: 400px;">
+                            <i class="fas fa-search"
+                                style="position: absolute; left: 1.2rem; top: 50%; transform: translateY(-50%); color: var(--gray-400);"></i>
+                            <input type="text" id="searchInput" placeholder="Rechercher par nom, email ou ID..."
+                                style="width: 100%; padding: 0.85rem 1rem 0.85rem 3.2rem; border: 2px solid var(--gray-200); border-radius: 14px; font-size: 0.95rem; outline: none; transition: all 0.2s;">
                         </div>
                         <div class="filter-dropdown">
-                            <select id="roleFilter">
+                            <select id="roleFilter"
+                                style="padding: 0.85rem 1.5rem; border: 2px solid var(--gray-200); border-radius: 14px; background: white; cursor: pointer; color: var(--gray-700); font-weight: 500;">
                                 <option value="">Tous les rôles</option>
                                 <option value="employé">Employés</option>
                                 <option value="sous-traitant">Sous-traitants</option>
@@ -161,37 +186,27 @@
                     <div class="filters-right">
                         <button class="btn btn-primary" id="addUserBtn">
                             <i class="fas fa-user-plus"></i>
-                            Assigner un utilisateur
+                            <span>Assigner un utilisateur</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Assigned Users Table -->
+                <!-- Users Table Container -->
                 <div class="users-table-container">
                     <div class="table-header">
-                        <h2>Utilisateurs Assignés</h2>
-                        <div class="table-actions">
-                            <button class="btn btn-secondary" id="refreshBtn">
-                                <i class="fas fa-sync-alt"></i>
-                                Actualiser
-                            </button>
-                        </div>
+                        <h2 id="activityTitle">Liste des Utilisateurs Assignés</h2>
                     </div>
 
                     <div class="table-wrapper">
                         <table class="users-table">
                             <thead>
                                 <tr>
-                                    <th>
-                                        <input type="checkbox" id="selectAll">
-                                    </th>
-                                    <th>ID</th>
-                                    <th>Nom</th>
+                                    <th>Utilisateur</th>
                                     <th>Email</th>
                                     <th>Rôle</th>
-                                    <th>Validateur</th>
-                                    <th>Date d'assignation</th>
-                                    <th>Actions</th>
+                                    <th>Statut</th>
+                                    <th>Assigné le</th>
+                                    <th style="width: 100px; text-align: center;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="assignedUsersTableBody">
@@ -221,64 +236,108 @@
 
     <!-- Modal d'assignation d'utilisateurs -->
     <div class="modal" id="assignUserModal" style="display: none;">
-        <div class="modal-content modal-large">
-            <div class="modal-header">
-                <h3>Assigner des utilisateurs</h3>
-                <button class="modal-close" onclick="closeAssignUserModal()">
+        <div class="modal-content modal-large"
+            style="max-width: 800px; border-radius: 24px; border: none; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+            <div class="modal-header"
+                style="background: white; color: var(--gray-900); padding: 1.5rem 2rem; border-bottom: 1px solid var(--gray-100);">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div
+                        style="width: 50px; height: 50px; background: var(--gray-50); color: var(--primary-blue); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 1px solid var(--gray-100);">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--gray-900);">Assigner des
+                            utilisateurs</h3>
+                        <p style="margin: 0; color: var(--gray-500); font-size: 0.9rem;">Sélectionnez les collaborateurs
+                            à ajouter à cette activité</p>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeAssignUserModal()"
+                    style="color: var(--gray-400); transition: color 0.2s;">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="modal-search">
-                    <input type="text" id="modalSearchInput" placeholder="Rechercher un utilisateur..." class="form-control">
-                    <select id="modalRoleFilter" class="form-control">
+
+            <div class="modal-body" style="padding: 2rem; background: var(--gray-50);">
+                <!-- Search and Filters Grid -->
+                <div class="modal-search"
+                    style="display: grid; grid-template-columns: 1fr 200px; gap: 1rem; margin-bottom: 2rem;">
+                    <div style="position: relative;">
+                        <i class="fas fa-search"
+                            style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray-400);"></i>
+                        <input type="text" id="modalSearchInput" placeholder="Rechercher par nom ou email..."
+                            style="width: 100%; padding: 0.85rem 1rem 0.85rem 3rem; border: 2px solid var(--gray-200); border-radius: 14px; font-size: 0.95rem; outline: none; transition: all 0.2s; background: white;">
+                    </div>
+                    <select id="modalRoleFilter"
+                        style="padding: 0.85rem 1.2rem; border: 2px solid var(--gray-200); border-radius: 14px; background: white; cursor: pointer; color: var(--gray-700); font-weight: 500; outline: none;">
                         <option value="">Tous les rôles</option>
-                        <option value="employé">Employé</option>
-                        <option value="sous-traitant">Sous-traitant</option>
+                        <option value="employé">Employés</option>
+                        <option value="sous-traitant">Sous-traitants</option>
                     </select>
                 </div>
-                
-                <div class="modal-users-container">
-                    <div class="modal-users-header">
-                        <label class="checkbox-container">
-                            <input type="checkbox" id="selectAllModalUsers">
-                            <span class="checkmark"></span>
-                            Sélectionner tout
+
+                <div class="modal-users-container"
+                    style="background: white; border-radius: 18px; border: 1px solid var(--gray-200); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                    <div class="modal-users-header"
+                        style="background: var(--gray-50); padding: 1rem 1.5rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center;">
+                        <label class="checkbox-container"
+                            style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 600; color: var(--gray-700); margin: 0;">
+                            <input type="checkbox" id="selectAllModalUsers"
+                                style="width: 18px; height: 18px; cursor: pointer;">
+                            <span>Sélectionner tout</span>
                         </label>
-                        <span class="selected-count">0 utilisateur(s) sélectionné(s)</span>
+                        <span class="selected-count"
+                            style="background: var(--primary-blue); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">0
+                            sélectionné(s)</span>
                     </div>
-                    
-                    <div class="modal-users-table-container">
-                        <table class="modal-users-table">
-                            <thead>
+
+                    <div class="modal-users-table-container" style="max-height: 350px; overflow-y: auto;">
+                        <table class="modal-users-table" style="width: 100%; border-collapse: collapse;">
+                            <thead
+                                style="position: sticky; top: 0; background: white; z-index: 10; box-shadow: 0 1px 0 var(--gray-200);">
                                 <tr>
-                                    <th width="50"></th>
-                                    <th>Nom</th>
-                                    <th>Email</th>
-                                    <th>Rôle</th>
+                                    <th style="width: 50px; padding: 1rem;"></th>
+                                    <th
+                                        style="text-align: left; padding: 1rem; color: var(--gray-500); font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">
+                                        Utilisateur</th>
+                                    <th
+                                        style="text-align: left; padding: 1rem; color: var(--gray-500); font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">
+                                        Email</th>
+                                    <th
+                                        style="text-align: left; padding: 1rem; color: var(--gray-500); font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">
+                                        Rôle</th>
                                 </tr>
                             </thead>
                             <tbody id="modalUsersTableBody">
                                 <!-- Les utilisateurs seront chargés ici -->
                             </tbody>
                         </table>
-                        
-                        <div id="modalNoUsersMessage" class="no-users-message" style="display: none;">
-                            <i class="fas fa-users"></i>
-                            <p>Aucun utilisateur disponible</p>
+
+                        <div id="modalNoUsersMessage" class="no-users-message"
+                            style="display: none; padding: 4rem 2rem; text-align: center; color: var(--gray-400);">
+                            <i class="fas fa-users-slash"
+                                style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p style="font-size: 1.1rem; font-weight: 500;">Aucun utilisateur disponible</p>
+                            <p style="font-size: 0.9rem;">Tous les utilisateurs correspondants sont déjà assignés.</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeAssignUserModal()">Annuler</button>
-                <button class="btn btn-primary" onclick="assignSelectedUsersToActivity()" id="assignSelectedBtn">Assigner</button>
+            <div class="modal-footer"
+                style="padding: 1.5rem 2rem; background: white; border-top: 1px solid var(--gray-100); display: flex; justify-content: flex-end; gap: 1rem;">
+                <button class="btn btn-secondary" onclick="closeAssignUserModal()"
+                    style="padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 600;">Annuler</button>
+                <button class="btn btn-primary" onclick="assignSelectedUsersToActivity()" id="assignSelectedBtn"
+                    style="padding: 0.75rem 2rem; border-radius: 12px; font-weight: 600; opacity: 0.5; cursor: not-allowed;"
+                    disabled>
+                    <i class="fas fa-check"></i> Assigner la sélection
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Modal de confirmation -->
-    <div class="modal" id="confirmModal" style="display: none !important;">
+    <div class="modal" id="confirmModal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Confirmer l'action</h3>
@@ -299,4 +358,5 @@
     <script src="/js/admin.js"></script>
     <script src="/js/activity-users.js"></script>
 </body>
+
 </html>

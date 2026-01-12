@@ -21,10 +21,10 @@ echo "=== VÉRIFICATION DES UTILISATEURS ===\n\n";
 $users = Capsule::table('utilisateurs')->get();
 
 if ($users->isEmpty()) {
-    echo "❌ Aucun utilisateur trouvé dans la base de données!\n";
+    echo " Aucun utilisateur trouvé dans la base de données!\n";
     echo "Exécutez: php artisan db:seed --class=UtilisateurSeeder\n";
 } else {
-    echo "✅ Utilisateurs trouvés:\n\n";
+    echo " Utilisateurs trouvés:\n\n";
     
     foreach ($users as $user) {
         echo "ID: " . $user->id_user . "\n";

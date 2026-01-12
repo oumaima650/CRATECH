@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,18 +8,76 @@
     <title>CRATECH - Mes CRA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .users-table {
+            table-layout: auto !important;
+        }
+
+        .users-table th,
+        .users-table td {
+            text-align: left !important;
+            padding: 1.25rem !important;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+        }
+
+        .status-badge.warning {
+            background: rgba(245, 158, 11, 0.1) !important;
+            color: #d97706 !important;
+        }
+
+        .status-badge.success {
+            background: rgba(16, 185, 129, 0.1) !important;
+            color: #059669 !important;
+        }
+
+        .status-badge.danger {
+            background: rgba(239, 68, 68, 0.1) !important;
+            color: #dc2626 !important;
+        }
+
+        .btn-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--gray-200);
+            background: white;
+            transition: all 0.2s;
+            cursor: pointer;
+            color: var(--primary-blue);
+        }
+
+        .btn-action:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+    </style>
 </head>
+
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="logo-section">
-                    <div class="logo-icon">C</div>
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                     <span class="logo-text">CRATECH</span>
                 </div>
             </div>
@@ -69,39 +128,41 @@
                         <i class="fas fa-clock"></i>
                         <span id="current-time"></span>
                     </div>
-                    <div class="user-menu">
-                        <button class="user-menu-trigger">
-                            <div class="user-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <span class="user-name" id="headerUserName">Employé</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
                 </div>
             </header>
 
             <!-- Mes CRA Content -->
-            <div class="mes-cra-content">
-                <div class="cra-header-card">
-                    <div class="card-header">
-                        
-                        <a href="/employe/dashboard.html" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i>
-                            Retour au CRA
+            <div class="dashboard-content">
+                <div class="users-table-container">
+                    <div class="table-header" style="justify-content: space-between;">
+                        <h2 style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-history" style="color: var(--primary-blue);"></i>
+                            Historique de mes CRA
+                        </h2>
+                        <a href="/employe/dashboard.html" class="btn btn-secondary" style="padding: 0.5rem 1rem;">
+                            <i class="fas fa-plus"></i>
+                            Nouveau CRA
                         </a>
                     </div>
-                </div>
-
-                <div class="cra-list-card">
-                    <div class="cra-list-container">
-                        <div class="loading-spinner" id="craListLoading" style="display: none;">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            Chargement des CRA...
+                    <div class="table-wrapper">
+                        <div class="loading-spinner" id="craListLoading"
+                            style="display: none; text-align: center; padding: 2rem;">
+                            <i class="fas fa-spinner fa-spin fa-2x" style="color: var(--primary-blue);"></i>
+                            <p style="margin-top: 1rem; color: var(--gray-500);">Chargement des CRA...</p>
                         </div>
-                        <div class="cra-list" id="craList">
-                            <!-- CRA list will be populated here -->
-                        </div>
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Période</th>
+                                    <th>Statut Validation</th>
+                                    <th>État Soumission</th>
+                                    <th style="width: 154px; text-align: center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="craList">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -113,4 +174,5 @@
     <script src="/js/admin.js"></script>
     <script src="/js/mes-cra.js"></script>
 </body>
+
 </html>

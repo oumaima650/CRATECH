@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,19 +9,24 @@
     <title>CRATECH - Gestion des Utilisateurs</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
-         <!-- Sidebar -->
+        <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="logo-section">
-                    <div class="logo-icon">C</div>
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                     <span class="logo-text">CRATECH</span>
                 </div>
                 <div class="admin-badge">
@@ -73,14 +79,14 @@
         <main class="admin-main">
             <!-- Header -->
             <header class="admin-header">
-                    <div class="header-left">
+                <div class="header-left">
                     <button class="sidebar-toggle">
                         <i class="fas fa-bars"></i>
                     </button>
-                        <h1 class="page-title">Gestion des Utilisateurs</h1>
-                    </div>
-                    <div class="header-right">
-                    
+                    <h1 class="page-title">Gestion des Utilisateurs</h1>
+                </div>
+                <div class="header-right">
+
                     <div class="current-time">
                         <i class="fas fa-clock"></i>
                         <span id="current-time"></span>
@@ -100,23 +106,12 @@
                             <h3 class="stat-number" id="totalUsers" data-target="0">0</h3>
                             <p class="stat-label">Total utilisateurs</p>
                             <div class="stat-change positive">
-                               
+
                             </div>
                         </div>
                     </div>
 
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-user-shield"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 class="stat-number" id="administrators" data-target="0">0</h3>
-                            <p class="stat-label">Administrateurs</p>
-                            <div class="stat-change positive">
-                                
-                            </div>
-                        </div>
-                    </div>
+
 
                     <div class="stat-card">
                         <div class="stat-icon">
@@ -126,7 +121,7 @@
                             <h3 class="stat-number" id="validators" data-target="0">0</h3>
                             <p class="stat-label">Validateurs</p>
                             <div class="stat-change positive">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -139,69 +134,61 @@
                             <h3 class="stat-number" id="employees" data-target="0">0</h3>
                             <p class="stat-label">Employés & Sous-traitants</p>
                             <div class="stat-change positive">
-                                
+
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Filters and Actions -->
-                <div class="filters-section">
-                    <div class="filters-left">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchInput" placeholder="Rechercher un utilisateur...">
+                <div class="filters-section"
+                    style="background: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--gray-100); margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+
+                    <div class="filters-left" style="display: flex; gap: 1rem; align-items: center; flex: 1;">
+                        <div class="search-box" style="position: relative; flex: 1; max-width: 300px;">
+                            <i class="fas fa-search"
+                                style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray-400);"></i>
+                            <input type="text" id="searchInput" placeholder="Rechercher..."
+                                style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.8rem; border: 1px solid var(--gray-200); border-radius: 12px; font-size: 0.95rem; outline: none; transition: border-color 0.2s;">
                         </div>
-                        <div class="filter-dropdown">
-                            <select id="roleFilter">
-                                <option value="">Tous les rôles</option>
-                                <option value="administrateur">Administrateurs</option>
-                                <option value="validateur">Validateurs</option>
-                                <option value="employé">Employés</option>
-                                <option value="sous-traitant">Sous-traitants</option>
-                            </select>
-                        </div>
-                        <div class="filter-dropdown">
-                            <select id="statusFilter">
-                                <option value="">Tous les statuts</option>
-                                <option value="actif">Actifs</option>
-                                <option value="inactif">Inactifs</option>
-                            </select>
-                        </div>
+
+                        <select id="roleFilter"
+                            style="padding: 0.75rem 1.5rem; border: 1px solid var(--gray-200); border-radius: 12px; background: white; cursor: pointer; color: var(--gray-700);">
+                            <option value="">Tous les rôles</option>
+                            <option value="validateur">Validateurs</option>
+                            <option value="employé">Employés</option>
+                            <option value="sous-traitant">Sous-traitants</option>
+                        </select>
+
+                        <select id="statusFilter"
+                            style="padding: 0.75rem 1.5rem; border: 1px solid var(--gray-200); border-radius: 12px; background: white; cursor: pointer; color: var(--gray-700);">
+                            <option value="">Tous les statuts</option>
+                            <option value="actif">Actifs</option>
+                            <option value="inactif">Inactifs</option>
+                        </select>
                     </div>
-                    <div class="filters-right">
-                        <button class="btn btn-secondary" id="exportBtn">
-                            
+
+                    <div class="filters-right" style="display: flex; gap: 1rem;">
+                        <button onclick="openCreateUserModal()" class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Nouvel Utilisateur</span>
                         </button>
-                        <a href="/admin/users/create.html" class="btn btn-primary">
-                            <i class="fas fa-user-plus"></i>
-                            <span>Ajouter un utilisateur</span>
-                        </a>
                     </div>
-                        </div>
-                        
+                </div>
+
                 <!-- Users Table -->
                 <div class="users-table-container">
                     <div class="table-header">
                         <h2>Liste des Utilisateurs</h2>
                         <div class="table-actions">
-                            <button class="table-action-btn" id="refreshBtn">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
-                            <button class="table-action-btn" id="viewToggle">
-                                <i class="fas fa-th"></i>
-                        </button>
-                    </div>
+                            <!-- Buttons removed as per user request -->
+                        </div>
                     </div>
 
                     <div class="table-wrapper">
                         <table class="users-table">
                             <thead>
                                 <tr>
-                                    <th>
-                                        <input type="checkbox" id="selectAll">
-                                    </th>
-                                    <th>ID</th>
                                     <th>Nom</th>
                                     <th>Email</th>
                                     <th>Rôle</th>
@@ -216,7 +203,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <!-- Pagination -->
                     <div class="pagination">
                         <button class="pagination-btn" id="prevBtn" disabled>
@@ -232,8 +219,77 @@
                         </button>
                     </div>
                 </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de création d'utilisateur -->
+    <div class="modal" id="createUserModal" style="display: none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus" style="margin-right:0.5rem;"></i>Nouvel Utilisateur</h3>
+                <button class="modal-close" onclick="closeCreateUserModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createUserForm">
+                    <input type="hidden" name="_token" id="csrf-token-create" value="">
+
+                    <div class="form-group">
+                        <label for="nom_user" class="form-label">Nom complet</label>
+                        <div style="position:relative;">
+                            <i class="fas fa-user"
+                                style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--gray-400);"></i>
+                            <input class="form-input" style="padding-left:2.5rem;" type="text" id="nom_user"
+                                name="nom_user" placeholder="Ex: Jean Dupont" required>
+                        </div>
                     </div>
-            </main>
+
+                    <div class="form-group">
+                        <label for="email_user" class="form-label">Email</label>
+                        <div style="position:relative;">
+                            <i class="fas fa-envelope"
+                                style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--gray-400);"></i>
+                            <input class="form-input" style="padding-left:2.5rem;" type="email" id="email_user"
+                                name="email_user" placeholder="exemple@domaine.com" required>
+                        </div>
+                        <div id="emailError"
+                            style="display:none;color:#dc2626;font-size:0.875rem;margin-top:0.25rem;padding:0.5rem;background:#fee2e2;border:1px solid #fecaca;border-radius:4px;">
+                            <i class="fas fa-exclamation-circle"></i> <span>Cette adresse email est déjà utilisée</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role" class="form-label">Rôle</label>
+                        <select id="role" name="role" class="form-select" required>
+                            <option value="validateur">Validateur</option>
+                            <option value="employé">Employé</option>
+                            <option value="sous-traitant">Sous-traitant</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Mot de passe</label>
+                        <div style="display:flex; gap:.5rem; align-items:center;">
+                            <input class="form-input" type="text" id="password" name="password" readonly>
+                            <button type="button" class="btn btn-secondary" id="generatePasswordBtn">
+                                <i class="fas fa-wand-magic-sparkles"></i>
+                            </button>
+                        </div>
+                        <small style="color:var(--gray-500);">Généré automatiquement.</small>
+                    </div>
+
+                    <div class="modal-footer" style="padding: 0; background: none; border: none; margin-top: 1rem;">
+                        <button type="button" class="btn btn-secondary"
+                            onclick="closeCreateUserModal()">Annuler</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check"></i> Créer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- Modal de confirmation -->
@@ -274,7 +330,8 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeValidatorSelectionModal()">Annuler</button>
-                <button class="btn btn-primary" id="confirmValidatorBtn" onclick="confirmValidatorSelection()">Affecter</button>
+                <button class="btn btn-primary" id="confirmValidatorBtn"
+                    onclick="confirmValidatorSelection()">Affecter</button>
             </div>
         </div>
     </div>
@@ -283,7 +340,8 @@
     <div class="modal" id="deleteConfirmModal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-exclamation-triangle" style="color: #EF4444; margin-right: 0.5rem;"></i>Supprimer l'utilisateur</h3>
+                <h3><i class="fas fa-exclamation-triangle" style="color: #EF4444; margin-right: 0.5rem;"></i>Supprimer
+                    l'utilisateur</h3>
                 <button class="modal-close" onclick="closeDeleteConfirmModal()">
                     <i class="fas fa-times"></i>
                 </button>
@@ -298,7 +356,8 @@
                         <p id="deleteUserName" class="user-to-delete"></p>
                         <div class="warning-message">
                             <i class="fas fa-exclamation-circle"></i>
-                            Cette action est <strong>irréversible</strong>. Toutes les données associées à cet utilisateur seront définitivement perdues.
+                            Cette action est <strong>irréversible</strong>. Toutes les données associées à cet
+                            utilisateur seront définitivement perdues.
                         </div>
                     </div>
                 </div>
@@ -316,4 +375,5 @@
     <script src="/js/admin.js"></script>
     <script src="/js/users.js"></script>
 </body>
+
 </html>

@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\EmployeController;
 use App\Http\Controllers\ValidateurController;
 use App\Models\Utilisateur;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -306,25 +307,41 @@ Route::get('/admin/cra.html', function () {
             $rowsHtml .= '<tr>'
                 . "<td><span class='id-number'>#$id</span></td>"
                 . '<td>'
-                    . '<div class="user-info">'
-                        . '<div class="user-avatar"><i class="fas fa-user"></i></div>'
-                        . '<div class="user-details">'
-                            . '<span class="user-name">' . $userName . '</span>'
-                            . '<span class="user-email">' . $userEmail . '</span>'
+                    . '<div class="user-cell">'
+                        . '<div class="user-cell-avatar" style="background: linear-gradient(135deg, var(--primary-blue), var(--primary-violet)); color: white;">'
+                            . '<i class="fas fa-user"></i>'
+                        . '</div>'
+                        . '<div class="user-cell-info">'
+                            . '<span class="user-cell-name" style="font-weight: 600; color: var(--gray-900);">' . $userName . '</span>'
+                            . '<span class="user-cell-email" style="font-size: 0.8rem; color: var(--gray-500);">' . $userEmail . '</span>'
                         . '</div>'
                     . '</div>'
                 . '</td>'
-                . '<td><span class="period-month">' . $period . '</span></td>'
-                . '<td><span class="status-badge ' . $statusKey . '">' . $statusText . '</span></td>'
-                . '<td><span class="date-created">' . $createdAt . '</span></td>'
                 . '<td>'
-                    . '<div class="action-buttons" style="display:flex; gap:8px; align-items:center;">'
-                        . '<button class="btn-action btn-view" title="Voir" data-id="' . $id . '" data-period="' . $period . '">'
+                    . '<div style="display: flex; align-items: center; gap: 0.5rem;">'
+                        . '<i class="far fa-calendar-alt" style="color: var(--primary-blue);"></i>'
+                        . '<span class="period-month" style="font-weight: 500;">' . $period . '</span>'
+                    . '</div>'
+                . '</td>'
+                . '<td><span class="status-badge ' . $statusKey . '"><i class="fas ' . ($statusKey === 'valide' ? 'fa-check-circle' : ($statusKey === 'refuse' ? 'fa-times-circle' : 'fa-clock')) . '"></i>' . $statusText . '</span></td>'
+                . '<td>'
+                    . '<div style="display: flex; flex-direction: column;">'
+                        . '<span class="date-created" style="font-size: 0.9rem; font-weight: 500;">' . \Carbon\Carbon::parse($r->submittedAt)->format('d/m/Y') . '</span>'
+                        . '<span style="font-size: 0.75rem; color: var(--gray-400);">' . \Carbon\Carbon::parse($r->submittedAt)->format('H:i') . '</span>'
+                    . '</div>'
+                . '</td>'
+                . '<td>'
+                    . '<div class="action-buttons" style="display:flex; gap:10px; justify-content: center;">'
+                        . '<button class="btn-action btn-view" title="Voir les détails" data-id="' . $id . '" data-period="' . $period . '">'
                             . '<i class="fas fa-eye"></i>'
                         . '</button>'
-                        . (($statusKey !== 'valide') ? (
-                            '<button class="btn-action btn-validate action-validate" title="Valider" data-id="' . $id . '"><i class="fas fa-check"></i></button>' .
-                            '<button class="btn-action btn-reject action-reject" title="Refuser" data-id="' . $id . '"><i class="fas fa-times"></i></button>'
+                        . (($statusKey === 'en_attente') ? (
+                            '<button class="btn-action btn-validate action-validate" title="Valider le CRA" data-id="' . $id . '" style="border-color: var(--success); color: var(--success);">'
+                                . '<i class="fas fa-check"></i>'
+                            . '</button>' .
+                            '<button class="btn-action btn-reject action-reject" title="Refuser le CRA" data-id="' . $id . '" style="border-color: var(--danger); color: var(--danger);">'
+                                . '<i class="fas fa-times"></i>'
+                            . '</button>'
                         ) : '')
                     . '</div>'
                 . '</td>'
@@ -337,6 +354,9 @@ Route::get('/admin/cra.html', function () {
 
     return response($html)->header('Content-Type', 'text/html; charset=utf-8');
 });
+// API pour les statistiques du dashboard admin (Chart.js)
+Route::get('/api/admin/stats', [AdminController::class, 'getDashboardStats']);
+
 // API pour les statistiques du dashboard admin
 Route::get('/api/admin/dashboard-stats', function () {
     try {
@@ -804,16 +824,8 @@ Route::get('/employe/mes-cra', function () {
             ->orderBy('dateMois', 'desc')
             ->get()
             ->map(function($cra) {
-                // Vérifier si le CRA a été soumis via le champ submittedAT
+                // Un CRA est soumis uniquement si submittedAT n'est pas NULL
                 $isSubmitted = !is_null($cra->submittedAT);
-                
-                // Vérification backup avec les activités
-                if (!$isSubmitted) {
-                    $hasActivities = DB::table('jour_activites')
-                        ->where('id_CRA', $cra->id_CRA)
-                        ->exists();
-                    $isSubmitted = $hasActivities;
-                }
                 
                 return [
                     'id_CRA' => $cra->id_CRA,
@@ -846,7 +858,7 @@ Route::get('/api/public/users', function () {
         // Filtrer par rôle si spécifié
         if (request('role')) {
             $query->where('utilisateurs.role', request('role'));
-            \Log::info('Filtrage par rôle: ' . request('role'));
+          
         }
         
         $users = $query->leftJoin('utilisateurs as validators', 'utilisateurs.id_validateur', '=', 'validators.id_user')
@@ -863,8 +875,7 @@ Route::get('/api/public/users', function () {
             )
             ->get();
             
-        \Log::info('Nombre d\'utilisateurs trouvés: ' . $users->count());
-        \Log::info('Utilisateurs: ' . $users->toJson());
+
     
     // Ajouter les informations du validateur
     $users->each(function ($user) {
@@ -906,7 +917,7 @@ Route::get('/api/public/users', function () {
         ]);
         
     } catch (\Exception $e) {
-        \Log::error('Erreur API users: ' . $e->getMessage());
+       
         return response()->json([
             'error' => $e->getMessage(),
             'users' => [],
@@ -1347,7 +1358,7 @@ Route::middleware(['auth'])->group(function () {
                             );
                             $emailSent = true;
                         } catch (\Exception $mailEx) {
-                            \Log::error('Erreur envoi email validateur: ' . $mailEx->getMessage());
+                           
                         }
                     }
                 }
@@ -1766,7 +1777,7 @@ Route::middleware(['auth'])->group(function () {
                         });
                     }
                 } catch (\Exception $mailEx) {
-                    \Log::error('Erreur envoi email validation CRA: ' . $mailEx->getMessage());
+                    
                 }
 
                 return response()->json(['success' => true]);
@@ -1818,7 +1829,7 @@ Route::middleware(['auth'])->group(function () {
                         });
                     }
                 } catch (\Exception $mailEx) {
-                    \Log::error('Erreur envoi email refus CRA: ' . $mailEx->getMessage());
+                  
                 }
 
                 return response()->json(['success' => true]);
@@ -1930,7 +1941,9 @@ Route::get('/img/{file}', function ($file) {
 
 // API publique pour lister les activités (lecture seule)
 Route::get('/api/public/activities', function () {
-    $activities = \App\Models\Activité::withCount('assignements')
+    $activities = \App\Models\Activité::withCount(['assignements' => function($query) {
+        $query->where('status', 'actif');
+    }])
         ->orderBy('created_at', 'desc')
         ->get(['id_activité', 'nom_act', 'description', 'status', 'created_at']);
     
@@ -1955,3 +1968,35 @@ Route::get('/api/public/activities', function () {
         ]
     ]);
 });
+// API pour lister les utilisateurs (publique pour le moment pour debug)
+// API pour lister les utilisateurs (publique pour le moment pour debug)
+Route::get('/api/public/users', function () {
+    try {
+        $users = DB::table('utilisateurs')
+            ->leftJoin('utilisateurs as validateurs', 'utilisateurs.id_validateur', '=', 'validateurs.id_user')
+            ->select(
+                'utilisateurs.*', 
+                'validateurs.nom_user as validator_name',
+                'validateurs.email_user as validator_email'
+            )
+            ->get();
+            
+        // Stats
+        $stats = [
+            'total' => $users->count(),
+            'administrators' => $users->where('role', 'administrateur')->count(),
+            'validators' => $users->where('role', 'validateur')->count(),
+            'employees' => $users->where('role', 'employé')->count(),
+            'active' => $users->where('status', 'actif')->count()
+        ];
+        
+        return response()->json([
+            'users' => $users,
+            'stats' => $stats
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+

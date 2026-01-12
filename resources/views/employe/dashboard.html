@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,18 +8,20 @@
     <title>CRATECH - Dashboard Employé</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="logo-section">
-                    <div class="logo-icon">C</div>
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                     <span class="logo-text">CRATECH</span>
                 </div>
             </div>
@@ -26,7 +29,7 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <h3 class="nav-section-title">Mon Espace</h3>
-                    <a href="#dashboard" class="nav-item active">
+                    <a href="/employe/dashboard.html" class="nav-item active">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Compte Rendu d'Activité</span>
                     </a>
@@ -62,21 +65,12 @@
                     <button class="sidebar-toggle">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h1 class="page-title">Compte Rendu d'Activité</h1>
+                    <h1 class="page-title">Dashboard Employé</h1>
                 </div>
                 <div class="header-right">
                     <div class="current-time">
                         <i class="fas fa-clock"></i>
                         <span id="current-time"></span>
-                    </div>
-                    <div class="user-menu">
-                        <button class="user-menu-trigger">
-                            <div class="user-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <span class="user-name" id="headerUserName">Employé</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
                     </div>
                 </div>
             </header>
@@ -99,8 +93,8 @@
                                     <!-- Month options will be populated dynamically -->
                                 </select>
                                 <select class="form-select" id="yearSelect">
-                                <!-- Years will be populated dynamically -->
-                            </select>
+                                    <!-- Years will be populated dynamically -->
+                                </select>
                             </div>
                             <button class="nav-btn" id="nextMonth">
                                 <i class="fas fa-chevron-right"></i>
@@ -125,7 +119,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <div class="cra-actions">
                         <button class="btn btn-secondary btn-lg" id="exportCRA">
                             <i class="fas fa-download"></i>
@@ -139,24 +133,23 @@
                 </div>
             </div>
 
-        </div>
+    </div>
 
-        <!-- Modal for day value selection -->
-        <div id="dayValueModal" class="modal" style="display: none;">
-            <div class="modal-content modal-compact">
-                <div class="value-options-compact">
-                    <button class="value-option-compact" data-value="0">0</button>
-                    <button class="value-option-compact" data-value="0.5">0.5</button>
-                    <button class="value-option-compact" data-value="1">1</button>
-                </div>
+    <!-- Modal for day value selection -->
+    <div id="dayValueModal" class="modal" style="display: none;">
+        <div class="modal-content modal-compact">
+            <div class="value-options-compact">
+                <button class="value-option-compact" data-value="0">0</button>
+                <button class="value-option-compact" data-value="0.5">0.5</button>
+                <button class="value-option-compact" data-value="1">1</button>
             </div>
         </div>
+    </div>
 
-        <input type="hidden" id="csrf-token" value="">
+    <input type="hidden" id="csrf-token" value="">
 
-        <script src="/js/admin.js"></script>
-        <script src="/js/employe.js"></script>
-    </body>
+    <script src="/js/admin.js"></script>
+    <script src="/js/employe.js"></script>
+</body>
+
 </html>
-
-

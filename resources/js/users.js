@@ -1,6 +1,6 @@
 // CRATECH - Gestion des Utilisateurs
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Initialisation
     initUsersPage();
     initSearchAndFilters();
@@ -32,13 +32,13 @@ function normalizeString(value) {
 // Initialisation de la page
 function initUsersPage() {
     console.log('🚀 CRATECH - Page utilisateurs initialisée !');
-    
+
     // Animation d'entrée
     const cards = document.querySelectorAll('.stat-card, .filters-section, .users-table-container');
     cards.forEach((card, index) => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
-        
+
         setTimeout(() => {
             card.style.transition = 'all 0.6s ease';
             card.style.opacity = '1';
@@ -52,18 +52,18 @@ function initSearchAndFilters() {
     const searchInput = document.getElementById('searchInput');
     const roleFilter = document.getElementById('roleFilter');
     const statusFilter = document.getElementById('statusFilter');
-    
+
     // Recherche en temps réel (input + keyup pour compatibilité)
     const triggerSearch = () => filterUsers();
     searchInput.addEventListener('input', triggerSearch);
     searchInput.addEventListener('keyup', triggerSearch);
-    
+
     // Filtres par rôle et statut
-    roleFilter.addEventListener('change', function() {
+    roleFilter.addEventListener('change', function () {
         filterUsers();
     });
-    
-    statusFilter.addEventListener('change', function() {
+
+    statusFilter.addEventListener('change', function () {
         filterUsers();
     });
 }
@@ -73,7 +73,7 @@ function filterUsers() {
     const searchTerm = normalizeString(document.getElementById('searchInput').value);
     const roleFilter = normalizeString(document.getElementById('roleFilter').value);
     const statusFilter = normalizeString(document.getElementById('statusFilter').value);
-    
+
     filteredUsers = usersData.filter(user => {
         const nom = normalizeString(user.nom);
         const email = normalizeString(user.email);
@@ -87,13 +87,13 @@ function filterUsers() {
             id.includes(searchTerm) ||
             role.includes(searchTerm) ||
             status.includes(searchTerm);
-        
+
         const matchesRole = !roleFilter || role === roleFilter;
         const matchesStatus = !statusFilter || status === statusFilter;
-        
+
         return matchesSearch && matchesRole && matchesStatus;
     });
-    
+
     currentPage = 1;
     renderUsersTable();
 }
@@ -103,17 +103,17 @@ function initTableActions() {
     const selectAll = document.getElementById('selectAll');
     const refreshBtn = document.getElementById('refreshBtn');
     const exportBtn = document.getElementById('exportBtn');
-    
+
     // Sélection globale
-    selectAll.addEventListener('change', function() {
+    selectAll.addEventListener('change', function () {
         const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
         checkboxes.forEach(checkbox => {
             checkbox.checked = this.checked;
         });
     });
-    
+
     // Rafraîchir
-    refreshBtn.addEventListener('click', function() {
+    refreshBtn.addEventListener('click', function () {
         this.style.transform = 'rotate(360deg)';
         setTimeout(() => {
             this.style.transform = '';
@@ -121,15 +121,17 @@ function initTableActions() {
             showNotification('Liste des utilisateurs actualisée', 'success');
         }, 500);
     });
-    
+
     // Exporter
-    exportBtn.addEventListener('click', function() {
-        showNotification('Export des utilisateurs en cours...', 'info');
-        // Simuler l'export
-        setTimeout(() => {
-            showNotification('Export terminé !', 'success');
-        }, 2000);
-    });
+    if (exportBtn) {
+        exportBtn.addEventListener('click', function () {
+            showNotification('Export des utilisateurs en cours...', 'info');
+            // Simuler l'export
+            setTimeout(() => {
+                showNotification('Export terminé !', 'success');
+            }, 2000);
+        });
+    }
 }
 
 // Charger et rendre
@@ -147,12 +149,12 @@ function fetchUsersAndRender() {
                 id_validateur: u.id_validateur || null,
                 validator: u.validator || null
             }));
-            
+
             // Mettre à jour les statistiques avec les données de l'API
             if (data.stats) {
                 updateUsersStatsFromAPI(data.stats);
             }
-            
+
             filteredUsers = [...usersData];
             currentPage = 1;
             renderUsersTable();
@@ -185,7 +187,7 @@ function renderUsersTable() {
 function createUserRow(user) {
     const row = document.createElement('tr');
     const canHaveValidator = user.role === 'employé' || user.role === 'sous-traitant';
-    
+
     row.innerHTML = `
         <td>
             <input type="checkbox" class="user-checkbox">
@@ -229,13 +231,13 @@ function createUserRow(user) {
             </div>
         </td>
     `;
-    
+
     return row;
 }
 
 // Obtenir l'icône du rôle
 function getRoleIcon(role) {
-    switch(role) {
+    switch (role) {
         case 'administrateur': return 'fa-user-shield';
         case 'validateur': return 'fa-user-check';
         case 'employé': return 'fa-user';
@@ -246,7 +248,7 @@ function getRoleIcon(role) {
 
 // Obtenir le label du rôle
 function getRoleLabel(role) {
-    switch(role) {
+    switch (role) {
         case 'administrateur': return 'Administrateur';
         case 'validateur': return 'Validateur';
         case 'employé': return 'Employé';
@@ -273,13 +275,13 @@ function updatePagination() {
     const totalPagesSpan = document.getElementById('totalPages');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
-    
+
     currentPageSpan.textContent = currentPage;
     totalPagesSpan.textContent = totalPages;
-    
+
     prevBtn.disabled = currentPage === 1;
     nextBtn.disabled = currentPage === totalPages;
-    
+
     // Event listeners pour la pagination
     prevBtn.onclick = () => {
         if (currentPage > 1) {
@@ -287,7 +289,7 @@ function updatePagination() {
             renderUsersTable();
         }
     };
-    
+
     nextBtn.onclick = () => {
         if (currentPage < totalPages) {
             currentPage++;
@@ -306,7 +308,7 @@ function editUser(userId) {
 function toggleUserStatus(userId, currentStatus) {
     const newStatus = currentStatus === 'actif' ? 'inactif' : 'actif';
     const action = newStatus === 'actif' ? 'activer' : 'désactiver';
-    
+
     showConfirmModal(
         `${action.charAt(0).toUpperCase() + action.slice(1)} l'utilisateur`,
         `Êtes-vous sûr de vouloir ${action} cet utilisateur ?`,
@@ -328,12 +330,12 @@ function showValidatorModal(userId, userName) {
     console.log('showValidatorModal appelé avec userId:', userId, 'userName:', userName);
     currentUserForValidator = userId;
     const modal = document.getElementById('validatorSelectionModal');
-    
+
     console.log('currentUserForValidator défini à:', currentUserForValidator);
-    
+
     // Charger les validateurs dans la modal
     loadValidatorsInModal();
-    
+
     modal.style.display = 'flex';
 }
 
@@ -341,7 +343,7 @@ function showDeleteConfirmation(userId, userName) {
     userToDelete = userId;
     const modal = document.getElementById('deleteConfirmModal');
     const userNameElement = document.getElementById('deleteUserName');
-    
+
     userNameElement.textContent = userName;
     modal.style.display = 'flex';
 }
@@ -367,35 +369,35 @@ function confirmUserDeletion() {
         },
         credentials: 'same-origin'
     })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('Erreur lors de la suppression');
-        }
-    })
-    .then(data => {
-        if (data.success) {
-            // Supprimer de la liste locale
-            usersData = usersData.filter(u => u.id != userToDelete);
-            filteredUsers = filteredUsers.filter(u => u.id != userToDelete);
-            
-            // Fermer la modal
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Erreur lors de la suppression');
+            }
+        })
+        .then(data => {
+            if (data.success) {
+                // Supprimer de la liste locale
+                usersData = usersData.filter(u => u.id != userToDelete);
+                filteredUsers = filteredUsers.filter(u => u.id != userToDelete);
+
+                // Fermer la modal
+                closeDeleteConfirmModal();
+
+                // Recharger le tableau
+                renderUsersTable();
+
+                showNotification('Utilisateur supprimé avec succès', 'success');
+            } else {
+                throw new Error(data.message || 'Erreur lors de la suppression');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showNotification('Erreur lors de la suppression de l\'utilisateur', 'error');
             closeDeleteConfirmModal();
-            
-            // Recharger le tableau
-            renderUsersTable();
-            
-            showNotification('Utilisateur supprimé avec succès', 'success');
-        } else {
-            throw new Error(data.message || 'Erreur lors de la suppression');
-        }
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-        showNotification('Erreur lors de la suppression de l\'utilisateur', 'error');
-        closeDeleteConfirmModal();
-    });
+        });
 }
 
 function deleteUser(userId) {
@@ -435,7 +437,7 @@ function showNotification(message, type = 'info') {
             <i class="fas fa-times"></i>
         </button>
     `;
-    
+
     notification.style.cssText = `
         position: fixed;
         top: 20px;
@@ -453,13 +455,13 @@ function showNotification(message, type = 'info') {
         transform: translateX(100%);
         transition: transform 0.3s ease;
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.style.transform = 'translateX(0)';
     }, 100);
-    
+
     const closeBtn = notification.querySelector('.notification-close');
     closeBtn.addEventListener('click', () => {
         notification.style.transform = 'translateX(100%)';
@@ -467,7 +469,7 @@ function showNotification(message, type = 'info') {
             notification.remove();
         }, 300);
     });
-    
+
     setTimeout(() => {
         if (notification.parentNode) {
             notification.style.transform = 'translateX(100%)';
@@ -491,10 +493,10 @@ function updateUsersStatsFromAPI(stats) {
 function updateStatNumber(elementId, value) {
     const element = document.getElementById(elementId);
     if (!element) return;
-    
+
     element.setAttribute('data-target', value);
     element.textContent = value;
-    
+
     // Animation du compteur
     let current = 0;
     const increment = value / 50;
@@ -509,7 +511,7 @@ function updateStatNumber(elementId, value) {
 }
 
 function getNotificationIcon(type) {
-    switch(type) {
+    switch (type) {
         case 'success': return 'fa-check-circle';
         case 'error': return 'fa-exclamation-circle';
         case 'warning': return 'fa-exclamation-triangle';
@@ -541,8 +543,8 @@ function getValidatorCell(user) {
 function loadValidators() {
     // Charger uniquement les utilisateurs avec rôle = 'validateur'
     console.log('Chargement des validateurs...');
-    fetch('/api/public/users?role=validateur', { 
-        credentials: 'same-origin' 
+    fetch('/api/public/users?role=validateur', {
+        credentials: 'same-origin'
     })
         .then(res => {
             if (!res.ok) {
@@ -553,7 +555,7 @@ function loadValidators() {
         .then(data => {
             validatorsData = data.users || [];
             console.log('Validateurs chargés:', validatorsData);
-            
+
             populateValidatorSelect();
         })
         .catch(err => {
@@ -567,14 +569,14 @@ function loadValidators() {
 function populateValidatorSelect() {
     const select = document.getElementById('validatorSelect');
     if (!select) return;
-    
+
     console.log('Remplissage de la liste des validateurs:', validatorsData);
-    
+
     // Vider les options existantes (sauf la première)
     while (select.children.length > 1) {
         select.removeChild(select.lastChild);
     }
-    
+
     // Vérifier si on a des validateurs
     if (validatorsData.length === 0) {
         const option = document.createElement('option');
@@ -584,7 +586,7 @@ function populateValidatorSelect() {
         select.appendChild(option);
         return;
     }
-    
+
     // Ajouter les validateurs
     validatorsData.forEach(validator => {
         const option = document.createElement('option');
@@ -606,7 +608,7 @@ let currentUserForValidatorAssignment = null;
 
 function assignValidatorDirectly(userId, userName) {
     currentUserForValidatorAssignment = userId;
-    
+
     // Charger tous les validateurs depuis la table utilisateurs
     fetch('/api/public/users', { credentials: 'same-origin' })
         .then(res => {
@@ -617,13 +619,13 @@ function assignValidatorDirectly(userId, userName) {
         })
         .then(data => {
             console.log('Données reçues:', data);
-            
+
             // Essayer de trouver les vrais validateurs
             const allUsers = data.users || data || [];
             console.log('Tous les utilisateurs:', allUsers);
-            
+
             let validators = [];
-            
+
             if (Array.isArray(allUsers)) {
                 validators = allUsers.filter(user => {
                     console.log('Utilisateur:', user, 'Role:', user.role);
@@ -635,7 +637,7 @@ function assignValidatorDirectly(userId, userName) {
                     role: user.role
                 }));
             }
-            
+
             // Si aucun validateur trouvé, créer des données de test
             if (validators.length === 0) {
                 console.log('Aucun validateur trouvé, création de données de test');
@@ -660,9 +662,9 @@ function assignValidatorDirectly(userId, userName) {
                     }
                 ];
             }
-            
+
             console.log('Validateurs finaux:', validators);
-            
+
             // Ouvrir la modal avec les validateurs
             openValidatorSelectionModal(userName, validators);
         })
@@ -675,46 +677,46 @@ function assignValidatorDirectly(userId, userName) {
 function openValidatorSelectionModal(userName, validators) {
     console.log('Ouverture de la modal avec validators:', validators);
     console.log('currentUserForValidatorAssignment dans openValidatorSelectionModal:', currentUserForValidatorAssignment);
-    
+
     // Transférer la valeur vers la bonne variable
     currentUserForValidator = currentUserForValidatorAssignment;
     console.log('currentUserForValidator défini à:', currentUserForValidator);
-    
+
     const modal = document.getElementById('validatorSelectionModal');
     const validatorsList = document.getElementById('validatorsList');
-    
+
     if (!modal) {
         console.error('Modal validatorSelectionModal introuvable');
         return;
     }
-    
+
     if (!validatorsList) {
         console.error('Element validatorsList introuvable');
         return;
     }
-    
+
     // Vider la liste des validateurs
     validatorsList.innerHTML = '';
-    
+
     // Vérifier qu'on a des validateurs
     if (!validators || validators.length === 0) {
         validatorsList.innerHTML = '<div class="no-validators">Aucun validateur disponible</div>';
         modal.style.display = 'flex';
         return;
     }
-    
+
     // Ajouter chaque validateur
     validators.forEach((validator, index) => {
         console.log(`Création du validateur ${index}:`, validator);
-        
+
         const validatorItem = document.createElement('div');
         validatorItem.className = 'validator-item';
         validatorItem.setAttribute('data-validator-id', validator.id);
-        
+
         // Vérifier que le nom existe et n'est pas vide
         const validatorName = validator.nom || validator.name || `Validateur ${validator.id}`;
         const validatorEmail = validator.email || 'Email non défini';
-        
+
         // Créer les initiales de façon sécurisée
         let initials = 'V';
         if (validatorName && validatorName !== 'Nom inconnu') {
@@ -723,7 +725,7 @@ function openValidatorSelectionModal(userName, validators) {
                 initials = nameParts.map(n => n[0]).join('').toUpperCase();
             }
         }
-        
+
         validatorItem.innerHTML = `
             <div class="validator-avatar">
                 ${initials}
@@ -733,35 +735,35 @@ function openValidatorSelectionModal(userName, validators) {
                 <div class="validator-email">${validatorEmail}</div>
             </div>
         `;
-        
+
         // Ajouter l'événement de sélection
         validatorItem.addEventListener('click', () => {
             console.log('Validateur sélectionné:', validator);
             console.log('ID du validateur:', validator.id);
-            
+
             // Désélectionner tous les autres
             document.querySelectorAll('.validator-item').forEach(item => {
                 item.classList.remove('selected');
             });
-            
+
             // Sélectionner celui-ci
             validatorItem.classList.add('selected');
             selectedValidatorId = validator.id;
-            
+
             console.log('selectedValidatorId mis à jour:', selectedValidatorId);
         });
-        
+
         validatorsList.appendChild(validatorItem);
         console.log(`Validateur ${index} ajouté au DOM`);
     });
-    
+
     // Ne pas réinitialiser la sélection ici
     // selectedValidatorId = null;
-    
+
     // Afficher la modal
     console.log('Affichage de la modal');
     modal.style.display = 'flex';
-    
+
     // Vérifier que la modal est bien visible
     setTimeout(() => {
         console.log('Style de la modal après affichage:', modal.style.display);
@@ -779,7 +781,7 @@ function closeValidatorSelectionModal() {
 function confirmValidatorSelection() {
     console.log('Confirmation - selectedValidatorId:', selectedValidatorId);
     console.log('Confirmation - currentUserForValidator:', currentUserForValidator);
-    
+
     if (!selectedValidatorId || !currentUserForValidator) {
         showNotification('Veuillez sélectionner un validateur', 'error');
         return;
@@ -799,46 +801,46 @@ function confirmValidatorSelection() {
             note: 'Affectation via interface admin'
         })
     })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('Erreur lors de l\'affectation');
-        }
-    })
-    .then(data => {
-        if (data.success) {
-            // Mettre à jour localement
-            const user = usersData.find(u => u.id == currentUserForValidator);
-            if (user) {
-                user.id_validateur = selectedValidatorId;
-                
-                // Trouver le validateur pour afficher son nom
-                const validator = validatorsData.find(v => v.id == selectedValidatorId);
-                if (validator) {
-                    user.validator = {
-                        id: selectedValidatorId,
-                        nom: validator.nom,
-                        email: validator.email
-                    };
-                }
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Erreur lors de l\'affectation');
             }
-            
-            // Fermer la modal
-            closeValidatorSelectionModal();
-            
-            // Recharger le tableau
-            renderUsersTable();
-            
-            showNotification('Validateur affecté avec succès! Veuillez rafraîchir la liste', 'success');
-        } else {
-            throw new Error(data.message || 'Erreur lors de l\'affectation');
-        }
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-        showNotification('Erreur lors de l\'affectation du validateur', 'error');
-    });
+        })
+        .then(data => {
+            if (data.success) {
+                // Mettre à jour localement
+                const user = usersData.find(u => u.id == currentUserForValidator);
+                if (user) {
+                    user.id_validateur = selectedValidatorId;
+
+                    // Trouver le validateur pour afficher son nom
+                    const validator = validatorsData.find(v => v.id == selectedValidatorId);
+                    if (validator) {
+                        user.validator = {
+                            id: selectedValidatorId,
+                            nom: validator.nom,
+                            email: validator.email
+                        };
+                    }
+                }
+
+                // Fermer la modal
+                closeValidatorSelectionModal();
+
+                // Recharger le tableau
+                renderUsersTable();
+
+                showNotification('Validateur affecté avec succès! Veuillez rafraîchir la liste', 'success');
+            } else {
+                throw new Error(data.message || 'Erreur lors de l\'affectation');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showNotification('Erreur lors de l\'affectation du validateur', 'error');
+        });
 }
 
 function closeValidatorModal() {
@@ -849,42 +851,42 @@ function closeValidatorModal() {
 
 function assignValidator() {
     const validatorId = document.getElementById('validatorSelect').value;
-    
+
     if (!validatorId) {
         showNotification('Veuillez sélectionner un validateur', 'warning');
         return;
     }
-    
+
     if (!currentUserForValidator) {
         showNotification('Erreur: aucun utilisateur sélectionné', 'error');
         return;
     }
-    
+
     console.log('ID Validateur sélectionné:', validatorId);
     console.log('ID Utilisateur:', currentUserForValidator);
     console.log('Données validateurs:', validatorsData);
     console.log('Données utilisateurs:', usersData);
-    
+
     const validator = validatorsData.find(v => v.id == validatorId);
     const user = usersData.find(u => u.id == currentUserForValidator);
-    
+
     console.log('Validateur trouvé:', validator);
     console.log('Utilisateur trouvé:', user);
-    
+
     if (!validator || !user) {
         showNotification('Erreur: validateur ou utilisateur introuvable', 'error');
         console.error('Validateur:', validator, 'Utilisateur:', user);
         return;
     }
-    
+
     // Appel API réel pour affecter le validateur
     const assignmentData = {
         user_id: currentUserForValidator,
         id_validateur: validatorId
     };
-    
+
     console.log('Données envoyées à l\'API:', assignmentData);
-    
+
     // Récupérer le token CSRF
     fetch('/csrf-token')
         .then(res => res.json())
@@ -900,29 +902,29 @@ function assignValidator() {
                 body: JSON.stringify(assignmentData)
             });
         })
-    .then(res => res.json())
-    .then(data => {
-        console.log('Réponse API:', data);
-        if (data.success) {
-            // Mettre à jour localement
-            user.id_validateur = validatorId;
-            user.validator = {
-                id: validator.id,
-                nom: validator.nom,
-                email: validator.email
-            };
-            
-            // Rafraîchir l'affichage
-            renderUsersTable();
-            closeValidatorModal();
-            
-            showNotification(`Validateur ${validator.nom} affecté à ${user.nom}`, 'success');
-        } else {
-            showNotification(data.message || 'Erreur lors de l\'affectation', 'error');
-        }
-    })
-    .catch(err => {
-        console.error('Erreur lors de l\'affectation:', err);
-        showNotification('Erreur lors de l\'affectation du validateur', 'error');
-    });
+        .then(res => res.json())
+        .then(data => {
+            console.log('Réponse API:', data);
+            if (data.success) {
+                // Mettre à jour localement
+                user.id_validateur = validatorId;
+                user.validator = {
+                    id: validator.id,
+                    nom: validator.nom,
+                    email: validator.email
+                };
+
+                // Rafraîchir l'affichage
+                renderUsersTable();
+                closeValidatorModal();
+
+                showNotification(`Validateur ${validator.nom} affecté à ${user.nom}`, 'success');
+            } else {
+                showNotification(data.message || 'Erreur lors de l\'affectation', 'error');
+            }
+        })
+        .catch(err => {
+            console.error('Erreur lors de l\'affectation:', err);
+            showNotification('Erreur lors de l\'affectation du validateur', 'error');
+        });
 }

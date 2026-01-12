@@ -34,6 +34,87 @@ class AdminController extends Controller
         return response()->file(resource_path('views/admin/dashboard.html'));
     }
 
+    public function getDashboardStats()
+    {
+        // 1. Répartition des utilisateurs par rôle (Sans les administrateurs)
+        $usersByRole = [
+            'labels' => ['Validateurs', 'Employés', 'Sous-traitants'],
+            'data' => [
+                Utilisateur::where('role', 'validateur')->count(),
+                Utilisateur::where('role', 'employé')->count(),
+                Utilisateur::where('role', 'sous-traitant')->count(),
+            ],
+            'colors' => ['#10B981', '#6366F1', '#F59E0B']
+        ];
+
+        // 2. Statut des CRA (Global)
+        $crasByStatus = [
+            'labels' => ['Validés', 'En attente', 'Refusés'],
+            'data' => [
+                CRA::where('status', 'valide')->count(),
+                CRA::where('status', 'en_attente')->count(),
+                CRA::where('status', 'refuse')->count(),
+            ],
+            'colors' => ['#10B981', '#F59E0B', '#EF4444']
+        ];
+
+        // 3. Statut des Activités
+        $activitiesByStatus = [
+            'labels' => ['Actives', 'Inactives'],
+            'data' => [
+                Activité::where('status', 'actif')->count(),
+                Activité::where('status', 'inactif')->count(),
+            ],
+            'colors' => ['#3B82F6', '#94A3B8']
+        ];
+
+        // 4. Évolution des CRA sur les 6 derniers mois
+        $months = [];
+        $validatedData = [];
+        $submittedData = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $monthName = $date->translatedFormat('M Y'); // ex: Jan 2024
+            $months[] = $monthName;
+
+            $submittedData[] = CRA::whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->count();
+                
+            $validatedData[] = CRA::whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->where('status', 'valide')
+                ->count();
+        }
+
+        $crasEvolution = [
+            'labels' => $months,
+            'datasets' => [
+                [
+                    'label' => 'Total Soumis',
+                    'data' => $submittedData,
+                    'borderColor' => '#6366F1',
+                    'backgroundColor' => 'rgba(99, 102, 241, 0.1)',
+                ],
+                [
+                    'label' => 'Validés',
+                    'data' => $validatedData,
+                    'borderColor' => '#10B981',
+                    'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
+                ]
+            ]
+        ];
+
+        return response()->json([
+            'users' => $usersByRole,
+            'cras_status' => $crasByStatus,
+            'activities_status' => $activitiesByStatus,
+            'cras_evolution' => $crasEvolution,
+            'recent_activity' => $this->getRecentActivity()
+        ]);
+    }
+
     private function getRecentActivity()
     {
         // Récupérer les dernières activités (CRA soumis, utilisateurs créés, etc.)

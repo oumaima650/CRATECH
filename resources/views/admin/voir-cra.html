@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,18 +8,20 @@
     <title>CRATECH - Voir CRA (Admin)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="logo-section">
-                    <div class="logo-icon">C</div>
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                     <span class="logo-text">CRATECH</span>
                 </div>
                 <div class="admin-badge">
@@ -46,7 +49,7 @@
                         <i class="fas fa-tasks"></i>
                         <span>Activité</span>
                     </a>
-                    <a href="/admin/cra.html" class="nav-item">
+                    <a href="/admin/cra.html" class="nav-item active">
                         <i class="fas fa-clipboard-list"></i>
                         <span>CRA</span>
                     </a>
@@ -74,10 +77,7 @@
                     <button class="sidebar-toggle">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <div class="breadcrumb">
-                        <i class="fas fa-eye"></i>
-                        <span>Voir CRA</span>
-                    </div>
+                    <h1 class="page-title">Voir CRA</h1>
                 </div>
                 <div class="header-right">
                     <div class="current-time">
@@ -120,7 +120,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <div class="cra-actions">
                         <button class="btn btn-secondary btn-lg" id="exportCRA">
                             <i class="fas fa-download"></i>
@@ -140,4 +140,5 @@
     <script src="/js/admin.js"></script>
     <script src="/js/voir-cra.js"></script>
 </body>
+
 </html>

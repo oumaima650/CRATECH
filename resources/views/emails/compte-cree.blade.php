@@ -19,7 +19,7 @@
     <p>Email : {{ $user->email_user }}</p>
     <p>Mot de passe temporaire : {{ $password }}</p>
 
-    <p>Se connecter : {{ url('/login') }}</p>
+    
 
     <p>⚠️ Conservez précieusement ces informations.</p>
 </body>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,31 +8,32 @@
     <title>CRATECH - Voir CRA (Validateur)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="admin-container">
-       <!-- Sidebar -->
+        <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="logo-section">
-                    <div class="logo-icon">C</div>
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                     <span class="logo-text">CRATECH</span>
                 </div>
-               
             </div>
 
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <h3 class="nav-section-title">Mon Espace</h3>
-                    <a href="/validateur/dashboard" class="nav-item active">
+                    <a href="/validateur/dashboard" class="nav-item">
                         <i class="fas fa-clipboard-check"></i>
                         <span>Validation des CRA</span>
                     </a>
-                    <a href="/validateur/history" class="nav-item">
+                    <a href="/validateur/history" class="nav-item active">
                         <i class="fas fa-history"></i>
                         <span>Historique des CRA</span>
                     </a>
@@ -70,15 +72,6 @@
                         <i class="fas fa-clock"></i>
                         <span id="current-time"></span>
                     </div>
-                    <div class="user-menu">
-                        <button class="user-menu-trigger">
-                            <div class="user-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <span class="user-name" id="headerUserName">Validateur</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
                 </div>
             </header>
 
@@ -92,9 +85,9 @@
                             <span id="craTitle">Compte Rendu d'Activité</span>
                         </h2>
                         <div class="cra-controls">
-                            <a href="/validateur/dashboard" class="btn btn-secondary">
+                            <a href="/validateur/history" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i>
-                                Retour au Dashboard
+                                Retour à la liste
                             </a>
                         </div>
                     </div>
@@ -115,7 +108,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <div class="cra-actions">
                         <button class="btn btn-secondary btn-lg" id="exportCRA">
                             <i class="fas fa-download"></i>
@@ -132,7 +125,42 @@
 
     <input type="hidden" id="csrf-token" value="">
 
-    <script src="/js/admin.js"></script>
+    <!-- Scripts -->
+    <script>
+        // Sidebar Toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggle = document.querySelector('.sidebar-toggle');
+            const sidebar = document.querySelector('.admin-sidebar');
+            if (toggle && sidebar) {
+                toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+            }
+        });
+
+        // Horloge
+        function updateTime() {
+            const el = document.getElementById('current-time');
+            if (el) el.textContent = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        }
+        setInterval(updateTime, 1000);
+
+        async function loadHeaderUser() {
+            try {
+                const res = await fetch('/account/me', { credentials: 'same-origin' });
+                const data = await res.json();
+                if (data && data.success && data.user) {
+                    const name = data.user.nom || data.user.name || 'Validateur';
+                    const el = document.getElementById('headerUserName');
+                    if (el) el.textContent = name;
+                }
+            } catch (e) { }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateTime();
+            loadHeaderUser();
+        });
+    </script>
     <script src="/js/voir-cra.js"></script>
 </body>
+
 </html>

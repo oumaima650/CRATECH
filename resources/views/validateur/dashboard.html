@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,21 +8,89 @@
     <title>CRATECH - Dashboard Validateur</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .users-table {
+            table-layout: auto !important;
+        }
+
+        .users-table th,
+        .users-table td {
+            text-align: left !important;
+            padding: 1.25rem !important;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+        }
+
+        .status-badge.warning {
+            background: rgba(245, 158, 11, 0.1) !important;
+            color: #d97706 !important;
+        }
+
+        .status-badge.success {
+            background: rgba(16, 185, 129, 0.1) !important;
+            color: #059669 !important;
+        }
+
+        .status-badge.danger {
+            background: rgba(239, 68, 68, 0.1) !important;
+            color: #dc2626 !important;
+        }
+
+        .btn-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--gray-200);
+            background: white;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-action:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-action.btn-validate:hover {
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .btn-action.btn-reject:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+    </style>
 </head>
+
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="logo-section">
-                    <div class="logo-icon">C</div>
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                     <span class="logo-text">CRATECH</span>
                 </div>
-                
+
             </div>
 
             <nav class="sidebar-nav">
@@ -59,7 +128,7 @@
         <main class="admin-main">
             <!-- Header -->
             <header class="admin-header">
-              <div class="header-left">
+                <div class="header-left">
                     <button class="sidebar-toggle">
                         <i class="fas fa-bars"></i>
                     </button>
@@ -70,15 +139,6 @@
                         <i class="fas fa-clock"></i>
                         <span id="current-time"></span>
                     </div>
-                    <div class="user-menu">
-                        <button class="user-menu-trigger">
-                            <div class="user-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <span class="user-name" id="headerUserName">Validateur</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
                 </div>
             </header>
 
@@ -86,88 +146,97 @@
             <div class="dashboard-content">
 
                 <!-- Stats Cards -->
-                <div class="stats-grid">
+                <div class="stats-grid" style="margin-bottom: 2rem;">
                     <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
+                        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);"><i
+                                class="fas fa-clock"></i></div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="statPending" data-target="0">0</h3>
-                            <p class="stat-label">En attente</p>
-                            <div class="stat-change negative">
-                                <i class="fas fa-arrow-down"></i>
-                                <span id="pendingTrend">Aujourd'hui</span>
-                            </div>
+                            <h3 class="stat-number" id="statPending">0</h3>
+                            <p class="stat-label">CRA en attente</p>
                         </div>
                     </div>
-
                     <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
+                        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);"><i
+                                class="fas fa-check-circle"></i></div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="statValidated" data-target="0">0</h3>
+                            <h3 class="stat-number" id="statValidated">0</h3>
                             <p class="stat-label">Validés ce mois</p>
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span id="validatedTrend">Ce mois</span>
-                            </div>
                         </div>
                     </div>
-
                     <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-times-circle"></i>
-                        </div>
+                        <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);"><i
+                                class="fas fa-times-circle"></i></div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="statRejected" data-target="0">0</h3>
+                            <h3 class="stat-number" id="statRejected">0</h3>
                             <p class="stat-label">Rejetés ce mois</p>
-                            <div class="stat-change negative">
-                                <i class="fas fa-arrow-down"></i>
-                                <span id="rejectedTrend">Ce mois</span>
-                            </div>
                         </div>
                     </div>
-
                     <div class="stat-card">
-                        <div class="stat-icon">
+                        <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--primary-blue);">
                             <i class="fas fa-users"></i>
                         </div>
                         <div class="stat-content">
-                            <h3 class="stat-number" id="statActiveUsers" data-target="0">0</h3>
+                            <h3 class="stat-number" id="statActiveUsers">0</h3>
                             <p class="stat-label">Utilisateurs actifs</p>
-                            <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span id="usersTrend">Affect��s</span>
-                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Pending Validations -->
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h2 class="card-title">
-                            <i class="fas fa-list-check"></i>
+                <div class="users-table-container">
+                    <div class="table-header" style="justify-content: space-between;">
+                        <h2 style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-clipboard-list" style="color: var(--primary-blue);"></i>
                             CRA en attente de validation
                         </h2>
-                        <button class="card-action" id="refreshBtn" title="Rafraîchir"><i class="fas fa-sync-alt"></i></button>
                     </div>
-                    <div class="card-content">
-                        <div class="cra-list-card" style="box-shadow:none;border:1px solid var(--gray-200);">
-                            <div class="cra-list" id="validationList">
-                                <div class="cra-item"><em>Chargement...</em></div>
-                            </div>
-                        </div>
+                    <div class="table-wrapper">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Collaborateur</th>
+                                    <th>Période</th>
+                                    <th>Soumission</th>
+                                    <th>Statut</th>
+                                    <th style="width: 154px; text-align: center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="validationList">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 3rem; color: var(--gray-400);">
+                                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                        <p style="margin-top: 1rem;">Chargement des CRA...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                
-                </div>
+
+            </div>
         </main>
     </div>
 
-    <script src="/js/admin.js"></script>
+    <!-- Scripts -->
+    <script>
+        // Sidebar Toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggle = document.querySelector('.sidebar-toggle');
+            const sidebar = document.querySelector('.admin-sidebar');
+            if (toggle && sidebar) {
+                toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+            }
+        });
+
+        // Horloge
+        function updateTime() {
+            const el = document.getElementById('current-time');
+            if (el) el.textContent = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        }
+        setInterval(updateTime, 1000);
+        document.addEventListener('DOMContentLoaded', updateTime);
+    </script>
     <script>
         // Utilitaires
         const state = { csrf: null };
@@ -204,7 +273,24 @@
                     const el = document.getElementById('headerUserName');
                     if (el) el.textContent = name;
                 }
-            } catch (e) {}
+            } catch (e) { }
+        }
+
+        function animateValue(el, target) {
+            if (!el) return;
+            const targetValue = parseInt(target) || 0;
+            const current = parseInt(el.textContent) || 0;
+            if (current === targetValue) { el.textContent = targetValue; return; }
+            const duration = 500;
+            const start = performance.now();
+            const step = (now) => {
+                const progress = Math.min((now - start) / duration, 1);
+                const val = Math.floor(progress * (targetValue - current) + current);
+                el.textContent = val;
+                if (progress < 1) requestAnimationFrame(step);
+                else el.textContent = targetValue;
+            };
+            requestAnimationFrame(step);
         }
 
         // Stats
@@ -220,51 +306,75 @@
                 const data = await res.json();
                 if (data && data.success) {
                     const s = data.stats || { pending: 0, validated_this_month: 0, rejected_this_month: 0, active_users: 0 };
-                    if (els.pending) els.pending.textContent = s.pending;
-                    if (els.validated) els.validated.textContent = s.validated_this_month;
-                    if (els.rejected) els.rejected.textContent = s.rejected_this_month;
-                    if (els.users) els.users.textContent = s.active_users;
+                    animateValue(els.pending, s.pending);
+                    animateValue(els.validated, s.validated_this_month);
+                    animateValue(els.rejected, s.rejected_this_month);
+                    animateValue(els.users, s.active_users);
                 }
             } catch (e) {
                 console.warn('Erreur stats', e);
             }
         }
 
-        // Liste des CRA en attente
         function renderPendingList(items) {
             const list = document.getElementById('validationList');
             if (!list) return;
             list.innerHTML = '';
             if (!items || items.length === 0) {
-                list.innerHTML = '<div class="cra-item"><em>Aucun CRA en attente</em></div>';
+                list.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 3rem; color: var(--gray-400);">Aucun CRA en attente</td></tr>';
                 return;
             }
             items.forEach(item => {
                 const monthDate = new Date(item.dateMois);
-                const monthIndex = monthDate.getMonth(); // 0-11
+                const monthIndex = monthDate.getMonth();
                 const year = monthDate.getFullYear();
-                const el = document.createElement('div');
-                el.className = 'cra-item';
-                el.innerHTML = `
-                    <div class="cra-info">
-                        <div class="cra-date">${formatMonthYear(item.dateMois)} - ${item.user?.nom_user || 'Utilisateur'}</div>
-                        <div class="cra-status">
-                            <span class="status-badge warning">En attente</span>
-                            <span class="submission-status submitted">Soumis le ${formatDateTime(item.submittedAT)}</span>
+                const userName = item.user?.nom_user || 'Utilisateur';
+                const userEmail = item.user?.email_user || '';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 40px; height: 40px; border-radius: 12px; background: var(--gray-100); color: var(--gray-500); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-weight: 600; color: var(--gray-900);">${userName}</span>
+                                <span style="font-size: 0.8rem; color: var(--gray-500);">${userEmail}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="cra-actions">
-                        <a href="/validateur/voir-cra.html?cra=${item.cra_id}&month=${monthIndex}&year=${year}" class="btn btn-secondary btn-small">
-                            <i class="fas fa-eye"></i> Voir
-                        </a>
-                        <button class="btn btn-primary btn-small action-validate" data-id="${item.cra_id}">
-                            <i class="fas fa-check"></i> Valider
-                        </button>
-                        <button class="btn btn-danger btn-small action-reject" data-id="${item.cra_id}">
-                            <i class="fas fa-times"></i> Rejeter
-                        </button>
-                    </div>`;
-                list.appendChild(el);
+                    </td>
+                    <td>
+                        <div style="font-weight: 500; color: var(--gray-700);">${formatMonthYear(item.dateMois)}</div>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.85rem; color: var(--gray-600);">
+                            <i class="far fa-paper-plane" style="margin-right: 0.5rem; color: var(--primary-blue);"></i>
+                            ${formatDateTime(item.submittedAT)}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge warning">
+                            <i class="fas fa-clock"></i>
+                            En attente
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 8px; justify-content: center;">
+                            <a href="/validateur/voir-cra.html?cra=${item.cra_id}&month=${monthIndex}&year=${year}" 
+                               class="btn-action" title="Voir les détails">
+                                <i class="fas fa-eye" style="color: var(--primary-blue);"></i>
+                            </a>
+                            <button class="btn-action btn-validate action-validate" data-id="${item.cra_id}" title="Valider">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn-action btn-reject action-reject" data-id="${item.cra_id}" title="Rejeter">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                list.appendChild(tr);
             });
         }
 
@@ -284,7 +394,7 @@
         }
 
         // Actions valider / rejeter (délégation)
-        document.addEventListener('click', async function(e) {
+        document.addEventListener('click', async function (e) {
             const validateBtn = e.target.closest && e.target.closest('.action-validate');
             const rejectBtn = e.target.closest && e.target.closest('.action-reject');
             if (!validateBtn && !rejectBtn) return;
@@ -315,113 +425,13 @@
             }
         });
 
-        // Refresh bouton
-        document.addEventListener('DOMContentLoaded', function() {
-            const btn = document.getElementById('refreshBtn');
-            if (btn) btn.addEventListener('click', async function() {
-                btn.classList.add('spinning');
-                await Promise.all([loadStats(), loadPending()]);
-                setTimeout(() => btn.classList.remove('spinning'), 300);
-            });
-        });
-
-        function renderHistory(items){
-            const body = document.getElementById('historyTableBody');
-            if (!body) return;
-            body.innerHTML = '';
-            if (!items || items.length === 0) {
-                body.innerHTML = '<tr><td colspan="5"><em>Aucun historique</em></td></tr>';
-                return;
-            }
-            items.forEach(row => {
-                const d = new Date(row.dateMois);
-                const monthStr = d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
-                const actionAt = row.actionAt ? new Date(row.actionAt).toLocaleString('fr-FR') : '';
-                const badge = row.status === 'valide' ? 'success' : 'danger';
-                const label = row.status === 'valide' ? 'Validé' : 'Refusé';
-                const monthIndex = d.getMonth();
-                const year = d.getFullYear();
-                body.innerHTML += `
-                    <tr>
-                        <td>${row.user?.nom_user || ''}</td>
-                        <td>${monthStr}</td>
-                        <td><span class="status-badge ${badge}">${label}</span></td>
-                        <td>${actionAt}</td>
-                        <td>
-                            <a class="btn btn-secondary btn-small" href="/validateur/voir-cra.html?cra=${row.cra_id}&month=${monthIndex}&year=${year}">
-                                <i class="fas fa-eye"></i>
-                                Voir
-                            </a>
-                        </td>
-                    </tr>`;
-            });
-        }
-
-        async function loadHistory(){
-            try {
-                const res = await fetch('/validateur/api/history', { credentials: 'same-origin' });
-                const payload = await res.json();
-                renderHistory(payload && payload.success ? payload.history : []);
-            } catch (e) {
-                renderHistory([]);
-            }
-        }
-
-        function renderAssigned(items){
-            const body = document.getElementById('assignedTableBody');
-            if (!body) return;
-            body.innerHTML = '';
-            if (!items || items.length === 0) {
-                body.innerHTML = '<tr><td colspan="5"><em>Aucun utilisateur assigné</em></td></tr>';
-                return;
-            }
-            items.forEach(u => {
-                const statusBadge = u.status === 'actif' ? 'success' : 'warning';
-                const createdAt = u.created_at ? new Date(u.created_at).toLocaleDateString('fr-FR') : '';
-                body.innerHTML += `
-                    <tr>
-                        <td>${u.nom_user}</td>
-                        <td>${u.email_user || ''}</td>
-                        <td><span class="status-badge ${statusBadge}">${u.status}</span></td>
-                        <td>${u.pending || 0}</td>
-                        <td>${createdAt}</td>
-                    </tr>`;
-            });
-        }
-
-        async function loadAssigned(){
-            try {
-                const res = await fetch('/validateur/api/assigned-users', { credentials: 'same-origin' });
-                const payload = await res.json();
-                renderAssigned(payload && payload.success ? payload.users : []);
-            } catch (e) {
-                renderAssigned([]);
-            }
-        }
-
-        // Refresh boutons secondaires
-        document.addEventListener('DOMContentLoaded', function(){
-            const h = document.getElementById('refreshHistory');
-            const a = document.getElementById('refreshAssigned');
-            if (h) h.addEventListener('click', async function(){
-                h.classList.add('spinning');
-                await loadHistory();
-                setTimeout(()=>h.classList.remove('spinning'), 300);
-            });
-            if (a) a.addEventListener('click', async function(){
-                a.classList.add('spinning');
-                await loadAssigned();
-                setTimeout(()=>a.classList.remove('spinning'), 300);
-            });
-        });
 
         // Boot
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             await loadHeaderUser();
-            await Promise.all([loadStats(), loadPending(), loadHistory(), loadAssigned()]);
+            await Promise.all([loadStats(), loadPending()]);
         });
-
-        // Exemple d'actions (legacy demo remplacé par API)
     </script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,19 +9,21 @@
     <title>CRATECH - Gestion des Activités</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
-         <!-- Sidebar -->
+        <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="logo-section">
-                    <div class="logo-icon">C</div>
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                     <span class="logo-text">CRATECH</span>
                 </div>
                 <div class="admin-badge">
@@ -80,7 +83,7 @@
                     <h1 class="page-title">Gestion des Activités</h1>
                 </div>
                 <div class="header-right">
-                    
+
                     <div class="current-time">
                         <i class="fas fa-clock"></i>
                         <span id="current-time"></span>
@@ -100,7 +103,7 @@
                             <h3 class="stat-number" id="totalActivities" data-target="0">0</h3>
                             <p class="stat-label">Total Activités</p>
                             <div class="stat-change positive">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -112,7 +115,7 @@
                             <h3 class="stat-number" id="activeActivities" data-target="0">0</h3>
                             <p class="stat-label">Actives</p>
                             <div class="stat-change positive">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -123,47 +126,42 @@
                         <div class="stat-content">
                             <h3 class="stat-number" id="inactiveActivities" data-target="0">0</h3>
                             <p class="stat-label">Inactives</p>
-                            
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 class="stat-number" id="assignedUsers" data-target="0">0</h3>
-                            <p class="stat-label">Assignations</p>
-                            
+
                         </div>
                     </div>
                 </div>
 
                 <!-- Filters and Actions -->
-                <div class="filters-section">
-                    <div class="filters-left">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchInput" placeholder="Rechercher une activité...">
+                <div class="filters-section"
+                    style="background: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--gray-100); margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+
+                    <div class="filters-left" style="display: flex; gap: 1rem; align-items: center; flex: 1;">
+                        <div class="search-box" style="position: relative; flex: 1; max-width: 300px;">
+                            <i class="fas fa-search"
+                                style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray-400);"></i>
+                            <input type="text" id="searchInput" placeholder="Rechercher une activité..."
+                                style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.8rem; border: 1px solid var(--gray-200); border-radius: 12px; font-size: 0.95rem; outline: none; transition: border-color 0.2s;">
                         </div>
-                        <div class="filter-dropdown">
-                            <select id="statusFilter">
-                                <option value="">Tous les statuts</option>
-                                <option value="actif">Actives</option>
-                                <option value="inactif">Inactives</option>
-                            </select>
-                        </div>
-                        <div class="filter-dropdown">
-                            <select id="sortBy">
-                                <option value="nom_act">Trier par nom</option>
-                                <option value="created_at">Trier par date</option>
-                                <option value="status">Trier par statut</option>
-                            </select>
-                        </div>
+
+                        <select id="statusFilter"
+                            style="padding: 0.75rem 1.5rem; border: 1px solid var(--gray-200); border-radius: 12px; background: white; cursor: pointer; color: var(--gray-700);">
+                            <option value="">Tous les statuts</option>
+                            <option value="actif">Actives</option>
+                            <option value="inactif">Inactives</option>
+                        </select>
+
+                        <select id="sortBy"
+                            style="padding: 0.75rem 1.5rem; border: 1px solid var(--gray-200); border-radius: 12px; background: white; cursor: pointer; color: var(--gray-700);">
+                            <option value="nom_act">Trier par nom</option>
+                            <option value="created_at">Trier par date</option>
+                            <option value="status">Trier par statut</option>
+                        </select>
                     </div>
-                    <div class="filters-right">
-                        <button class="btn btn-primary" onclick="window.location.href='/admin/activities/create.html'">
-                            <i class="fas fa-plus"></i>
-                            Ajouter une Activité
+
+                    <div class="filters-right" style="display: flex; gap: 1rem;">
+                        <button class="btn btn-primary" onclick="openCreateActivityModal()">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Nouvelle Activité</span>
                         </button>
                     </div>
                 </div>
@@ -173,11 +171,6 @@
                     <div class="table-header">
                         <h2>Liste des Activités</h2>
                         <div class="table-actions">
-                            <button class="btn btn-secondary" id="refreshBtn">
-                                <i class="fas fa-sync-alt"></i>
-                                Actualiser
-                            </button>
-                           
                         </div>
                     </div>
 
@@ -185,10 +178,6 @@
                         <table class="users-table">
                             <thead>
                                 <tr>
-                                    <th>
-                                        <input type="checkbox" id="selectAll">
-                                    </th>
-                                    <th>ID</th>
                                     <th>Nom</th>
                                     <th>Description</th>
                                     <th>Statut</th>
@@ -226,7 +215,8 @@
     <div class="modal" id="deleteActivityModal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-exclamation-triangle" style="color: #EF4444; margin-right: 0.5rem;"></i>Supprimer l'activité</h3>
+                <h3><i class="fas fa-exclamation-triangle" style="color: #EF4444; margin-right: 0.5rem;"></i>Supprimer
+                    l'activité</h3>
                 <button class="modal-close" onclick="closeDeleteActivityModal()">
                     <i class="fas fa-times"></i>
                 </button>
@@ -241,7 +231,8 @@
                         <p id="deleteActivityName" class="user-to-delete"></p>
                         <div class="warning-message">
                             <i class="fas fa-exclamation-circle"></i>
-                            Cette action est <strong>irréversible</strong>. Toutes les données associées à cette activité seront définitivement perdues.
+                            Cette action est <strong>irréversible</strong>. Toutes les données associées à cette
+                            activité seront définitivement perdues.
                         </div>
                     </div>
                 </div>
@@ -255,11 +246,61 @@
         </div>
     </div>
 
+    <!-- Modal de création d'activité -->
+    <div class="modal" id="createActivityModal" style="display: none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-tasks" style="margin-right:0.5rem;"></i>Nouvelle Activité</h3>
+                <button class="modal-close" onclick="closeCreateActivityModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createActivityForm" class="form-grid"
+                    style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+                    <div class="form-row" style="grid-column:span 1;">
+                        <label for="nom_act" style="font-weight:600;color:var(--gray-800);">Nom de l'activité</label>
+                        <div style="position:relative;">
+                            <i class="fas fa-tag"
+                                style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--gray-400);"></i>
+                            <input class="form-input" style="padding-left:2.5rem;" type="text" id="nom_act"
+                                name="nom_act" placeholder="Ex: Développement Web..." required>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="grid-column:span 1;">
+                        <label for="status" style="font-weight:600;color:var(--gray-800);">Statut</label>
+                        <select id="status" name="status" class="form-select" required>
+                            <option value="actif" selected>Actif</option>
+                            <option value="inactif">Inactif</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row" style="grid-column:span 2;">
+                        <label for="description" style="font-weight:600;color:var(--gray-800);">Description</label>
+                        <textarea id="description" name="description" class="form-input" rows="4"
+                            placeholder="Description de l'activité..."></textarea>
+                    </div>
+
+                    <div class="modal-footer"
+                        style="grid-column:span 2; padding: 0; background: none; border: none; margin-top: 1rem; display: flex; justify-content: flex-end; gap: 1rem;">
+                        <button type="button" class="btn btn-secondary"
+                            onclick="closeCreateActivityModal()">Annuler</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check"></i> Créer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de confirmation de changement de statut -->
     <div class="modal" id="statusChangeModal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="statusChangeTitle"><i class="fas fa-exchange-alt" style="color: #F59E0B; margin-right: 0.5rem;"></i>Changer le statut</h3>
+                <h3 id="statusChangeTitle"><i class="fas fa-exchange-alt"
+                        style="color: #F59E0B; margin-right: 0.5rem;"></i>Changer le statut</h3>
                 <button class="modal-close" onclick="closeStatusChangeModal()">
                     <i class="fas fa-times"></i>
                 </button>
@@ -291,4 +332,5 @@
     <script src="/js/admin.js"></script>
     <script src="/js/activities.js"></script>
 </body>
+
 </html>

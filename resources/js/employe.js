@@ -47,7 +47,7 @@ class CRAManager {
 
     async loadUserInfo() {
         try {
-            const response = await fetch('/employe/user-info', { 
+            const response = await fetch('/employe/user-info', {
                 credentials: 'same-origin',
                 headers: {
                     'Accept': 'application/json',
@@ -55,14 +55,14 @@ class CRAManager {
                 }
             });
             const data = await response.json();
-            
+
             if (response.ok && data.user) {
                 const userName = data.user.nom || data.user.name || 'Employé';
                 this.userId = data.user.id_user || data.user.id;
-                
+
                 const userNameElement = document.getElementById('userName');
                 const headerUserNameElement = document.getElementById('headerUserName');
-                
+
                 if (userNameElement) {
                     userNameElement.textContent = userName;
                 }
@@ -82,16 +82,16 @@ class CRAManager {
         this.yearSelect.addEventListener('change', () => this.onDateChange());
         this.submitCRABtn.addEventListener('click', () => this.submitCRA());
         this.exportCRABtn.addEventListener('click', () => this.exportCRA());
-        
+
         // Navigation events - removed since using separate pages now
-        
+
         // Modal event listeners
         this.setupModalListeners();
     }
 
     setupModalListeners() {
         const valueOptions = this.dayValueModal.querySelectorAll('.value-option-compact');
-        
+
         this.dayValueModal.addEventListener('click', (e) => {
             if (e.target === this.dayValueModal) {
                 this.closeModal();
@@ -142,7 +142,7 @@ class CRAManager {
             'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
             'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
         ];
-        
+
         this.monthSelect.innerHTML = '';
         monthNames.forEach((monthName, index) => {
             const option = document.createElement('option');
@@ -151,12 +151,12 @@ class CRAManager {
             if (index === this.currentMonth) option.selected = true;
             this.monthSelect.appendChild(option);
         });
-        
+
         // Update year selector with extended range
         this.yearSelect.innerHTML = '';
         const startYear = 2020;
         const endYear = new Date().getFullYear() + 5;
-        
+
         for (let year = startYear; year <= endYear; year++) {
             const option = document.createElement('option');
             option.value = year;
@@ -170,7 +170,7 @@ class CRAManager {
         try {
             const response = await fetch('/employe/activities', { credentials: 'same-origin' });
             const data = await response.json();
-            
+
             if (response.ok && data.activities) {
                 this.projects = data.activities.map(activity => ({
                     id: activity.id_activité,
@@ -190,39 +190,39 @@ class CRAManager {
 
     buildCRATable() {
         const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
-        
+
         // Build header
         this.buildTableHeader(daysInMonth);
-        
+
         // Build body
         this.buildTableBody(daysInMonth);
-        
+
         // Load existing data
         this.loadCRAData();
     }
 
     buildTableHeader(daysInMonth) {
         let headerHTML = '<th class="project-header">Projet</th>';
-        
+
         for (let day = 1; day <= daysInMonth; day++) {
             const date = new Date(this.currentYear, this.currentMonth, day);
             const isWeekend = date.getDay() === 0 || date.getDay() === 6;
             const weekendClass = isWeekend ? ' weekend' : '';
-            
+
             headerHTML += `<th class="day-header${weekendClass}">${day}</th>`;
         }
-        
+
         headerHTML += '<th class="total-header">Total</th>';
         this.craTableHeader.innerHTML = headerHTML;
     }
 
     buildTableBody(daysInMonth) {
         let bodyHTML = '';
-        
+
         this.projects.forEach(project => {
             bodyHTML += `<tr data-project-id="${project.id}">`;
             bodyHTML += `<td class="project-cell">${project.name}</td>`;
-            
+
             let rowTotal = 0;
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = new Date(this.currentYear, this.currentMonth, day);
@@ -230,7 +230,7 @@ class CRAManager {
                 const weekendClass = isWeekend ? ' weekend' : '';
                 const dateKey = this.formatDate(this.currentYear, this.currentMonth + 1, day);
                 const cellKey = `${project.id}_${dateKey}`;
-                
+
                 bodyHTML += `<td>
                     <div class="day-cell zero${weekendClass}" 
                          data-project-id="${project.id}" 
@@ -238,13 +238,13 @@ class CRAManager {
                          data-day="${day}">0</div>
                 </td>`;
             }
-            
+
             bodyHTML += `<td class="total-cell" data-project-id="${project.id}">0</td>`;
             bodyHTML += '</tr>';
         });
-        
+
         this.craTableBody.innerHTML = bodyHTML;
-        
+
         // Add click listeners to cells
         this.addCellListeners();
     }
@@ -261,15 +261,15 @@ class CRAManager {
     openModal(cell) {
         this.currentCell = cell;
         console.log('Opening modal for cell:', cell);
-        
+
         const modal = this.dayValueModal;
         console.log('Modal element:', modal);
-        
+
         if (!modal) {
             console.error('Modal not found!');
             return;
         }
-        
+
         // Affichage simple pour test
         modal.style.display = 'flex';
         modal.style.position = 'fixed';
@@ -278,15 +278,15 @@ class CRAManager {
         modal.style.transform = 'translate(-50%, -50%)';
         modal.style.zIndex = '10000';
         modal.style.background = 'rgba(0, 0, 0, 0.5)';
-        
+
         console.log('Modal should be visible now');
     }
 
     closeModal() {
         const modal = this.dayValueModal;
-        
+
         modal.style.display = 'none';
-        
+
         // Reset all styles
         modal.style.position = '';
         modal.style.top = '';
@@ -294,27 +294,27 @@ class CRAManager {
         modal.style.transform = '';
         modal.style.zIndex = '';
         modal.style.background = '';
-        
+
         this.currentCell = null;
     }
 
     applyValueToCell(value) {
         if (!this.currentCell) return;
-        
+
         const projectId = this.currentCell.dataset.projectId;
         const date = this.currentCell.dataset.date;
-        
+
         // Update cell
         this.currentCell.textContent = value;
         this.currentCell.className = `day-cell ${this.getValueClass(value)}`;
-        
+
         // Store in data
         const key = `${projectId}_${date}`;
         this.craData[key] = value;
-        
+
         // Update row total
         this.updateRowTotal(projectId);
-        
+
         // Auto-save if enabled
         if (this.autoSaveEnabled) {
             this.autoSave();
@@ -338,17 +338,17 @@ class CRAManager {
                 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
                 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
             ];
-            
+
             const userIdSuffix = this.userId ? `_User${this.userId}` : '';
             const excelFileName = `CRA_${monthNames[this.currentMonth]}_${this.currentYear}${userIdSuffix}.xls`;
-            
+
             const payload = {
                 year: this.currentYear,
                 month: this.currentMonth + 1,
                 status: 'en_attente',
                 excel_path: excelFileName
             };
-            
+
             const response = await fetch('/employe/cra/create', {
                 method: 'POST',
                 headers: {
@@ -358,9 +358,9 @@ class CRAManager {
                 credentials: 'same-origin',
                 body: JSON.stringify(payload)
             });
-            
+
             const result = await response.json();
-            
+
             if (response.ok) {
                 this.currentCRAId = result.cra_id;
             }
@@ -371,13 +371,13 @@ class CRAManager {
 
     async autoSave() {
         if (!this.currentCRAId) return;
-        
+
         try {
             const payload = {
                 cra_id: this.currentCRAId,
                 data: this.craData
             };
-            
+
             await fetch('/employe/cra/autosave', {
                 method: 'POST',
                 headers: {
@@ -405,11 +405,11 @@ class CRAManager {
         const row = this.craTableBody.querySelector(`tr[data-project-id="${projectId}"]`);
         const cells = row.querySelectorAll('.day-cell');
         let total = 0;
-        
+
         cells.forEach(cell => {
             total += parseFloat(cell.textContent) || 0;
         });
-        
+
         const totalCell = row.querySelector('.total-cell');
         totalCell.textContent = total.toFixed(1);
     }
@@ -429,7 +429,7 @@ class CRAManager {
             this.currentMonth = 0;
             this.currentYear++;
         }
-        
+
         this.updateSelectors();
         this.buildCRATable();
     }
@@ -445,7 +445,7 @@ class CRAManager {
             const response = await fetch(`/employe/cra/load?year=${this.currentYear}&month=${this.currentMonth + 1}`, {
                 credentials: 'same-origin'
             });
-            
+
             if (response.ok) {
                 const data = await response.json();
                 this.applyCRAData(data);
@@ -462,14 +462,14 @@ class CRAManager {
             const cell = this.craTableBody.querySelector(
                 `.day-cell[data-project-id="${projectId}"][data-date="${date}"]`
             );
-            
+
             if (cell) {
                 cell.textContent = value;
                 cell.className = `day-cell ${this.getValueClass(value)}`;
                 this.craData[key] = value;
             }
         });
-        
+
         // Update all row totals
         this.projects.forEach(project => {
             this.updateRowTotal(project.id);
@@ -481,7 +481,7 @@ class CRAManager {
             if (!this.currentCRAId) {
                 await this.createCRA();
             }
-            
+
             const payload = {
                 cra_id: this.currentCRAId,
                 year: this.currentYear,
@@ -489,7 +489,7 @@ class CRAManager {
                 data: this.craData,
                 status: 'en_attente'
             };
-            
+
             const response = await fetch('/employe/cra/save', {
                 method: 'POST',
                 headers: {
@@ -499,9 +499,9 @@ class CRAManager {
                 credentials: 'same-origin',
                 body: JSON.stringify(payload)
             });
-            
+
             const result = await response.json();
-            
+
             if (response.ok) {
                 this.showNotification('CRA sauvegardé avec succès!', 'success');
             } else {
@@ -523,11 +523,11 @@ class CRAManager {
                 this.showNotification('Impossible de déterminer le CRA à soumettre', 'error');
                 return;
             }
-            
+
             const payload = {
                 cra_id: this.currentCRAId
             };
-            
+
             const response = await fetch('/employe/cra/submit', {
                 method: 'POST',
                 headers: {
@@ -537,9 +537,9 @@ class CRAManager {
                 credentials: 'same-origin',
                 body: JSON.stringify(payload)
             });
-            
+
             const result = await response.json();
-            
+
             if (response.ok) {
                 this.showNotification('CRA soumis avec succès!', 'success');
                 this.submitCRABtn.disabled = true;
@@ -568,15 +568,26 @@ class CRAManager {
 
     async checkSubmissionStatus() {
         try {
-            const resp = await fetch(`/employe/cra/status?year=${this.currentYear}&month=${this.currentMonth + 1}` , { credentials: 'same-origin' });
+            const resp = await fetch(`/employe/cra/status?year=${this.currentYear}&month=${this.currentMonth + 1}`, { credentials: 'same-origin' });
             const st = await resp.json();
             if (resp.ok && st.success) {
                 if (st.submitted) {
-                    // Verrouiller l'édition du mois courant et afficher un message discret
+                    // Verrouiller l'édition du mois courant
                     this.lockEditing();
+
+                    // Masquer le bouton de soumission s'il est déjà soumis
+                    if (this.submitCRABtn) {
+                        this.submitCRABtn.style.display = 'none';
+                    }
+
                     this.showNotification('Ce CRA est déjà soumis ! Aucune modification ne sera prise en considération', 'info');
                 } else {
                     this.unlockEditing();
+
+                    // Réafficher le bouton de soumission s'il n'est pas encore soumis
+                    if (this.submitCRABtn) {
+                        this.submitCRABtn.style.display = 'flex';
+                    }
                 }
             }
         } catch (e) {
@@ -599,10 +610,10 @@ class CRAManager {
             'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
             'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
         ];
-        
+
         const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
         const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
-        
+
         // Create HTML table for better Excel formatting
         let htmlContent = `
 <!DOCTYPE html>
@@ -625,7 +636,7 @@ class CRAManager {
         <thead>
             <tr class="header">
                 <th rowspan="2">Projet</th>`;
-        
+
         // Add day names header
         for (let day = 1; day <= daysInMonth; day++) {
             const date = new Date(this.currentYear, this.currentMonth, day);
@@ -635,7 +646,7 @@ class CRAManager {
             htmlContent += `<th class="header${weekendClass}">${dayName}</th>`;
         }
         htmlContent += `<th class="header" rowspan="2">Total</th></tr>`;
-        
+
         // Add day numbers header
         htmlContent += `<tr class="header">`;
         for (let day = 1; day <= daysInMonth; day++) {
@@ -645,12 +656,12 @@ class CRAManager {
             htmlContent += `<th class="header${weekendClass}">${day}</th>`;
         }
         htmlContent += `</tr></thead><tbody>`;
-        
+
         // Data rows for each project
         this.projects.forEach(project => {
             htmlContent += `<tr><td class="project">${project.name}</td>`;
             let total = 0;
-            
+
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = new Date(this.currentYear, this.currentMonth, day);
                 const isWeekend = date.getDay() === 0 || date.getDay() === 6;
@@ -661,10 +672,10 @@ class CRAManager {
                 htmlContent += `<td class="${weekendClass}">${value}</td>`;
                 total += parseFloat(value);
             }
-            
+
             htmlContent += `<td class="total">${total.toFixed(1)}</td></tr>`;
         });
-        
+
         // Add summary row
         htmlContent += `<tr><td class="grand-total">TOTAL GÉNÉRAL</td>`;
         let grandTotal = 0;
@@ -683,12 +694,12 @@ class CRAManager {
             grandTotal += dayTotal;
         }
         htmlContent += `<td class="grand-total">${grandTotal.toFixed(1)}</td></tr>`;
-        
+
         htmlContent += `</tbody></table>
     <br><p><strong>Total Requis: ${grandTotal.toFixed(1)}</strong></p>
 </body>
 </html>`;
-        
+
         const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel;charset=utf-8;' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -706,7 +717,7 @@ class CRAManager {
         this.showCRADashboard();
         this.loadCRAData();
     }
-    
+
     editCRA(craId, month, year) {
         this.viewCRA(craId, month, year);
     }
@@ -721,7 +732,7 @@ class CRAManager {
         // Generate rows for each activity
         this.activities.forEach(activity => {
             const row = document.createElement('tr');
-            
+
             // Activity name cell
             const activityCell = document.createElement('td');
             activityCell.className = 'project-cell';
@@ -732,11 +743,11 @@ class CRAManager {
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayCell = document.createElement('td');
                 dayCell.className = 'day-cell';
-                
+
                 // Check if weekend
                 const date = new Date(this.currentYear, this.currentMonth, day);
                 const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-                
+
                 if (isWeekend) {
                     dayCell.classList.add('weekend');
                     dayCell.textContent = '0';
@@ -744,13 +755,13 @@ class CRAManager {
                     dayCell.classList.add('zero');
                     dayCell.textContent = '0';
                 }
-                
+
                 // Allow clicking on all days (including weekends)
                 dayCell.addEventListener('click', () => this.openModal(dayCell, activity.id_activité, day));
-                
+
                 row.appendChild(dayCell);
             }
-            
+
             tbody.appendChild(row);
         });
     }
@@ -771,7 +782,7 @@ class CRAManager {
             z-index: 1000;
             animation: slideIn 0.3s ease;
         `;
-        
+
         if (type === 'success') {
             notification.style.background = 'var(--success)';
         } else if (type === 'error') {
@@ -779,9 +790,9 @@ class CRAManager {
         } else {
             notification.style.background = 'var(--primary-blue)';
         }
-        
+
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
             notification.remove();
         }, 3000);

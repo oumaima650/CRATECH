@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,144 +8,275 @@
     <title>CRATECH - Historique des CRA (Validateur)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-<body>
-<div class="admin-container">
-    <!-- Sidebar -->
-    <aside class="admin-sidebar">
-        <div class="sidebar-header">
-            <div class="logo-section">
-                <div class="logo-icon">C</div>
-                <span class="logo-text">CRATECH</span>
-            </div>
-            
-        </div>
-        <nav class="sidebar-nav">
-            <div class="nav-section">
-                <h3 class="nav-section-title">Mon Espace</h3>
-                <a href="/validateur/dashboard" class="nav-item">
-                    <i class="fas fa-clipboard-check"></i>
-                    <span>Validation des CRA</span>
-                </a>
-                <a href="/validateur/history" class="nav-item active">
-                    <i class="fas fa-history"></i>
-                    <span>Historique des CRA</span>
-                </a>
-                <a href="/validateur/assigned" class="nav-item">
-                    <i class="fas fa-users"></i>
-                    <span>Utilisateurs assignés</span>
-                </a>
-            </div>
-            <div class="nav-section">
-                <h3 class="nav-section-title">Compte</h3>
-                <a href="/validateur/account.html" class="nav-item">
-                    <i class="fas fa-user-cog"></i>
-                    <span>Mon Compte</span>
-                </a>
-                <a href="/logout" class="nav-item">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Déconnexion</span>
-                </a>
-            </div>
-        </nav>
-    </aside>
+    <style>
+        .users-table th,
+        .users-table td {
+            text-align: left !important;
+            padding: 1.25rem !important;
+        }
 
-    <!-- Main Content -->
-    <main class="admin-main">
-        <header class="admin-header">
-          <div class="header-left">
+        .status-badge {
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+        }
+
+        .status-badge.success {
+            background: rgba(16, 185, 129, 0.1) !important;
+            color: #059669 !important;
+        }
+
+        .status-badge.danger {
+            background: rgba(239, 68, 68, 0.1) !important;
+            color: #dc2626 !important;
+        }
+
+        .btn-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--gray-200);
+            background: white;
+            transition: all 0.2s;
+            cursor: pointer;
+            color: var(--primary-blue);
+        }
+
+        .btn-action:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-section">
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
+                    <span class="logo-text">CRATECH</span>
+                </div>
+
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Mon Espace</h3>
+                    <a href="/validateur/dashboard" class="nav-item">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Validation des CRA</span>
+                    </a>
+                    <a href="/validateur/history" class="nav-item active">
+                        <i class="fas fa-history"></i>
+                        <span>Historique des CRA</span>
+                    </a>
+                    <a href="/validateur/assigned" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs assignés</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Compte</h3>
+                    <a href="/validateur/account.html" class="nav-item">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Mon Compte</span>
+                    </a>
+                    <a href="/logout" class="nav-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
                     <button class="sidebar-toggle">
                         <i class="fas fa-bars"></i>
                     </button>
                     <h1 class="page-title">Historique de validation </h1>
                 </div>
-            <div class="header-right">
-                <div class="current-time"><i class="fas fa-clock"></i><span id="current-time"></span></div>
-                <div class="user-menu">
-                    <button class="user-menu-trigger">
-                        <div class="user-avatar"><i class="fas fa-user"></i></div>
-                        <span class="user-name" id="headerUserName">Validateur</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
+                <div class="header-right">
+                    <div class="current-time">
+                        <i class="fas fa-clock"></i>
+                        <span id="current-time"></span>
+                    </div>
                 </div>
-            </div>
-        </header>
+            </header>
 
-        <div class="dashboard-content">
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-list"></i> Historique des CRA validés/refusés</h2>
-                    <button class="card-action" id="refreshHistory" title="Rafraîchir"><i class="fas fa-sync-alt"></i></button>
-                </div>
-                <div class="card-content">
-                    <div class="table-responsive">
-                        <table class="table">
+            <div class="dashboard-content">
+                <div class="users-table-container">
+                    <div class="table-header" style="justify-content: space-between;">
+                        <h2 style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-history" style="color: var(--primary-blue);"></i>
+                            Historique des CRA validés/refusés
+                        </h2>
+                        
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="users-table">
                             <thead>
-                            <tr>
-                                <th>Utilisateur</th>
-                                <th>Mois</th>
-                                <th>Statut</th>
-                                <th>Action le</th>
-                                <th></th>
-                            </tr>
+                                <tr>
+                                    <th>Collaborateur</th>
+                                    <th>Période</th>
+                                    <th>Statut</th>
+                                    <th>Date d'action</th>
+                                    <th style="width: 80px; text-align: center;">Détails</th>
+                                </tr>
                             </thead>
                             <tbody id="historyTableBody">
-                            <tr><td colspan="5"><em>Chargement...</em></td></tr>
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 3rem; color: var(--gray-400);">
+                                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                        <p style="margin-top: 1rem;">Chargement de l'historique...</p>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
-</div>
+        </main>
+    </div>
 
-<script src="/js/admin.js"></script>
-<script>
-    function updateTime(){
-        const el = document.getElementById('current-time');
-        if (el) el.textContent = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-    }
-    setInterval(updateTime, 1000); document.addEventListener('DOMContentLoaded', updateTime);
+    <!-- Scripts -->
+    <script>
+        // Utilities & State
+        function updateTime() {
+            const el = document.getElementById('current-time');
+            if (el) el.textContent = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        }
 
-    async function loadHeaderUser(){
-        try { const res = await fetch('/account/me',{credentials:'same-origin'}); const data=await res.json(); if(data&&data.success&&data.user){ const n=data.user.nom||data.user.name||'Validateur'; const el=document.getElementById('headerUserName'); if(el) el.textContent=n; } } catch(e){}
-    }
+        async function loadHeaderUser() {
+            try {
+                const res = await fetch('/account/me', { credentials: 'same-origin' });
+                const data = await res.json();
+                if (data && data.success && data.user) {
+                    const n = data.user.nom || data.user.name || 'Validateur';
+                    const el = document.getElementById('headerUserName');
+                    if (el) el.textContent = n;
+                }
+            } catch (e) { }
+        }
 
-    function renderHistory(items){
-        const body = document.getElementById('historyTableBody');
-        if (!body) return; body.innerHTML = '';
-        if (!items || items.length=== 0){ body.innerHTML = '<tr><td colspan="5"><em>Aucun historique</em></td></tr>'; return; }
-        items.forEach(row=>{
-            const d=new Date(row.dateMois); const monthStr=d.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
-            const actionAt=row.actionAt? new Date(row.actionAt).toLocaleString('fr-FR'):'';
-            const badge=row.status==='valide'?'success':'danger'; const label=row.status==='valide'?'Validé':'Refusé';
-            const monthIndex=d.getMonth(); const year=d.getFullYear();
-            body.innerHTML += `
-                <tr>
-                    <td>${row.user?.nom_user||''}</td>
-                    <td>${monthStr}</td>
-                    <td><span class="status-badge ${badge}">${label}</span></td>
-                    <td>${actionAt}</td>
-                    <td><a class="btn btn-secondary btn-small" href="/validateur/voir-cra.html?cra=${row.cra_id}&month=${monthIndex}&year=${year}"><i class="fas fa-eye"></i> Voir</a></td>
-                </tr>`;
+        // UI Rendering
+        function renderHistory(items) {
+            const body = document.getElementById('historyTableBody');
+            if (!body) return;
+            body.innerHTML = '';
+
+            if (!items || items.length === 0) {
+                body.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 3rem; color: var(--gray-400);">Aucun historique trouvé</td></tr>';
+                return;
+            }
+
+            items.forEach(row => {
+                const d = new Date(row.dateMois);
+                const monthStr = d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+                const actionAt = row.actionAt ? new Date(row.actionAt).toLocaleString('fr-FR') : '---';
+                const badgeClass = row.status === 'valide' ? 'success' : 'danger';
+                const label = row.status === 'valide' ? 'Validé' : 'Refusé';
+                const icon = row.status === 'valide' ? 'fa-check-circle' : 'fa-times-circle';
+                const monthIndex = d.getMonth();
+                const year = d.getFullYear();
+                const userName = row.user?.nom_user || 'Utilisateur';
+                const userEmail = row.user?.email_user || '';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 40px; height: 40px; border-radius: 12px; background: var(--gray-100); color: var(--gray-500); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-weight: 600; color: var(--gray-900);">${userName}</span>
+                                <span style="font-size: 0.8rem; color: var(--gray-500);">${userEmail}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 500; color: var(--gray-700);">${monthStr}</div>
+                    </td>
+                    <td>
+                        <span class="status-badge ${badgeClass}">
+                            <i class="fas ${icon}"></i>
+                            ${label}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.85rem; color: var(--gray-600);">
+                            <i class="far fa-calendar-alt" style="margin-right: 0.5rem; color: var(--primary-blue);"></i>
+                            ${actionAt}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; justify-content: center;">
+                            <a class="btn-action" href="/validateur/voir-cra.html?cra=${row.cra_id}&month=${monthIndex}&year=${year}" title="Voir les détails">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        // Data Loading
+        async function loadHistory() {
+            try {
+                const res = await fetch('/validateur/api/history', { credentials: 'same-origin' });
+                const payload = await res.json();
+                renderHistory(payload && payload.success ? payload.history : []);
+            } catch (e) {
+                renderHistory([]);
+            }
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sidebar Toggle
+            const toggle = document.querySelector('.sidebar-toggle');
+            const sidebar = document.querySelector('.admin-sidebar');
+            if (toggle && sidebar) {
+                toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+            }
+
+            // Time and User
+            updateTime();
+            setInterval(updateTime, 1000);
+            loadHeaderUser();
+
+            // Initial data load
+            loadHistory();
+
+            // Refresh button
+            const btn = document.getElementById('refreshHistory');
+            if (btn) {
+                btn.addEventListener('click', async function () {
+                    btn.classList.add('spinning');
+                    await loadHistory();
+                    setTimeout(() => btn.classList.remove('spinning'), 300);
+                });
+            }
         });
-    }
-
-    async function loadHistory(){
-        try { const res = await fetch('/validateur/api/history',{credentials:'same-origin'}); const payload=await res.json(); renderHistory(payload&&payload.success?payload.history:[]); } catch(e){ renderHistory([]); }
-    }
-
-    document.addEventListener('DOMContentLoaded', function(){
-        loadHeaderUser();
-        loadHistory();
-        const btn = document.getElementById('refreshHistory');
-        if (btn) btn.addEventListener('click', async function(){ btn.classList.add('spinning'); await loadHistory(); setTimeout(()=>btn.classList.remove('spinning'),300); });
-    });
-</script>
+    </script>
 </body>
+
 </html>

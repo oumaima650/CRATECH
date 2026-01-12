@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,61 +8,185 @@
     <title>CRATECH - Mon Compte</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Conteneurs élargis alignés au design */
-        .cra-header-card .card-header,
-        .calendar-card { width: calc(100% - 48px); margin: 0 24px; max-width: none; }
-        .calendar-card .cra-table-container { width: 100%; margin: 0; max-width: none; }
-
-        /* Alertes compactes (complément au style global) */
-        .alert { display:none; padding: 12px 14px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
-        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-        .badge { padding: 4px 10px; font-size: 12px; border-radius: 9999px; background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe; }
-
-        /* Grille du formulaire plus large */
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group label { font-size: 16px; color: #374151; font-weight: 600; }
-        .form-group input { height: 58px; border: 1px solid #e5e7eb; border-radius: 12px; padding: 0 16px; font-size: 17px; outline: none; }
-        .form-group input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
-
-        .account-actions { display: flex; gap: 18px; margin-top: 20px; }
-        .btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 12px; border: 1px solid transparent; cursor: pointer; font-weight: 700; font-size: 16px; }
-        .btn-primary { background: #3b82f6; color: #fff; }
-        .btn-secondary { background: #f3f4f6; color: #111827; border-color: #e5e7eb; }
-        .btn-danger { background: #ef4444; color: #fff; }
-        .muted { color: #6b7280; font-size: 12px; }
-
-        @media (max-width: 1200px) { .cra-header-card .card-header, .calendar-card .cra-table-container { width: calc(100% - 24px); margin: 0 12px; } }
-        @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr; } }
-    /* Supprimer le cadre autour du formulaire */
-        .calendar-card,
-        .calendar-card .cra-table-container {
-            background: transparent !important;
-            border: 0 !important;
-            box-shadow: none !important;
+        .settings-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--gray-100);
+            overflow: hidden;
+            margin-bottom: 2rem;
         }
-        .calendar-card { padding: 0 !important; }
-        .cra-table-container { padding: 0 !important; }
 
-        /* Agrandir davantage */
-        .form-group label { font-size: 18px; }
-        .form-group input { height: 64px; font-size: 18px; border-radius: 14px; }
-        .btn { padding: 16px 24px; font-size: 18px; border-radius: 14px; }
+        .settings-header {
+            padding: 2rem;
+            background: linear-gradient(to right, var(--gray-50), white);
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .settings-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-violet));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.2);
+        }
+
+        .settings-title-info h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--gray-900);
+            font-weight: 700;
+        }
+
+        .settings-title-info p {
+            margin: 0.25rem 0 0;
+            color: var(--gray-500);
+            font-size: 0.95rem;
+        }
+
+        .settings-body {
+            padding: 2.5rem;
+        }
+
+        .form-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-section-title i {
+            color: var(--primary-blue);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            padding: 0.875rem 1.25rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            background: var(--gray-50);
+        }
+
+        .form-group input:focus {
+            background: white;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            outline: none;
+        }
+
+        .form-group input[readonly] {
+            cursor: not-allowed;
+            color: var(--gray-500);
+        }
+
+        .form-actions {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-100);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1px solid var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+
+        .badge-role {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-blue);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="admin-container">
         <!-- Sidebar fixe -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="logo-section">
-                    <div class="logo-icon">C</div>
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                     <span class="logo-text">CRATECH</span>
                 </div>
             </div>
@@ -112,69 +237,80 @@
                         <i class="fas fa-clock"></i>
                         <span id="current-time"></span>
                     </div>
-                    <div class="user-menu">
-                        <button class="user-menu-trigger">
-                            <div class="user-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <span class="user-name" id="headerUserName">Utilisateur</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
                 </div>
             </header>
 
             <!-- Contenu compte -->
-            <div class="cra-content" id="accountContent">
-                <!-- Carte titre -->
-                <div class="cra-header-card">
-                    <div class="card-header">
-                        <h2 class="card-title">
-                            <i class="fas fa-user-cog"></i>
-                            Mon Compte
-                        </h2>
-                        <div class="cra-controls">
-                            <span id="accountRole" class="badge">Compte</span>
+            <div class="dashboard-content" id="accountContent">
+                <div class="settings-card">
+                    <div class="settings-header">
+                        <div class="settings-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="settings-title-info">
+                            <h2 id="displayUserName">Chargement...</h2>
+                            <span id="accountRole" class="badge-role">Utilisateur</span>
                         </div>
                     </div>
-                </div>
 
-                <!-- Carte formulaire -->
-                <div class="calendar-card">
-                    <div class="cra-table-container">
-                        <div id="alertSuccess" class="alert alert-success"></div>
-                        <div id="alertError" class="alert alert-error"></div>
+                    <div class="settings-body">
+                        <div id="alertSuccess" class="alert alert-success"
+                            style="display: none; padding: 1rem; border-radius: 12px; margin-bottom: 2rem; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;">
+                        </div>
+                        <div id="alertError" class="alert alert-error"
+                            style="display: none; padding: 1rem; border-radius: 12px; margin-bottom: 2rem; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;">
+                        </div>
 
                         <form id="accountForm">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="accountId">Identifiant</label>
-                                    <input id="accountId" type="text" value="" readonly>
-                                    <span class="muted">Non modifiable</span>
-                                </div>
-                                <div class="form-group">
-                                    <label for="accountEmail">Email</label>
-                                    <input id="accountEmail" type="email" value="" readonly>
-                                    <span class="muted">Non modifiable</span>
-                                </div>
-                                <div class="form-group">
-                                    <label for="accountName">Nom</label>
-                                    <input id="accountName" name="nom" type="text" placeholder="Votre nom">
-                                </div>
-                                <div class="form-group">
-                                    <label for="accountPassword">Nouveau mot de passe</label>
-                                    <input id="accountPassword" name="password" type="password" placeholder="Laisser vide pour ne pas changer">
-                                </div>
-                                <div class="form-group">
-                                    <label for="accountPasswordConfirm">Confirmer le mot de passe</label>
-                                    <input id="accountPasswordConfirm" name="password_confirmation" type="password" placeholder="Confirmez le mot de passe">
+                            <div class="form-section">
+                                <h3 class="form-section-title">
+                                    <i class="fas fa-id-card"></i>
+                                    Informations Personnelles
+                                </h3>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="accountId">Identifiant unique</label>
+                                        <input id="accountId" type="text" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="accountName">Nom complet</label>
+                                        <input id="accountName" name="nom" type="text" placeholder="Entrez votre nom">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="accountEmail">Adresse email</label>
+                                        <input id="accountEmail" type="email" readonly>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="account-actions">
-                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>Enregistrer</button>
-                                <button type="button" id="btnCancel" class="btn btn-secondary"><i class="fas fa-arrow-left"></i>Annuler</button>
-                                <a href="/logout" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i>Déconnexion</a>
+                            <div class="form-section" style="margin-bottom: 0;">
+                                <h3 class="form-section-title">
+                                    <i class="fas fa-lock"></i>
+                                    Sécurité
+                                </h3>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="accountPassword">Nouveau mot de passe</label>
+                                        <input id="accountPassword" name="password" type="password"
+                                            placeholder="Laisser vide pour conserver l'actuel">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="accountPasswordConfirm">Confirmer le mot de passe</label>
+                                        <input id="accountPasswordConfirm" name="password_confirmation" type="password"
+                                            placeholder="Retapez le mot de passe">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" id="btnCancel" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Annuler
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Enregistrer les modifications
+                                </button>
                             </div>
                             <input type="hidden" id="csrf-token" value="">
                         </form>
@@ -186,7 +322,7 @@
 
     <script src="/js/admin.js"></script>
     <script>
-        (function(){
+        (function () {
             const els = {
                 id: document.getElementById('accountId'),
                 email: document.getElementById('accountEmail'),
@@ -201,20 +337,20 @@
                 btnCancel: document.getElementById('btnCancel'),
             };
 
-            function showAlert(el, msg){ el.textContent = msg; el.style.display = 'block'; }
-            function hideAlerts(){ els.alertSuccess.style.display = 'none'; els.alertError.style.display = 'none'; }
+            function showAlert(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+            function hideAlerts() { els.alertSuccess.style.display = 'none'; els.alertError.style.display = 'none'; }
 
-            async function loadCSRF(){
+            async function loadCSRF() {
                 try {
                     const r = await fetch('/csrf-token', { credentials: 'same-origin' });
                     const j = await r.json();
                     els.csrf.value = j.token || '';
-                } catch(e) { console.error('CSRF error', e); }
+                } catch (e) { console.error('CSRF error', e); }
             }
 
-            async function loadMe(){
+            async function loadMe() {
                 try {
-                    const r = await fetch('/account/me', { 
+                    const r = await fetch('/account/me', {
                         credentials: 'same-origin',
                         headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                     });
@@ -223,7 +359,10 @@
                     els.id.value = j.user.id_user || '';
                     els.email.value = j.user.email || j.user.email_user || '';
                     els.name.value = j.user.nom || '';
-                    els.role.textContent = j.user.role ? j.user.role.charAt(0).toUpperCase() + j.user.role.slice(1) : 'Compte';
+                    if (els.role) els.role.textContent = j.user.role ? j.user.role.charAt(0).toUpperCase() + j.user.role.slice(1) : 'Compte';
+
+                    const displayUserName = document.getElementById('displayUserName');
+                    if (displayUserName) displayUserName.textContent = j.user.nom || 'Utilisateur';
 
                     // Mettre à jour le nom en header si présent
                     const headerUserName = document.getElementById('headerUserName');
@@ -253,12 +392,12 @@
                         if (navMainText) navMainText.textContent = "Compte Rendu d'Activité";
                         if (historySection) historySection.style.display = '';
                     }
-                } catch(e) {
+                } catch (e) {
                     showAlert(els.alertError, 'Erreur: ' + e.message);
                 }
             }
 
-            els.form.addEventListener('submit', async function(e){
+            els.form.addEventListener('submit', async function (e) {
                 e.preventDefault(); hideAlerts();
                 const payload = {};
                 const nom = els.name.value.trim();
@@ -286,24 +425,27 @@
                     if (!r.ok || !j.success) { throw new Error(j.message || 'Échec de la mise à jour'); }
                     showAlert(els.alertSuccess, 'Compte mis à jour avec succès');
                     if (payload.nom) {
+                        const displayUserName = document.getElementById('displayUserName');
+                        if (displayUserName) displayUserName.textContent = payload.nom;
                         const headerUserName = document.getElementById('headerUserName');
                         if (headerUserName) headerUserName.textContent = payload.nom;
                     }
                     els.pass.value = ''; els.pass2.value = '';
-                } catch(e) {
+                } catch (e) {
                     showAlert(els.alertError, 'Erreur: ' + e.message);
                 }
             });
 
-            els.btnCancel.addEventListener('click', function(){
+            els.btnCancel.addEventListener('click', function () {
                 if (document.referrer) { window.history.back(); } else { window.location.href = '/employe/dashboard.html'; }
             });
 
-            (async function init(){
+            (async function init() {
                 await loadCSRF();
                 await loadMe();
             })();
         })();
     </script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,481 +8,542 @@
     <title>CRATECH - Gestion des CRA (Admin)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
 </head>
-<body>
-<div class="admin-container">
-    <!-- Sidebar -->
-    <aside class="admin-sidebar">
-        <div class="sidebar-header">
-            <div class="logo-section">
-                <div class="logo-icon">C</div>
-                <span class="logo-text">CRATECH</span>
-            </div>
-            <div class="admin-badge">
-                <i class="fas fa-crown"></i>
-                <span>Administrateur</span>
-            </div>
-        </div>
-        <nav class="sidebar-nav">
-            <div class="nav-section">
-                <h3 class="nav-section-title">Tableau de bord</h3>
-                <a href="/admin/dashboard.html" class="nav-item">
-                    <i class="fas fa-chart-pie"></i>
-                    <span>Vue d'ensemble</span>
-                </a>
-            </div>
-            <div class="nav-section">
-                <h3 class="nav-section-title">Gestion</h3>
-                <a href="/admin/users.html" class="nav-item">
-                    <i class="fas fa-users"></i>
-                    <span>Utilisateurs</span>
-                </a>
-                <a href="/admin/activities.html" class="nav-item">
-                    <i class="fas fa-tasks"></i>
-                    <span>Activité</span>
-                </a>
-                <a href="/admin/cra.html" class="nav-item active">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>CRA</span>
-                </a>
-            </div>
-            <div class="nav-section">
-                <h3 class="nav-section-title">Compte</h3>
-                <a href="/admin/account.html" class="nav-item">
-                    <i class="fas fa-user-cog"></i>
-                    <span>Compte</span>
-                </a>
-                <a href="/logout" class="nav-item">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Déconnexion</span>
-                </a>
-            </div>
-        </nav>
-    </aside>
 
-    <!-- Main Content -->
-    <main class="admin-main">
-        <!-- Header -->
-        <header class="admin-header">
-            <div class="header-left">
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-section">
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
+                    <span class="logo-text">CRATECH</span>
+                </div>
+                <div class="admin-badge">
+                    <i class="fas fa-crown"></i>
+                    <span>Administrateur</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Tableau de bord</h3>
+                    <a href="/admin/dashboard.html" class="nav-item">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Vue d'ensemble</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Gestion</h3>
+                    <a href="/admin/users.html" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                    <a href="/admin/activities.html" class="nav-item">
+                        <i class="fas fa-tasks"></i>
+                        <span>Activité</span>
+                    </a>
+                    <a href="/admin/cra.html" class="nav-item active">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>CRA</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Compte</h3>
+                    <a href="/admin/account.html" class="nav-item">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Compte</span>
+                    </a>
+                    <a href="/logout" class="nav-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-left">
                     <button class="sidebar-toggle">
                         <i class="fas fa-bars"></i>
                     </button>
                     <h1 class="page-title">Gestion des CRA</h1>
                 </div>
-            <div class="current-time">
-                        <i class="fas fa-clock"></i>
-                        <span id="current-time"></span>
-                    </div>
-        </header>
+                <div class="current-time">
+                    <i class="fas fa-clock"></i>
+                    <span id="current-time"></span>
+                </div>
+            </header>
 
-        <!-- Content -->
-        <div class="dashboard-content">
-            <!-- Stats -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" id="statPending" data-target="0">0</h3>
-                        <p class="stat-label">En attente</p>
+            <!-- Content -->
+            <div class="dashboard-content">
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="statPending" data-target="0">0</h3>
+                            <p class="stat-label">En attente</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="statValidated" data-target="0">0</h3>
+                            <p class="stat-label">Validés</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="statRejected" data-target="0">0</h3>
+                            <p class="stat-label">Refusés</p>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" id="statValidated" data-target="0">0</h3>
-                        <p class="stat-label">Validés</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" id="statRejected" data-target="0">0</h3>
-                        <p class="stat-label">Refusés</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" id="statTotal" data-target="0">0</h3>
-                        <p class="stat-label">Total CRA</p>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Filters -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-filter"></i> Filtres</h2>
-                </div>
-                <div class="card-content">
-                    <div class="filters-container">
-                        <div class="filter-group">
-                            <label for="fStatus">Statut</label>
-                            <select id="fStatus" class="filter-select">
-                                <option value="">Tous</option>
-                                <option value="en_attente">En attente</option>
-                                <option value="valide">Validé</option>
-                                <option value="refuse">Refusé</option>
-                            </select>
+                <!-- Filters and Actions -->
+                <div class="filters-section"
+                    style="background: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--gray-100); margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+
+                    <div class="filters-left" style="display: flex; gap: 1rem; align-items: center; flex: 1;">
+                        <div class="search-box" style="position: relative; flex: 1; max-width: 300px;">
+                            <i class="fas fa-search"
+                                style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray-400);"></i>
+                            <input type="text" id="fSearch" placeholder="Rechercher un CRA ou utilisateur..."
+                                style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.8rem; border: 1px solid var(--gray-200); border-radius: 12px; font-size: 0.95rem; outline: none; transition: border-color 0.2s;">
                         </div>
-                        <div class="filter-group">
-                            <label for="fUser">Utilisateur</label>
-                            <select id="fUser" class="filter-select">
-                                <option value="">Tous</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="fSearch">Rechercher</label>
-                            <input type="text" id="fSearch" class="filter-input" placeholder="ID CRA, utilisateur...">
-                        </div>
-                        
+
+                        <select id="fStatus"
+                            style="padding: 0.75rem 1.5rem; border: 1px solid var(--gray-200); border-radius: 12px; background: white; cursor: pointer; color: var(--gray-700);">
+                            <option value="">Tous les statuts</option>
+                            <option value="en_attente">En attente</option>
+                            <option value="valide">Validés</option>
+                            <option value="refuse">Refusés</option>
+                        </select>
+
+                        <select id="fUser"
+                            style="padding: 0.75rem 1.5rem; border: 1px solid var(--gray-200); border-radius: 12px; background: white; cursor: pointer; color: var(--gray-700);">
+                            <option value="">Tous les utilisateurs</option>
+                        </select>
                     </div>
                 </div>
-            </div>
 
-            <!-- Table -->
-            <div class="dashboard-card">
-                <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
-                    <h2 class="card-title"><i class="fas fa-table"></i> Liste des CRA</h2>
-                    
-                </div>
-                <div class="card-content">
-                    <div class="table-container">
-                        <table class="data-table">
+                <!-- Table -->
+                <div class="users-table-container">
+                    <div class="table-header">
+                        <h2>Liste des CRA</h2>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="users-table">
                             <thead>
                                 <tr>
-                                    <th>ID CRA</th>
+                                    <th style="width: 100px;">Réf.</th>
                                     <th>Utilisateur</th>
                                     <th>Période</th>
                                     <th>Statut</th>
-                                    <th>Créé le</th>
-                                    <th>Actions</th>
+                                    <th>Soumis le</th>
+                                    <th style="width: 150px; text-align: center;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="craTbody">
-                                <tr>
-                                    <td colspan="6" class="loading-row">
-                                        <div class="loading-state"><i class="fas fa-spinner fa-spin"></i><span> Chargement des CRA...</span></div>
-                                    </td>
-                                </tr>
+                                <!-- Les CRA seront chargés ici -->
                             </tbody>
                         </table>
                     </div>
-                    <div class="pagination-container" id="pagination"></div>
+                    <div class="pagination-container" id="pagination"
+                        style="padding: 1rem; border-top: 1px solid var(--gray-100);"></div>
                 </div>
             </div>
-        </div>
-    </main>
-</div>
-
-
-
-<!-- Confirmation Modal -->
-<div id="modal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="modalTitle">Confirmer</h3>
-            <button class="modal-close" id="modalClose" title="Fermer">&times;</button>
-        </div>
-        <div class="modal-body">
-            <p id="modalMsg">Confirmer l'action ?</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" id="modalCancel">Annuler</button>
-            <button class="btn btn-primary" id="modalConfirm">Confirmer</button>
-        </div>
+        </main>
     </div>
 
-</div>
 
-<script src="/js/admin.js"></script>
-<!--
+
+    <!-- Confirmation Modal -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Confirmer</h3>
+                <button class="modal-close" id="modalClose" title="Fermer">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMsg">Confirmer l'action ?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modalCancel">Annuler</button>
+                <button class="btn btn-primary" id="modalConfirm">Confirmer</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/js/admin.js"></script>
+    <!--
 <script>
     // JS CRA désactivé pour affichage PHP direct
     // ... tout le code JS est commenté pour éviter le rechargement AJAX et l'erreur d'API
 </script>
 -->
 
-<style>
-    .filters-container{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end}
-    .filter-group{display:flex;flex-direction:column;gap:.25rem}
-    .filter-select,.filter-input{padding:.5rem .75rem;border:1px solid #e5e7eb;border-radius:.5rem;min-width:200px}
-    .table-container{overflow:auto}
-    .pagination-container{display:flex;align-items:center;justify-content:space-between;margin-top:1rem}
-    .pagination-links{display:flex;gap:.5rem;flex-wrap:wrap}
-    .pagination-btn{padding:.5rem .75rem;border:1px solid #e5e7eb;background:#fff;border-radius:.5rem;cursor:pointer}
-    .pagination-btn.active{background:#3B82F6;color:#fff;border-color:#3B82F6}
-    .btn-action{width:32px;height:32px;border:none;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.875rem;margin:0 2px}
-    .btn-view{background:#3B82F6;color:#fff;transition:all 0.2s ease}
-    .btn-view:hover{background:#2563EB;transform:translateY(-1px)}
-    .btn-validate{background:#10B981;color:#fff;transition:all 0.2s ease}
-    .btn-validate:hover{background:#059669;transform:translateY(-1px)}
-    .btn-reject{background:#EF4444;color:#fff;transition:all 0.2s ease}
-    .btn-reject:hover{background:#DC2626;transform:translateY(-1px)}
-    .btn-export{background:#8B5CF6;color:#fff;transition:all 0.2s ease}
-    .btn-export:hover{background:#7C3AED;transform:translateY(-1px)}
-/* Espacement des colonnes pour la table CRA */
-    .table-container .data-table { width: 100%; border-collapse: separate; border-spacing: 12px 0; }
-    .table-container .data-table th, .table-container .data-table td { padding: 12px 16px; vertical-align: middle; }
-    .table-container .data-table thead th { background: var(--gray-50); color: var(--gray-700); font-weight: 600; }
-    .table-container .data-table tbody tr td { background: #fff; }
-</style>
-<script>
-(function(){
-  const tbody = document.getElementById('craTbody');
-  if (!tbody) return;
-  const els = {
-    statPending: document.getElementById('statPending'),
-    statValidated: document.getElementById('statValidated'),
-    statRejected: document.getElementById('statRejected'),
-    statTotal: document.getElementById('statTotal'),
-    fStatus: document.getElementById('fStatus'),
-    fUser: document.getElementById('fUser'),
-    fSearch: document.getElementById('fSearch'),
-    btnClear: document.getElementById('btnClear'),
-    pagination: document.getElementById('pagination'),
-    btnExportExcel: document.getElementById('btnExportExcel'),
-  };
+    <style>
+        /* Override global users-table fixed layout */
+        .users-table {
+            table-layout: auto !important;
+            width: 100% !important;
+        }
 
-  // Extract data from rows
-  let allItems = Array.from(tbody.querySelectorAll('tr')).map(tr => {
-    const idText = tr.querySelector('.id-number')?.textContent || '';
-    const id = parseInt(idText.replace(/[^0-9]/g,'') || '0', 10);
-    const userName = tr.querySelector('.user-name')?.textContent?.trim() || '';
-    const userEmail = tr.querySelector('.user-email')?.textContent?.trim() || '';
-    const period = tr.querySelector('.period-month')?.textContent?.trim() || '';
-    const statusBadge = tr.querySelector('.status-badge');
-    const statusKey = statusBadge ? (statusBadge.className.split(' ').find(c=>c!== 'status-badge')||'') : '';
-    const createdAt = tr.querySelector('.date-created')?.textContent?.trim() || '';
-    return { id, userName, userEmail, period, statusKey, createdAt, tr, statusBadge };
-  });
+        .users-table th,
+        .users-table td {
+            width: auto !important;
+            text-align: left !important;
+            padding: 1.25rem !important;
+            vertical-align: middle !important;
+        }
 
-  // Populate user filter
-  const uniqueUsers = Array.from(new Set(allItems.map(x => x.userName).filter(Boolean))).sort((a,b)=>a.localeCompare(b, 'fr'));
-  if (els.fUser) {
-    els.fUser.innerHTML = '<option value="">Tous</option>' + uniqueUsers.map(u => `<option value="${u.replace(/"/g,'&quot;')}">${u}</option>`).join('');
-  }
+        .users-table th {
+            background: var(--gray-50) !important;
+            color: var(--gray-500) !important;
+            font-weight: 600 !important;
+            font-size: 0.8rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+        }
 
-  // Stats
-  function updateStats(items){
-    const total = items.length;
-    const pending = items.filter(x=>x.statusKey === 'en_attente').length;
-    const validated = items.filter(x=>x.statusKey === 'valide').length;
-    const rejected = items.filter(x=>x.statusKey === 'refuse').length;
-    if (els.statTotal) { els.statTotal.dataset.target = total; els.statTotal.textContent = total; }
-    if (els.statPending) { els.statPending.dataset.target = pending; els.statPending.textContent = pending; }
-    if (els.statValidated) { els.statValidated.dataset.target = validated; els.statValidated.textContent = validated; }
-    if (els.statRejected) { els.statRejected.dataset.target = rejected; els.statRejected.textContent = rejected; }
-  }
+        .users-table th:last-child {
+            text-align: center !important;
+        }
 
-  // Filtering + pagination
-  const pageSize = 10;
-  let currentPage = 1;
-  function norm(s){ return (s||'').toString().toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,''); }
+        .status-badge {
+            padding: 0.4rem 0.8rem !important;
+            border-radius: 8px !important;
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+        }
 
-  function getFiltered(){
-    const sStatus = els.fStatus?.value || '';
-    const sUser = els.fUser?.value || '';
-    const sText = norm(els.fSearch?.value || '');
-    return allItems.filter(item => {
-      const matchStatus = !sStatus || item.statusKey === sStatus;
-      const matchUser = !sUser || item.userName === sUser;
-      const hay = `${item.id} ${item.userName} ${item.userEmail} ${item.period} ${item.statusKey}`;
-      const matchText = !sText || norm(hay).includes(sText);
-      return matchStatus && matchUser && matchText;
-    });
-  }
+        .status-badge.en_attente {
+            background: rgba(245, 158, 11, 0.1) !important;
+            color: #d97706 !important;
+        }
 
-  function renderPage(page){
-    const items = getFiltered();
-    const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
-    currentPage = Math.min(Math.max(1, page), totalPages);
-    const start = (currentPage-1)*pageSize;
-    const end = start + pageSize;
-    const visible = new Set(items.slice(start, end).map(x=>x.tr));
-    // Toggle row visibility
-    allItems.forEach(x => { x.tr.style.display = visible.has(x.tr) ? '' : 'none'; });
-    // Update stats on filtered set
-    updateStats(items);
-    // Render pagination controls
-    if (els.pagination){
-      els.pagination.innerHTML = '';
-      const makeBtn = (p, label, active=false) => `<button class="pagination-btn${active?' active':''}" data-page="${p}">${label}</button>`;
-      const parts = [];
-      if (totalPages > 1) {
-        parts.push(makeBtn(Math.max(1, currentPage-1), '«'));
-        const range = 3;
-        const from = Math.max(1, currentPage - range);
-        const to = Math.min(totalPages, currentPage + range);
-        for (let i=from;i<=to;i++) parts.push(makeBtn(i, i, i===currentPage));
-        parts.push(makeBtn(Math.min(totalPages, currentPage+1), '»'));
-      }
-      els.pagination.innerHTML = `<div class="pagination-links">${parts.join('')}</div>`;
-    }
-  }
+        .status-badge.valide {
+            background: rgba(16, 185, 129, 0.1) !important;
+            color: #059669 !important;
+        }
 
-  // Wire filters
-  if (els.fStatus) els.fStatus.addEventListener('change', ()=>renderPage(1));
-  if (els.fUser) els.fUser.addEventListener('change', ()=>renderPage(1));
-  if (els.fSearch) {
-    let t; els.fSearch.addEventListener('input', ()=>{ clearTimeout(t); t=setTimeout(()=>renderPage(1), 150); });
-  }
-  if (els.btnClear) els.btnClear.addEventListener('click', ()=>{
-    if (els.fStatus) els.fStatus.value='';
-    if (els.fUser) els.fUser.value='';
-    if (els.fSearch) els.fSearch.value='';
-    renderPage(1);
-  });
-  if (els.pagination) els.pagination.addEventListener('click', (e)=>{
-    const btn = e.target.closest('.pagination-btn');
-    if (!btn) return;
-    const p = parseInt(btn.getAttribute('data-page'),10);
-    if (!isNaN(p)) renderPage(p);
-  });
+        .status-badge.refuse {
+            background: rgba(239, 68, 68, 0.1) !important;
+            color: #dc2626 !important;
+        }
 
-  // CSRF token
-  let csrfToken = null;
-  async function ensureCsrf(){
-    if (csrfToken) return csrfToken;
-    try {
-      const r = await fetch('/csrf-token', { credentials: 'same-origin' });
-      const j = await r.json();
-      csrfToken = j && j.token;
-    } catch(e) { csrfToken = null; }
-    return csrfToken;
-  }
+        .btn-action {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 10px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: 1px solid var(--gray-200) !important;
+            background: white !important;
+            transition: all 0.2s ease !important;
+            cursor: pointer !important;
+            margin: 0 !important;
+        }
 
-  // Actions: validate / reject
-  document.addEventListener('click', async function(e){
-    const btnValidate = e.target.closest && e.target.closest('.action-validate');
-    const btnReject = e.target.closest && e.target.closest('.action-reject');
-    if (!btnValidate && !btnReject) return;
-    const btn = btnValidate || btnReject;
-    const craId = btn.getAttribute('data-id');
-    if (!craId) return;
-    const url = btnValidate ? `/admin/cra/${craId}/validate` : `/admin/cra/${craId}/reject`;
-    const actionLabel = btnValidate ? 'validé' : 'refusé';
+        .btn-view {
+            color: var(--primary-blue) !important;
+        }
 
-    try {
-      const token = await ensureCsrf();
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-CSRF-TOKEN': token || ''
-        },
-        credentials: 'same-origin'
-      });
-      if (!res.ok) throw new Error('Action non autorisée ou erreur serveur');
-      // Update UI
-      const item = allItems.find(x=>String(x.id)===String(craId));
-      if (item && item.statusBadge) {
-        const newStatus = btnValidate ? 'valide' : 'refuse';
-        const newText = btnValidate ? 'Validé' : 'Refusé';
-        item.statusKey = newStatus;
-        item.statusBadge.className = `status-badge ${newStatus}`;
-        item.statusBadge.textContent = newText;
-      }
-      // Optionally disable buttons after action
-      btn.closest('.action-buttons')?.querySelectorAll('button').forEach(b=>{ if (!b.classList.contains('btn-view')) b.disabled = true; });
-      if (typeof showNotification === 'function') {
-        showNotification(`CRA #${craId} ${actionLabel}`, btnValidate ? 'success' : 'warning');
-      }
-      renderPage(currentPage);
-    } catch (err) {
-      if (typeof showNotification === 'function') showNotification(err.message || 'Erreur action', 'error');
-      else alert(err.message || 'Erreur action');
-    }
-  });
+        .btn-validate {
+            color: var(--success) !important;
+        }
 
-  // Initial render
-  renderPage(1);
+        .btn-reject {
+            color: var(--danger) !important;
+        }
 
-    // Export Excel
-    if (els.btnExportExcel) {
-        els.btnExportExcel.addEventListener('click', function(){
-            window.location.href = '/admin/cra/export-excel';
-        });
-    }
+        .btn-action:hover {
+            border-color: var(--primary-blue) !important;
+            background: var(--gray-50) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+        }
 
-    // Masquer les boutons Valider/Rejeter si le CRA est refusé ou validé
-    setTimeout(()=>{
-        allItems.forEach(item => {
-            const actions = item.tr.querySelector('.action-buttons');
-            if (!actions) return;
-            if (item.statusKey === 'valide' || item.statusKey === 'refuse') {
-                actions.querySelectorAll('.action-validate, .action-reject').forEach(btn => btn.style.display = 'none');
-            } else {
-                actions.querySelectorAll('.action-validate, .action-reject').forEach(btn => btn.style.display = '');
+        .pagination {
+            padding: 1.5rem !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            border-top: 1px solid var(--gray-100) !important;
+        }
+
+        .id-number {
+            font-weight: 600;
+            color: var(--primary-blue);
+            font-family: 'Courier New', monospace;
+            background: rgba(59, 130, 246, 0.05);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+        }
+    </style>
+    <script>
+        (function () {
+            const tbody = document.getElementById('craTbody');
+            if (!tbody) return;
+            const els = {
+                statPending: document.getElementById('statPending'),
+                statValidated: document.getElementById('statValidated'),
+                statRejected: document.getElementById('statRejected'),
+                fStatus: document.getElementById('fStatus'),
+                fUser: document.getElementById('fUser'),
+                fSearch: document.getElementById('fSearch'),
+                btnClear: document.getElementById('btnClear'),
+                pagination: document.getElementById('pagination'),
+                btnExportExcel: document.getElementById('btnExportExcel'),
+            };
+
+            // Extract data from rows
+            let allItems = Array.from(tbody.querySelectorAll('tr')).map(tr => {
+                const idText = tr.querySelector('.id-number')?.textContent || '';
+                const id = parseInt(idText.replace(/[^0-9]/g, '') || '0', 10);
+                const userName = tr.querySelector('.user-cell-name')?.textContent?.trim() || tr.querySelector('.user-name')?.textContent?.trim() || '';
+                const userEmail = tr.querySelector('.user-cell-email')?.textContent?.trim() || tr.querySelector('.user-email')?.textContent?.trim() || '';
+                const period = tr.querySelector('.period-month')?.textContent?.trim() || '';
+                const statusBadge = tr.querySelector('.status-badge');
+                const statusKey = statusBadge ? (statusBadge.className.split(' ').find(c => c !== 'status-badge') || '') : '';
+                const createdAt = tr.querySelector('.date-created')?.textContent?.trim() || '';
+                return { id, userName, userEmail, period, statusKey, createdAt, tr, statusBadge };
+            });
+
+            // Populate user filter
+            const uniqueUsers = Array.from(new Set(allItems.map(x => x.userName).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'fr'));
+            if (els.fUser) {
+                els.fUser.innerHTML = '<option value="">Tous</option>' + uniqueUsers.map(u => `<option value="${u.replace(/"/g, '&quot;')}">${u}</option>`).join('');
             }
-        });
-    }, 300);
 
-    // Export Excel du CRA sélectionné (exactement comme employe/mes-cra.html)
-    if (els.btnExportExcel) {
-        els.btnExportExcel.addEventListener('click', function(){
-            const visibleCra = allItems.find(x => x.tr.style.display !== 'none');
-            if (visibleCra && visibleCra.id) {
-                let month = 9, year = 2025;
-                if (visibleCra.period) {
-                    const m = visibleCra.period.match(/([0-9]{1,2})\s*\/\s*([0-9]{4})/);
-                    if (m) { month = parseInt(m[1],10); year = parseInt(m[2],10); }
+            // Stats
+            function updateStats(items) {
+                const pending = items.filter(x => x.statusKey === 'en_attente').length;
+                const validated = items.filter(x => x.statusKey === 'valide').length;
+                const rejected = items.filter(x => x.statusKey === 'refuse').length;
+                if (els.statPending) { els.statPending.dataset.target = pending; els.statPending.textContent = pending; }
+                if (els.statValidated) { els.statValidated.dataset.target = validated; els.statValidated.textContent = validated; }
+                if (els.statRejected) { els.statRejected.dataset.target = rejected; els.statRejected.textContent = rejected; }
+            }
+
+            // Filtering + pagination
+            const pageSize = 10;
+            let currentPage = 1;
+            function norm(s) { return (s || '').toString().toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, ''); }
+
+            function getFiltered() {
+                const sStatus = els.fStatus?.value || '';
+                const sUser = els.fUser?.value || '';
+                const sText = norm(els.fSearch?.value || '');
+                return allItems.filter(item => {
+                    const matchStatus = !sStatus || item.statusKey === sStatus;
+                    const matchUser = !sUser || item.userName === sUser;
+                    const hay = `${item.id} ${item.userName} ${item.userEmail} ${item.period} ${item.statusKey}`;
+                    const matchText = !sText || norm(hay).includes(sText);
+                    return matchStatus && matchUser && matchText;
+                });
+            }
+
+            function renderPage(page) {
+                const items = getFiltered();
+                const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+                currentPage = Math.min(Math.max(1, page), totalPages);
+                const start = (currentPage - 1) * pageSize;
+                const end = start + pageSize;
+                const visible = new Set(items.slice(start, end).map(x => x.tr));
+                // Toggle row visibility
+                allItems.forEach(x => { x.tr.style.display = visible.has(x.tr) ? '' : 'none'; });
+                // Update stats on filtered set
+                updateStats(items);
+                // Render pagination controls
+                if (els.pagination) {
+                    els.pagination.innerHTML = '';
+                    const makeBtn = (p, label, active = false) => `<button class="pagination-btn${active ? ' active' : ''}" data-page="${p}">${label}</button>`;
+                    const parts = [];
+                    if (totalPages > 1) {
+                        parts.push(makeBtn(Math.max(1, currentPage - 1), '«'));
+                        const range = 3;
+                        const from = Math.max(1, currentPage - range);
+                        const to = Math.min(totalPages, currentPage + range);
+                        for (let i = from; i <= to; i++) parts.push(makeBtn(i, i, i === currentPage));
+                        parts.push(makeBtn(Math.min(totalPages, currentPage + 1), '»'));
+                    }
+                    els.pagination.innerHTML = `<div class="pagination-links">${parts.join('')}</div>`;
                 }
-                
-                // Export comme mes-cra.js
-                exportCRALikeEmployee(visibleCra.id, month, year);
-            } else {
-                alert('Aucun CRA sélectionné à exporter.');
             }
-        });
-    }
 
-    // Export exactement comme mes-cra.js
-    async function exportCRALikeEmployee(craId, monthNumber, year) {
-        try {
-            console.log('🔄 Export CRA:', craId, monthNumber, year);
-            
-            // Récupérer les données du CRA comme employe
-            const response = await fetch(`/admin/api/cra/${craId}/details-public`, {
-                method: 'GET',
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
+            // Wire filters
+            if (els.fStatus) els.fStatus.addEventListener('change', () => renderPage(1));
+            if (els.fUser) els.fUser.addEventListener('change', () => renderPage(1));
+            if (els.fSearch) {
+                let t; els.fSearch.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => renderPage(1), 150); });
+            }
+            if (els.btnClear) els.btnClear.addEventListener('click', () => {
+                if (els.fStatus) els.fStatus.value = '';
+                if (els.fUser) els.fUser.value = '';
+                if (els.fSearch) els.fSearch.value = '';
+                renderPage(1);
+            });
+            if (els.pagination) els.pagination.addEventListener('click', (e) => {
+                const btn = e.target.closest('.pagination-btn');
+                if (!btn) return;
+                const p = parseInt(btn.getAttribute('data-page'), 10);
+                if (!isNaN(p)) renderPage(p);
+            });
+
+            // CSRF token
+            let csrfToken = null;
+            async function ensureCsrf() {
+                if (csrfToken) return csrfToken;
+                try {
+                    const r = await fetch('/csrf-token', { credentials: 'same-origin' });
+                    const j = await r.json();
+                    csrfToken = j && j.token;
+                } catch (e) { csrfToken = null; }
+                return csrfToken;
+            }
+
+            // Actions: validate / reject
+            document.addEventListener('click', async function (e) {
+                const btnValidate = e.target.closest && e.target.closest('.action-validate');
+                const btnReject = e.target.closest && e.target.closest('.action-reject');
+                if (!btnValidate && !btnReject) return;
+                const btn = btnValidate || btnReject;
+                const craId = btn.getAttribute('data-id');
+                if (!craId) return;
+                const url = btnValidate ? `/admin/cra/${craId}/validate` : `/admin/cra/${craId}/reject`;
+                const actionLabel = btnValidate ? 'validé' : 'refusé';
+
+                try {
+                    const token = await ensureCsrf();
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': token || ''
+                        },
+                        credentials: 'same-origin'
+                    });
+                    if (!res.ok) throw new Error('Action non autorisée ou erreur serveur');
+                    // Update UI
+                    const item = allItems.find(x => String(x.id) === String(craId));
+                    if (item && item.statusBadge) {
+                        const newStatus = btnValidate ? 'valide' : 'refuse';
+                        const newText = btnValidate ? 'Validé' : 'Refusé';
+                        item.statusKey = newStatus;
+                        item.statusBadge.className = `status-badge ${newStatus}`;
+                        item.statusBadge.textContent = newText;
+                    }
+                    // Optionally disable buttons after action
+                    btn.closest('.action-buttons')?.querySelectorAll('button').forEach(b => { if (!b.classList.contains('btn-view')) b.disabled = true; });
+                    if (typeof showNotification === 'function') {
+                        showNotification(`CRA #${craId} ${actionLabel}`, btnValidate ? 'success' : 'warning');
+                    }
+                    renderPage(currentPage);
+                } catch (err) {
+                    if (typeof showNotification === 'function') showNotification(err.message || 'Erreur action', 'error');
+                    else alert(err.message || 'Erreur action');
                 }
             });
-            
-            if (!response.ok) {
-                throw new Error('Erreur lors de l\'export');
-            }
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                // Créer le fichier Excel comme mes-cra.js
-                const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-                const monthName = monthNames[monthNumber - 1]; // Convert to 0-based
-                generateExcelFileAdmin(data, monthName, year, craId);
-            } else {
-                alert('Erreur: ' + (data.message || 'Impossible d\'exporter le CRA'));
-            }
-        } catch (error) {
-            console.error('❌ Erreur export:', error);
-            alert('Erreur lors de l\'export: ' + error.message);
-        }
-    }
 
-    function generateExcelFileAdmin(craData, monthName, year, craId) {
-        const daysInMonth = new Date(year, new Date(monthName + ' 1, ' + year).getMonth() + 1, 0).getDate();
-        
-        // Créer le contenu HTML pour Excel (exactement comme mes-cra.js)
-        let htmlContent = `
+            // Initial render
+            renderPage(1);
+
+            // Export Excel
+            if (els.btnExportExcel) {
+                els.btnExportExcel.addEventListener('click', function () {
+                    window.location.href = '/admin/cra/export-excel';
+                });
+            }
+
+            // Masquer les boutons Valider/Rejeter si le CRA est refusé ou validé
+            setTimeout(() => {
+                allItems.forEach(item => {
+                    const actions = item.tr.querySelector('.action-buttons');
+                    if (!actions) return;
+                    if (item.statusKey === 'valide' || item.statusKey === 'refuse') {
+                        actions.querySelectorAll('.action-validate, .action-reject').forEach(btn => btn.style.display = 'none');
+                    } else {
+                        actions.querySelectorAll('.action-validate, .action-reject').forEach(btn => btn.style.display = '');
+                    }
+                });
+            }, 300);
+
+            // Export Excel du CRA sélectionné (exactement comme employe/mes-cra.html)
+            if (els.btnExportExcel) {
+                els.btnExportExcel.addEventListener('click', function () {
+                    const visibleCra = allItems.find(x => x.tr.style.display !== 'none');
+                    if (visibleCra && visibleCra.id) {
+                        let month = 9, year = 2025;
+                        if (visibleCra.period) {
+                            const m = visibleCra.period.match(/([0-9]{1,2})\s*\/\s*([0-9]{4})/);
+                            if (m) { month = parseInt(m[1], 10); year = parseInt(m[2], 10); }
+                        }
+
+                        // Export comme mes-cra.js
+                        exportCRALikeEmployee(visibleCra.id, month, year);
+                    } else {
+                        alert('Aucun CRA sélectionné à exporter.');
+                    }
+                });
+            }
+
+            // Export exactement comme mes-cra.js
+            async function exportCRALikeEmployee(craId, monthNumber, year) {
+                try {
+                    console.log('🔄 Export CRA:', craId, monthNumber, year);
+
+                    // Récupérer les données du CRA comme employe
+                    const response = await fetch(`/admin/api/cra/${craId}/details-public`, {
+                        method: 'GET',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Erreur lors de l\'export');
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Créer le fichier Excel comme mes-cra.js
+                        const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+                        const monthName = monthNames[monthNumber - 1]; // Convert to 0-based
+                        generateExcelFileAdmin(data, monthName, year, craId);
+                    } else {
+                        alert('Erreur: ' + (data.message || 'Impossible d\'exporter le CRA'));
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur export:', error);
+                    alert('Erreur lors de l\'export: ' + error.message);
+                }
+            }
+
+            function generateExcelFileAdmin(craData, monthName, year, craId) {
+                const daysInMonth = new Date(year, new Date(monthName + ' 1, ' + year).getMonth() + 1, 0).getDate();
+
+                // Créer le contenu HTML pour Excel (exactement comme mes-cra.js)
+                let htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -501,86 +563,87 @@
         <thead>
             <tr class="header">
                 <th class="project">Projet</th>`;
-        
-        // En-têtes des jours
-        for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(year, new Date(monthName + ' 1, ' + year).getMonth(), day);
-            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-            const weekendClass = isWeekend ? ' weekend' : '';
-            htmlContent += `<th class="header${weekendClass}">${day}</th>`;
-        }
-        
-        htmlContent += '<th class="header total">Total</th></tr></thead><tbody>';
-        
-        // Lignes des projets
-        if (craData.projects && craData.projects.length > 0) {
-            craData.projects.forEach(project => {
-                htmlContent += `<tr><td class="project">${project.name}</td>`;
-                
-                let rowTotal = 0;
+
+                // En-têtes des jours
                 for (let day = 1; day <= daysInMonth; day++) {
-                    const dateKey = `${year}-${String(new Date(monthName + ' 1, ' + year).getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                    const cellKey = `${project.id}_${dateKey}`;
-                    const value = craData.data[cellKey] || '0';
-                    rowTotal += parseFloat(value);
-                    
                     const date = new Date(year, new Date(monthName + ' 1, ' + year).getMonth(), day);
                     const isWeekend = date.getDay() === 0 || date.getDay() === 6;
                     const weekendClass = isWeekend ? ' weekend' : '';
-                    
-                    htmlContent += `<td class="${weekendClass}">${value}</td>`;
+                    htmlContent += `<th class="header${weekendClass}">${day}</th>`;
                 }
-                
-                htmlContent += `<td class="total">${rowTotal.toFixed(1)}</td></tr>`;
-            });
-        }
-        
-        htmlContent += '</tbody></table></body></html>';
-        
-        // Télécharger le fichier
-        const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel;charset=utf-8;' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `CRA_${monthName}_${year}_ID${craId}.xls`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-        
-        console.log('✅ Fichier Excel généré et téléchargé');
-    }
 
-    // Redirection Voir CRA admin (comme employe/mes-cra.html)
-    document.addEventListener('click', function(e){
-        const btnView = e.target.closest && e.target.closest('.btn-view');
-        if (!btnView) return;
-        
-        const craId = btnView.getAttribute('data-id');
-        const period = btnView.getAttribute('data-period') || '';
-        
-        console.log('🔍 Debug bouton cliqué:', {
-            craId: craId,
-            period: period,
-            button: btnView
-        });
-        
-        if (!craId || craId === 'null') {
-            console.error('❌ CRA ID manquant ou null:', craId);
-            alert('Erreur: ID de CRA manquant');
-            return;
-        }
-        
-        let month = 9, year = 2025;
-        const m = period.match(/([0-9]{1,2})\s*\/\s*([0-9]{4})/);
-        if (m) { 
-            month = parseInt(m[1],10) - 1; // 0-based month like employe
-            year = parseInt(m[2],10); 
-        }
-        
-        const url = `/admin/voir-cra.html?cra=${craId}&month=${month}&year=${year}`;
-        console.log('🔗 Redirection vers:', url);
-        window.location.assign(url);
-    });
-})();
-</script>
+                htmlContent += '<th class="header total">Total</th></tr></thead><tbody>';
+
+                // Lignes des projets
+                if (craData.projects && craData.projects.length > 0) {
+                    craData.projects.forEach(project => {
+                        htmlContent += `<tr><td class="project">${project.name}</td>`;
+
+                        let rowTotal = 0;
+                        for (let day = 1; day <= daysInMonth; day++) {
+                            const dateKey = `${year}-${String(new Date(monthName + ' 1, ' + year).getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                            const cellKey = `${project.id}_${dateKey}`;
+                            const value = craData.data[cellKey] || '0';
+                            rowTotal += parseFloat(value);
+
+                            const date = new Date(year, new Date(monthName + ' 1, ' + year).getMonth(), day);
+                            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+                            const weekendClass = isWeekend ? ' weekend' : '';
+
+                            htmlContent += `<td class="${weekendClass}">${value}</td>`;
+                        }
+
+                        htmlContent += `<td class="total">${rowTotal.toFixed(1)}</td></tr>`;
+                    });
+                }
+
+                htmlContent += '</tbody></table></body></html>';
+
+                // Télécharger le fichier
+                const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `CRA_${monthName}_${year}_ID${craId}.xls`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+
+                console.log('✅ Fichier Excel généré et téléchargé');
+            }
+
+            // Redirection Voir CRA admin (comme employe/mes-cra.html)
+            document.addEventListener('click', function (e) {
+                const btnView = e.target.closest && e.target.closest('.btn-view');
+                if (!btnView) return;
+
+                const craId = btnView.getAttribute('data-id');
+                const period = btnView.getAttribute('data-period') || '';
+
+                console.log('🔍 Debug bouton cliqué:', {
+                    craId: craId,
+                    period: period,
+                    button: btnView
+                });
+
+                if (!craId || craId === 'null') {
+                    console.error('❌ CRA ID manquant ou null:', craId);
+                    alert('Erreur: ID de CRA manquant');
+                    return;
+                }
+
+                let month = 9, year = 2025;
+                const m = period.match(/([0-9]{1,2})\s*\/\s*([0-9]{4})/);
+                if (m) {
+                    month = parseInt(m[1], 10) - 1; // 0-based month like employe
+                    year = parseInt(m[2], 10);
+                }
+
+                const url = `/admin/voir-cra.html?cra=${craId}&month=${month}&year=${year}`;
+                console.log('🔗 Redirection vers:', url);
+                window.location.assign(url);
+            });
+        })();
+    </script>
 </body>
+
 </html>

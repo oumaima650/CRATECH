@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,18 +8,145 @@
     <title>CRATECH - Voir CRA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .cra-table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--gray-100);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .cra-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .cra-table th,
+        .cra-table td {
+            padding: 0.75rem;
+            text-align: center;
+            border: 1px solid var(--gray-100);
+        }
+
+        .project-header,
+        .project-cell {
+            text-align: left !important;
+            min-width: 200px;
+            font-weight: 600;
+            background: var(--gray-50);
+            position: sticky;
+            left: 0;
+            z-index: 1;
+        }
+
+        .day-header {
+            min-width: 40px;
+            font-size: 0.85rem;
+            background: var(--gray-50);
+            color: var(--gray-600);
+        }
+
+        .day-header.weekend {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        .day-cell-readonly {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .day-cell-readonly.zero {
+            background: transparent;
+            color: var(--gray-300);
+        }
+
+        .day-cell-readonly.half {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .day-cell-readonly.one {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .day-cell-readonly.weekend {
+            opacity: 0.5;
+        }
+
+        .total-header,
+        .total-cell {
+            background: var(--gray-50);
+            font-weight: 700;
+            min-width: 60px;
+        }
+
+        .status-badges {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+        }
+
+        .status-badge.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+
+        .status-badge.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        .submission-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+    </style>
 </head>
+
 <body>
     <div class="admin-container">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="logo-section">
-                    <div class="logo-icon">C</div>
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                     <span class="logo-text">CRATECH</span>
                 </div>
             </div>
@@ -64,7 +192,7 @@
                     </button>
                     <div class="breadcrumb">
                         <i class="fas fa-eye"></i>
-                        <span>Voir CRA</span>
+                        <span>Voir mon CRA</span>
                     </div>
                 </div>
                 <div class="header-right">
@@ -72,38 +200,30 @@
                         <i class="fas fa-clock"></i>
                         <span id="current-time"></span>
                     </div>
-                    <div class="user-menu">
-                        <button class="user-menu-trigger">
-                            <div class="user-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <span class="user-name" id="headerUserName">Employé</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
                 </div>
             </header>
 
             <!-- CRA Content -->
-            <div class="cra-content" id="craContent">
-                <!-- Header Card -->
-                <div class="cra-header-card">
-                    <div class="card-header">
-                        <h2 class="card-title">
-                            <i class="fas fa-calendar-alt"></i>
+            <div class="dashboard-content" id="craContent">
+                <div class="users-table-container" style="padding: 2rem;">
+                    <div class="table-header" style="justify-content: space-between; margin-bottom: 2rem;">
+                        <h2 style="display: flex; align-items: center; gap: 12px; margin: 0;">
+                            <i class="fas fa-calendar-check" style="color: var(--primary-blue);"></i>
                             <span id="craTitle">Compte Rendu d'Activité</span>
                         </h2>
-                        <div class="cra-controls">
-                            <a href="/employe/mes-cra.html" class="btn btn-secondary">
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn btn-secondary" id="exportCRA">
+                                <i class="fas fa-download"></i>
+                                Exporter
+                            </button>
+                            <a href="/employe/mes-cra.html" class="btn btn-primary"
+                                style="background: var(--gray-800);">
                                 <i class="fas fa-arrow-left"></i>
-                                Retour à Mes CRA
+                                Retour
                             </a>
                         </div>
                     </div>
-                </div>
 
-                <!-- CRA Table Card -->
-                <div class="calendar-card">
                     <div class="cra-table-container">
                         <table id="craTable" class="cra-table">
                             <thead>
@@ -117,13 +237,10 @@
                             </tbody>
                         </table>
                     </div>
-                    
-                    <div class="cra-actions">
-                        <button class="btn btn-secondary btn-lg" id="exportCRA">
-                            <i class="fas fa-download"></i>
-                            Exporter
-                        </button>
-                        <div class="cra-status-info" id="craStatusInfo">
+
+                    <div class="cra-footer"
+                        style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center; padding-top: 2rem; border-top: 1px solid var(--gray-100);">
+                        <div id="craStatusInfo">
                             <!-- Status info will be displayed here -->
                         </div>
                     </div>
@@ -137,4 +254,5 @@
     <script src="/js/admin.js"></script>
     <script src="/js/voir-cra.js"></script>
 </body>
+
 </html>

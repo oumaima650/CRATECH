@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,12 @@
     <title>CRATECH - Connexion Professionnelle</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/auth.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="auth-container">
         <!-- Background Elements -->
@@ -23,7 +26,7 @@
         <!-- Header -->
         <header class="auth-header">
             <a href="/" class="auth-logo">
-                <div class="logo-icon">C</div>
+                <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                 <span class="logo-text">CRATECH</span>
             </a>
             <div class="auth-nav">
@@ -50,7 +53,7 @@
                         <p class="info-subtitle">
                             Connectez-vous à votre espace professionnel de gestion des comptes rendus d'activité
                         </p>
-                        
+
                         <div class="info-features">
                             <div class="feature-item">
                                 <div class="feature-icon">
@@ -101,232 +104,240 @@
                 <!-- Right Side - Login Form -->
                 <div class="auth-form-container">
                     <div class="form-wrapper">
-            <div class="form-header">
+                        <div class="form-header">
                             <h2 class="form-title">Connexion</h2>
                             <p class="form-subtitle">Accédez à votre espace de travail</p>
-            </div>
+                        </div>
 
                         <!-- User Type Selector -->
-            <div class="user-type-selector">
-                <button type="button" class="type-option active" data-type="employee">
-                    <i class="fas fa-users"></i>
-                    <span>Employés & Sous-traitants</span>
-                </button>
-                <button type="button" class="type-option" data-type="admin">
-                    <i class="fas fa-user-shield"></i>
-                    <span>Administrateurs</span>
-                </button>
-            </div>
+                        <div class="user-type-selector">
+                            <button type="button" class="type-option active" data-type="employee">
+                                <i class="fas fa-users"></i>
+                                <span>Employés & Sous-traitants</span>
+                            </button>
+                            <button type="button" class="type-option" data-type="admin">
+                                <i class="fas fa-user-shield"></i>
+                                <span>Administrateurs</span>
+                            </button>
+                        </div>
 
                         <!-- Messages -->
                         <div id="error-message" class="form-message error" style="display: none;"></div>
 
                         <!-- Employee Login Form -->
                         <form class="auth-form active" id="employeeLoginForm" action="/login" method="post">
-                <input type="hidden" name="_token" id="csrf-token-employee" value="">
-                
-                <div class="form-group">
+                            <input type="hidden" name="_token" id="csrf-token-employee" value="">
+
+                            <div class="form-group">
                                 <label for="employeeId" class="form-label">
                                     <i class="fas fa-user"></i>
                                     Identifiant
                                 </label>
-                    <div class="input-container">
-                                    <input type="text" id="employeeId" name="username" class="form-input" placeholder="Votre identifiant" required autocomplete="username">
+                                <div class="input-container">
+                                    <input type="text" id="employeeId" name="username" class="form-input"
+                                        placeholder="Votre identifiant" required autocomplete="username">
                                     <button type="button" class="clear-input">
                                         <i class="fas fa-times"></i>
                                     </button>
-                    </div>
-                </div>
+                                </div>
+                            </div>
 
-                <div class="form-group">
+                            <div class="form-group">
                                 <label for="employeeEmail" class="form-label">
                                     <i class="fas fa-envelope"></i>
                                     Adresse email
                                 </label>
-                    <div class="input-container">
-                                    <input type="email" id="employeeEmail" name="email" class="form-input" placeholder="votre.email@cratech.com" required autocomplete="email">
+                                <div class="input-container">
+                                    <input type="email" id="employeeEmail" name="email" class="form-input"
+                                        placeholder="votre.email@cratech.com" required autocomplete="email">
                                     <button type="button" class="clear-input">
                                         <i class="fas fa-times"></i>
                                     </button>
-                    </div>
-                </div>
+                                </div>
+                            </div>
 
-                <div class="form-group">
+                            <div class="form-group">
                                 <label for="employeePassword" class="form-label">
                                     <i class="fas fa-lock"></i>
                                     Mot de passe
                                 </label>
-                    <div class="input-container">
-                                    <input type="password" id="employeePassword" name="password" class="form-input" placeholder="Votre mot de passe" required autocomplete="current-password">
+                                <div class="input-container">
+                                    <input type="password" id="employeePassword" name="password" class="form-input"
+                                        placeholder="Votre mot de passe" required autocomplete="current-password">
                                     <button type="button" class="clear-input">
                                         <i class="fas fa-times"></i>
                                     </button>
-                    </div>
-                </div>
+                                </div>
+                            </div>
 
                             <div class="form-options">
                                 <div class="checkbox-container">
-                        <input type="checkbox" id="rememberMe" name="remember" checked>
+                                    <input type="checkbox" id="rememberMe" name="remember" checked>
                                     <label for="rememberMe">Se souvenir de moi</label>
-                </div>
+                                </div>
                                 <a href="/forgot-password" class="forgot-link">Mot de passe oublié ?</a>
-                </div>
+                            </div>
 
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-sign-in-alt"></i>
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-sign-in-alt"></i>
                                 <span>Se connecter</span>
                                 <div class="btn-loading">
                                     <i class="fas fa-spinner fa-spin"></i>
                                 </div>
-                </button>
-            </form>
+                            </button>
+                        </form>
 
                         <!-- Admin Login Form -->
                         <form class="auth-form" id="adminLoginForm" action="/login" method="post">
-                <input type="hidden" name="_token" id="csrf-token-admin" value="">
-                <input type="hidden" name="admin_section" value="true">
-                
-                <div class="form-group">
+                            <input type="hidden" name="_token" id="csrf-token-admin" value="">
+                            <input type="hidden" name="admin_section" value="true">
+
+                            <div class="form-group">
                                 <label for="adminId" class="form-label">
                                     <i class="fas fa-user-shield"></i>
                                     Identifiant administrateur
                                 </label>
-                    <div class="input-container">
-                                    <input type="text" id="adminId" name="username" class="form-input" placeholder="ADMIN001" required autocomplete="username">
+                                <div class="input-container">
+                                    <input type="text" id="adminId" name="username" class="form-input"
+                                        placeholder="ADMIN001" required autocomplete="username">
                                     <button type="button" class="clear-input">
                                         <i class="fas fa-times"></i>
                                     </button>
-                    </div>
-                </div>
+                                </div>
+                            </div>
 
-                <div class="form-group">
+                            <div class="form-group">
                                 <label for="adminEmail" class="form-label">
                                     <i class="fas fa-envelope"></i>
                                     Adresse email
                                 </label>
-                    <div class="input-container">
-                                    <input type="email" id="adminEmail" name="email" class="form-input" placeholder="admin@cratech.com" required autocomplete="email">
+                                <div class="input-container">
+                                    <input type="email" id="adminEmail" name="email" class="form-input"
+                                        placeholder="admin@cratech.com" required autocomplete="email">
                                     <button type="button" class="clear-input">
                                         <i class="fas fa-times"></i>
                                     </button>
-                    </div>
-                </div>
+                                </div>
+                            </div>
 
-                <div class="form-group">
+                            <div class="form-group">
                                 <label for="adminPassword" class="form-label">
                                     <i class="fas fa-lock"></i>
                                     Mot de passe
-                    </label>
-                    <div class="input-container">
-                                    <input type="password" id="adminPassword" name="password" class="form-input" placeholder="Votre mot de passe" required autocomplete="current-password">
+                                </label>
+                                <div class="input-container">
+                                    <input type="password" id="adminPassword" name="password" class="form-input"
+                                        placeholder="Votre mot de passe" required autocomplete="current-password">
                                     <button type="button" class="clear-input">
                                         <i class="fas fa-times"></i>
                                     </button>
-                    </div>
-                </div>
+                                </div>
+                            </div>
 
                             <div class="form-options">
                                 <div class="checkbox-container">
-                        <input type="checkbox" id="adminRememberMe" name="remember">
+                                    <input type="checkbox" id="adminRememberMe" name="remember">
                                     <label for="adminRememberMe">Se souvenir de moi</label>
-                </div>
+                                </div>
                                 <a href="/forgot-password" class="forgot-link">Mot de passe oublié ?</a>
-                </div>
+                            </div>
 
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-user-shield"></i>
-                    <span>Connexion Admin</span>
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-user-shield"></i>
+                                <span>Connexion Admin</span>
                                 <div class="btn-loading">
                                     <i class="fas fa-spinner fa-spin"></i>
                                 </div>
-                </button>
-            </form>
+                            </button>
+                        </form>
 
                         <!-- Admin Signup Form -->
                         <form class="auth-form" id="adminSignupForm" action="/register" method="post">
-                <input type="hidden" name="_token" id="csrf-token-signup" value="">
-                
-                <div class="form-group">
+                            <input type="hidden" name="_token" id="csrf-token-signup" value="">
+
+                            <div class="form-group">
                                 <label for="adminName" class="form-label">
                                     <i class="fas fa-user"></i>
                                     Nom complet
                                 </label>
-                    <div class="input-container">
-                                    <input type="text" id="adminName" name="nom" class="form-input" placeholder="Jean Dupont" required autocomplete="name">
+                                <div class="input-container">
+                                    <input type="text" id="adminName" name="nom" class="form-input"
+                                        placeholder="Jean Dupont" required autocomplete="name">
                                     <button type="button" class="clear-input">
                                         <i class="fas fa-times"></i>
                                     </button>
-                    </div>
-                </div>
+                                </div>
+                            </div>
 
-                <div class="form-group">
+                            <div class="form-group">
                                 <label for="adminSignupEmail" class="form-label">
                                     <i class="fas fa-envelope"></i>
                                     Adresse email
                                 </label>
-                    <div class="input-container">
-                                    <input type="email" id="adminSignupEmail" name="email" class="form-input" placeholder="admin@cratech.com" required autocomplete="email">
+                                <div class="input-container">
+                                    <input type="email" id="adminSignupEmail" name="email" class="form-input"
+                                        placeholder="admin@cratech.com" required autocomplete="email">
                                     <button type="button" class="clear-input">
                                         <i class="fas fa-times"></i>
                                     </button>
-                    </div>
-                </div>
+                                </div>
+                            </div>
 
-                <div class="form-group">
+                            <div class="form-group">
                                 <label for="adminSignupPassword" class="form-label">
                                     <i class="fas fa-lock"></i>
                                     Mot de passe
                                 </label>
-                    <div class="input-container">
-                                    <input type="password" id="adminSignupPassword" name="password" class="form-input" placeholder="Mot de passe sécurisé" required autocomplete="new-password">
+                                <div class="input-container">
+                                    <input type="password" id="adminSignupPassword" name="password" class="form-input"
+                                        placeholder="Mot de passe sécurisé" required autocomplete="new-password">
                                     <button type="button" class="clear-input">
                                         <i class="fas fa-times"></i>
                                     </button>
-                    </div>
-                                <div class="password-hint">Minimum 8 caractères avec majuscules, minuscules et chiffres</div>
-                </div>
+                                </div>
+                                <div class="password-hint">Minimum 8 caractères avec majuscules, minuscules et chiffres
+                                </div>
+                            </div>
 
-                <div class="form-group">
+                            <div class="form-group">
                                 <label for="adminConfirmPassword" class="form-label">
                                     <i class="fas fa-lock"></i>
                                     Confirmer le mot de passe
                                 </label>
-                    <div class="input-container">
-                                    <input type="password" id="adminConfirmPassword" name="password_confirmation" class="form-input" placeholder="Confirmez votre mot de passe" required autocomplete="new-password">
+                                <div class="input-container">
+                                    <input type="password" id="adminConfirmPassword" name="password_confirmation"
+                                        class="form-input" placeholder="Confirmez votre mot de passe" required
+                                        autocomplete="new-password">
                                     <button type="button" class="clear-input">
                                         <i class="fas fa-times"></i>
                                     </button>
-                    </div>
-                </div>
+                                </div>
+                            </div>
 
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-user-plus"></i>
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-user-plus"></i>
                                 <span>Créer le compte admin</span>
                                 <div class="btn-loading">
                                     <i class="fas fa-spinner fa-spin"></i>
                                 </div>
-                </button>
-            </form>
+                            </button>
+                        </form>
 
                         <!-- Admin Switch Buttons -->
-            <div class="admin-switch-buttons" style="display: none;">
-                <button type="button" class="switch-btn" id="switchToAdminLogin">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>Déjà un compte admin ?</span>
-                </button>
-                <button type="button" class="switch-btn" id="switchToAdminSignup">
-                    <i class="fas fa-user-plus"></i>
-                    <span>Créer un compte admin</span>
-                </button>
-            </div>
+                        <div class="admin-switch-buttons" style="display: none;">
+                            <button type="button" class="switch-btn" id="switchToAdminLogin">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>Déjà un compte admin ?</span>
+                            </button>
+                            <button type="button" class="switch-btn" id="switchToAdminSignup">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Créer un compte admin</span>
+                            </button>
+                        </div>
 
-                        <!-- Security Info -->
-                        <div class="security-info">
-                    <i class="fas fa-shield-alt"></i>
-                            <span>Connexion sécurisée avec chiffrement SSL/TLS</span>
+                     
+                    </div>
                 </div>
-            </div>
-        </div>
             </div>
         </main>
 
@@ -345,4 +356,5 @@
 
     <script src="/js/auth.js"></script>
 </body>
+
 </html>

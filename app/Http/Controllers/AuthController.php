@@ -194,10 +194,10 @@ class AuthController extends Controller
         }
 
         // Connexion réussie
-        Log::info('Connexion admin réussie, redirection vers /admin/dashboard');
+        Log::info('Connexion admin réussie, redirection vers /admin/dashboard.html');
         Auth::login($user, $request->has('remember'));
         
-        return response()->json(['success' => true, 'redirect' => '/admin/dashboard']);
+        return response()->json(['success' => true, 'redirect' => '/admin/dashboard.html']);
     }
 
     /**
@@ -227,7 +227,7 @@ class AuthController extends Controller
         
         // Redirection selon le rôle
         if ($user->role === 'administrateur') {
-            return redirect('/admin/dashboard')->with('success', 'Connexion administrateur réussie !');
+            return redirect('/admin/dashboard.html')->with('success', 'Connexion administrateur réussie !');
         } elseif ($user->role === 'validateur') {
             return redirect('/validateur/dashboard')->with('success', 'Connexion validateur réussie !');
         } elseif (in_array($user->role, ['employé', 'sous-traitant'])) {
@@ -295,12 +295,12 @@ class AuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Compte administrateur créé avec succès !',
-                'redirect' => '/admin/dashboard'
+                'redirect' => '/admin/dashboard.html'
             ]);
         }
 
             // Redirection vers le dashboard admin
-            return redirect('/admin/dashboard')->with('success', 'Compte administrateur créé avec succès !');
+            return redirect('/admin/dashboard.html')->with('success', 'Compte administrateur créé avec succès !');
 
         } catch (\Exception $e) {
             Log::error('Erreur lors de la création du compte admin: ' . $e->getMessage());

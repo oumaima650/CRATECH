@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,15 +8,17 @@
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/accueil.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-container">
             <div class="header-left">
                 <a href="#accueil" class="logo">
-                    <div class="logo-icon">C</div>
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                     <span class="logo-text">CRATECH</span>
                 </a>
                 <nav class="nav">
@@ -26,9 +29,9 @@
                     <a href="#contact" class="nav-link">Contact</a>
                 </nav>
             </div>
-            
+
             <div class="header-right">
-                
+
                 <a href="/auth/login" class="btn-demo">
                     <i class="fas fa-play"></i>
                     Connexion / Inscription
@@ -50,7 +53,8 @@
                 </h1>
                 <p class="hero-subtitle">
                     CRATECH centralise la saisie mensuelle des CRA par les employés, la validation par les validateurs,
-                    et l'administration complète par les équipes RH/IT. Suivi temps réel, historiques et reporting inclus.
+                    et l'administration complète par les équipes RH/IT. Suivi temps réel, historiques et reporting
+                    inclus.
                 </p>
                 <div class="hero-stats">
                     <div class="stat">
@@ -188,37 +192,43 @@
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
                     <h3 class="feature-title">CRA mensuel</h3>
-                    <p class="feature-description">Saisie au jour le jour, auto-save, soumission et statut par mois (en attente, validé, refusé).</p>
+                    <p class="feature-description">Saisie au jour le jour, auto-save, soumission et statut par mois (en
+                        attente, validé, refusé).</p>
                     <div class="feature-badge">CRA</div>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-clipboard-check"></i></div>
                     <h3 class="feature-title">Workflow de validation</h3>
-                    <p class="feature-description">Interface Validateur dédiée: liste des CRA soumis, actions valider/refuser, historique.</p>
+                    <p class="feature-description">Interface Validateur dédiée: liste des CRA soumis, actions
+                        valider/refuser, historique.</p>
                     <div class="feature-badge">Workflow</div>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-project-diagram"></i></div>
                     <h3 class="feature-title">Activités & Projets</h3>
-                    <p class="feature-description">Assignation des utilisateurs aux activités/projets, contrôle par statut d'activité.</p>
+                    <p class="feature-description">Assignation des utilisateurs aux activités/projets, contrôle par
+                        statut d'activité.</p>
                     <div class="feature-badge">Projets</div>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-user-tag"></i></div>
                     <h3 class="feature-title">Affectation des validateurs</h3>
-                    <p class="feature-description">Affecter un validateur à chaque employé/sous-traitant directement depuis l'admin.</p>
+                    <p class="feature-description">Affecter un validateur à chaque employé/sous-traitant directement
+                        depuis l'admin.</p>
                     <div class="feature-badge">Affectation</div>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-envelope"></i></div>
                     <h3 class="feature-title">Notifications email</h3>
-                    <p class="feature-description">Envoi d'email au validateur lors de la soumission d'un CRA en attente.</p>
+                    <p class="feature-description">Envoi d'email au validateur lors de la soumission d'un CRA en
+                        attente.</p>
                     <div class="feature-badge">Email</div>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
                     <h3 class="feature-title">Reporting & Dashboard</h3>
-                    <p class="feature-description">Statistiques d'activité, utilisateurs actifs, en attente, historiques récents.</p>
+                    <p class="feature-description">Statistiques d'activité, utilisateurs actifs, en attente, historiques
+                        récents.</p>
                     <div class="feature-badge">Stats</div>
                 </div>
             </div>
@@ -236,19 +246,22 @@
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
                     <h3 class="feature-title">CSRF & Sessions</h3>
-                    <p class="feature-description">Protection CSRF, routes sécurisées et gestion des sessions intégrées.</p>
+                    <p class="feature-description">Protection CSRF, routes sécurisées et gestion des sessions intégrées.
+                    </p>
                     <div class="feature-badge">CSRF</div>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-user-lock"></i></div>
                     <h3 class="feature-title">Rôles & Accès</h3>
-                    <p class="feature-description">Accès différenciés par rôle (administrateur, validateur, employé/sous-traitant).</p>
+                    <p class="feature-description">Accès différenciés par rôle (administrateur, validateur,
+                        employé/sous-traitant).</p>
                     <div class="feature-badge">RBAC</div>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon"><i class="fas fa-key"></i></div>
                     <h3 class="feature-title">SSO (Keycloak)</h3>
-                    <p class="feature-description">Prêt pour une intégration SSO via Keycloak (configuration prévue).</p>
+                    <p class="feature-description">Prêt pour une intégration SSO via Keycloak (configuration prévue).
+                    </p>
                     <div class="feature-badge">SSO</div>
                 </div>
             </div>
@@ -315,7 +328,7 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <div class="footer-logo">
-                        <div class="logo-icon">C</div>
+                        <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                         <span class="logo-text">CRATECH</span>
                     </div>
                     <p class="footer-description">
@@ -327,7 +340,7 @@
                         <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
                     </div>
                 </div>
-                
+
                 <div class="footer-section">
                     <h3 class="footer-title">Produit</h3>
                     <ul class="footer-links">
@@ -337,7 +350,7 @@
                         <li><a href="#security">Sécurité</a></li>
                     </ul>
                 </div>
-                
+
                 <div class="footer-section">
                     <h3 class="footer-title">Support</h3>
                     <ul class="footer-links">
@@ -347,7 +360,7 @@
                         <li><a href="#">Statut</a></li>
                     </ul>
                 </div>
-                
+
                 <div class="footer-section">
                     <h3 class="footer-title">Entreprise</h3>
                     <ul class="footer-links">
@@ -358,7 +371,7 @@
                     </ul>
                 </div>
             </div>
-            
+
             <div class="footer-bottom">
                 <div class="footer-bottom-content">
                     <p>&copy; 2025 CRATECH. Tous droits réservés.</p>
@@ -374,4 +387,5 @@
 
     <script src="/js/accueil.js"></script>
 </body>
+
 </html>

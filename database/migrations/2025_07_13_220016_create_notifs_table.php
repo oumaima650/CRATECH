@@ -11,13 +11,22 @@ return new class extends Migration
      */
     public function up(): void
 {
-    Schema::create('notifs', function (Blueprint $table) {
-        $table->id('id_notif');
-        $table->string('message');
-        $table->dateTime('dateEnvoi')->nullable();
-        $table->foreign('id_user')->references('id_user')->on('utilisateurs')->onDelete('cascade');
-        $table->timestamps();
-    });
+  Schema::create('notifs', function (Blueprint $table) {
+    $table->id('id_notif');
+    $table->string('message');
+    $table->dateTime('dateEnvoi')->nullable();
+
+    // 👇 créer la colonne AVANT la foreign key
+    $table->unsignedBigInteger('id_user');
+
+    $table->foreign('id_user')
+          ->references('id_user')
+          ->on('utilisateurs')
+          ->onDelete('cascade');
+
+    $table->timestamps();
+});
+
 }
 
 

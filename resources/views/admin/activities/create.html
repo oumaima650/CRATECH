@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,18 +8,20 @@
     <title>CRATECH - Créer une Activité</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="admin-container">
-         <!-- Sidebar -->
+        <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <div class="logo-section">
-                    <div class="logo-icon">C</div>
+                    <img src="/images/image.png" alt="CRATECH Logo" class="logo-icon">
                     <span class="logo-text">CRATECH</span>
                 </div>
                 <div class="admin-badge">
@@ -76,12 +79,12 @@
                     <h1 class="page-title">Créer une Activité</h1>
                 </div>
                 <div class="header-right">
-                  
+
                     <div class="current-time">
                         <i class="fas fa-clock"></i>
                         <span id="current-time"></span>
                     </div>
-                    
+
                 </div>
             </header>
 
@@ -94,22 +97,27 @@
                             </div>
                             <div>
                                 <h2 style="margin:0;">Créer une nouvelle activité</h2>
-                                <p style="margin:.25rem 0 0;color:var(--gray-600);">Renseignez les informations ci-dessous pour créer une nouvelle activité.</p>
+                                <p style="margin:.25rem 0 0;color:var(--gray-600);">Renseignez les informations
+                                    ci-dessous pour créer une nouvelle activité.</p>
                             </div>
                         </div>
                     </div>
                     <div class="table-wrapper" style="padding: 1.5rem;">
-                        <form id="createActivityForm" class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+                        <form id="createActivityForm" class="form-grid"
+                            style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
                             <input type="hidden" name="_token" id="csrf-token" value="">
-                            
+
                             <div class="form-row" style="grid-column:span 1;">
-                                <label for="nom_act" style="font-weight:600;color:var(--gray-800);">Nom de l'activité</label>
+                                <label for="nom_act" style="font-weight:600;color:var(--gray-800);">Nom de
+                                    l'activité</label>
                                 <div style="position:relative;">
-                                    <i class="fas fa-tag" style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--gray-400);"></i>
-                                    <input style="padding-left:2.5rem;" type="text" id="nom_act" name="nom_act" placeholder="Ex: Développement Web, Marketing Digital..." required>
+                                    <i class="fas fa-tag"
+                                        style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--gray-400);"></i>
+                                    <input style="padding-left:2.5rem;" type="text" id="nom_act" name="nom_act"
+                                        placeholder="Ex: Développement Web, Marketing Digital..." required>
                                 </div>
                             </div>
-                            
+
                             <div class="form-row" style="grid-column:span 1;">
                                 <label for="status" style="font-weight:600;color:var(--gray-800);">Statut</label>
                                 <select id="status" name="status" required>
@@ -118,14 +126,18 @@
                                     <option value="inactif">Inactif</option>
                                 </select>
                             </div>
-                            
+
                             <div class="form-row" style="grid-column:span 2;">
-                                <label for="description" style="font-weight:600;color:var(--gray-800);">Description</label>
-                                <textarea id="description" name="description" rows="4" placeholder="Décrivez cette activité en détail..."></textarea>
+                                <label for="description"
+                                    style="font-weight:600;color:var(--gray-800);">Description</label>
+                                <textarea id="description" name="description" rows="4"
+                                    placeholder="Décrivez cette activité en détail..."></textarea>
                             </div>
-                            
-                            <div class="form-actions" style="grid-column:span 2;display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--gray-200);">
-                                <button type="button" class="btn btn-secondary" onclick="window.location.href='/admin/activities.html'">
+
+                            <div class="form-actions"
+                                style="grid-column:span 2;display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--gray-200);">
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="window.location.href='/admin/activities.html'">
                                     <i class="fas fa-arrow-left"></i>
                                     <span>Retour à la liste</span>
                                 </button>
@@ -144,7 +156,7 @@
     <script src="/js/admin.js"></script>
     <script>
         // Initialisation du token CSRF
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             fetch('/csrf-token', { credentials: 'same-origin' })
                 .then(response => response.json())
                 .then(data => {
@@ -156,20 +168,20 @@
         });
 
         // Gestion du formulaire
-        document.getElementById('createActivityForm').addEventListener('submit', function(e) {
+        document.getElementById('createActivityForm').addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
-            
+
             // Désactiver le bouton et afficher le loading
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Création...';
-            
+
             // Nettoyer les erreurs précédentes
             clearFormErrors();
-            
+
             fetch('/admin/activities', {
                 method: 'POST',
                 headers: {
@@ -179,26 +191,26 @@
                 body: formData,
                 credentials: 'same-origin'
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showSuccessMessage('Activité créée avec succès !');
-                    setTimeout(() => {
-                        window.location.href = '/admin/activities.html';
-                    }, 1500);
-                } else {
-                    showErrorMessage(data.message || 'Erreur lors de la création de l\'activité');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                showErrorMessage('Erreur de connexion. Veuillez réessayer.');
-            })
-            .finally(() => {
-                // Réactiver le bouton
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccessMessage('Activité créée avec succès !');
+                        setTimeout(() => {
+                            window.location.href = '/admin/activities.html';
+                        }, 1500);
+                    } else {
+                        showErrorMessage(data.message || 'Erreur lors de la création de l\'activité');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showErrorMessage('Erreur de connexion. Veuillez réessayer.');
+                })
+                .finally(() => {
+                    // Réactiver le bouton
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                });
         });
 
         function clearFormErrors() {
@@ -232,7 +244,7 @@
                 transform: translateX(100%);
                 transition: transform 0.3s ease;
             `;
-            
+
             document.body.appendChild(notification);
             setTimeout(() => notification.style.transform = 'translateX(0)', 100);
             setTimeout(() => notification.remove(), 3000);
@@ -264,11 +276,12 @@
                 transform: translateX(100%);
                 transition: transform 0.3s ease;
             `;
-            
+
             document.body.appendChild(notification);
             setTimeout(() => notification.style.transform = 'translateX(0)', 100);
             setTimeout(() => notification.remove(), 5000);
         }
     </script>
 </body>
+
 </html>
