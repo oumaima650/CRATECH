@@ -526,73 +526,10 @@ Route::get('/employe/dashboard.html', function () {
     abort(404);
 });
 
-// Page employe mes-cra HTML publique (pas d'auth)
-Route::get('/employe/mes-cra.html', function () {
-    $path = resource_path('views/employe/mes-cra.html');
-    if (file_exists($path)) {
-        return response(file_get_contents($path))->header('Content-Type', 'text/html; charset=utf-8');
-    }
-    abort(404);
-});
+
 
 // API employe activities (avec authentification)
-Route::get('/employe/activities', function (Illuminate\Http\Request $request) {
-    try {
-        $user = Auth::user();
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Utilisateur non connecté'
-            ], 401);
-        }
 
-        $year = $request->get('year');
-        $month = $request->get('month');
-        
-        // DEBUG: Log les paramètres reçus
-        \Log::info('API /employe/activities appelée', [
-            'user_id' => $user->id_user,
-            'user_name' => $user->nom_user,
-            'year' => $year,
-            'month' => $month
-        ]);
-        
-        $query = DB::table('user__acts')
-            ->join('activités', 'user__acts.id_activité', '=', 'activités.id_activité')
-            ->where('user__acts.id_user', $user->id_user);
-
-        if ($year && $month) {
-            // Filtrage strict : SEULEMENT si activité ET assignation sont actives
-            $query->where('activités.status', 'actif')
-                  ->where('user__acts.status', 'actif');
-        } else {
-            // Sans contexte de date, on ne montre que le strictement actif
-            $query->where('activités.status', 'actif')
-                  ->where('user__acts.status', 'actif');
-        }
-
-        $activities = $query->select('activités.id_activité', 'activités.nom_act', 'activités.description')
-            ->distinct()
-            ->get();
-        
-        // DEBUG: Log le résultat
-        \Log::info('API /employe/activities résultat', [
-            'count' => $activities->count(),
-            'activities' => $activities->pluck('nom_act')->toArray()
-        ]);
-
-        
-        return response()->json([
-            'success' => true,
-            'activities' => $activities
-        ]);
-    } catch (Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la récupération des activités: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
 // API pour charger les données CRA (même logique que dans employe.php)
 Route::get('/employe/cra/load', function (Request $request) {
@@ -808,81 +745,6 @@ Route::get('/employe/cra/export/{craId}', function ($craId) {
     }
 });
 
-// API employe user-info (avec authentification)
-Route::get('/employe/user-info', function () {
-    try {
-        $user = Auth::user();
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Utilisateur non connecté'
-            ], 401);
-        }
-        
-        return response()->json([
-            'success' => true,
-            'user' => [
-                'id_user' => $user->id_user,
-                'id' => $user->id_user,
-                'nom' => $user->nom,
-                'name' => $user->nom,
-                'email' => $user->email,
-                'role' => $user->role
-            ]
-        ]);
-    } catch (Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la récupération des informations utilisateur'
-        ], 500);
-    }
-});
-
-// API employe mes-cra (avec données réelles de la base)
-Route::get('/employe/mes-cra', function () {
-    try {
-        $user = Auth::user();
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Utilisateur non connecté'
-            ], 401);
-        }
-        
-        $userId = $user->id_user;
-        
-        // Récupérer tous les CRA de cet utilisateur depuis la table c_r_a_s
-        $cras = DB::table('c_r_a_s')
-            ->where('id_user', $userId)
-            ->orderBy('dateMois', 'desc')
-            ->get()
-            ->map(function($cra) {
-                // Un CRA est soumis uniquement si submittedAT n'est pas NULL
-                $isSubmitted = !is_null($cra->submittedAT);
-                
-                return [
-                    'id_CRA' => $cra->id_CRA,
-                    'dateMois' => $cra->dateMois,
-                    'status' => $cra->status,
-                    'is_submitted' => $isSubmitted,
-                    'submittedAT' => $cra->submittedAT,
-                    'created_at' => $cra->created_at,
-                    'updated_at' => $cra->updated_at
-                ];
-            });
-        
-        return response()->json([
-            'success' => true,
-            'cras' => $cras
-        ]);
-        
-    } catch (Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Erreur lors de la récupération des CRA: ' . $e->getMessage()
-        ], 500);
-    }
-});
 // API publique pour lister les utilisateurs (lecture seule)
 Route::get('/api/public/users', function () {
     try {
@@ -1254,7 +1116,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [EmployeController::class, 'dashboard'])->name('employe.dashboard');
         Route::post('/cra/save', [EmployeController::class, 'saveCra'])->name('employe.cra.save');
         
-        // API routes for CRA system
+        // Informations utilisateur
         Route::get('/user-info', function () {
             $user = Auth::user();
             if (!$user) {
@@ -1265,17 +1127,85 @@ Route::middleware(['auth'])->group(function () {
                 'user' => ['id' => $user->id_user, 'nom' => $user->nom_user, 'email' => $user->email_user]
             ]);
         });
-        
-        Route::get('/activities', function () {
+
+        // Historique des CRA (mes-cra)
+        Route::get('/mes-cra', function () {
+            try {
+                $user = Auth::user();
+                if (!$user) {
+                    return response()->json(['success' => false, 'message' => 'Non connecté'], 401);
+                }
+                
+                $cras = DB::table('c_r_a_s')
+                    ->where('id_user', $user->id_user)
+                    ->orderBy('dateMois', 'desc')
+                    ->get()
+                    ->map(function($cra) {
+                        return [
+                            'id_CRA' => $cra->id_CRA,
+                            'dateMois' => $cra->dateMois,
+                            'status' => $cra->status,
+                            'is_submitted' => !is_null($cra->submittedAT),
+                            'submittedAT' => $cra->submittedAT,
+                            'created_at' => $cra->created_at,
+                            'updated_at' => $cra->updated_at
+                        ];
+                    });
+                
+                return response()->json(['success' => true, 'cras' => $cras]);
+            } catch (\Exception $e) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
+        });
+
+        // Page mes-cra HTML
+        Route::get('/mes-cra.html', function () {
+            $path = resource_path('views/employe/mes-cra.html');
+            if (file_exists($path)) {
+                return response(file_get_contents($path))->header('Content-Type', 'text/html; charset=utf-8');
+            }
+            abort(404);
+        });
+
+        Route::get('/activities', function (Illuminate\Http\Request $request) {
             $user = Auth::user();
             if (!$user) {
                 return response()->json(['success' => false, 'message' => 'Non connecté'], 401);
             }
             
-            $activities = DB::table('user__acts')
+            $year = $request->get('year');
+            $month = $request->get('month');
+            
+            // Si pas de mois/année, on ne retourne rien (sécurité)
+            if (!$year || !$month) {
+                return response()->json(['success' => true, 'activities' => []]);
+            }
+
+            $dateMois = sprintf('%04d-%02d-01', $year, $month);
+
+            // Règle de filtrage hybride :
+            // 1. On vérifie si un CRA existe pour ce mois
+            $cra = DB::table('c_r_a_s')
+                ->where('id_user', $user->id_user)
+                ->where('dateMois', $dateMois)
+                ->first();
+
+            $query = DB::table('user__acts')
                 ->join('activités', 'user__acts.id_activité', '=', 'activités.id_activité')
-                ->where('user__acts.id_user', $user->id_user)
-                ->select('activités.id_activité', 'activités.nom_act', 'activités.description')
+                ->where('user__acts.id_user', $user->id_user);
+
+            if ($cra) {
+                // État A : Le CRA existe -> on montre TOUT ce qui est assigné (historique)
+                // On ne filtre pas par statut pour préserver les saisies passées
+            } else {
+                // État B : Pas encore de CRA -> on montre SEULEMENT ce qui est actif
+                // Cela permet à l'utilisateur de "trouver" ses projets pour initialiser le mois
+                $query->where('activités.status', 'actif')
+                      ->where('user__acts.status', 'actif');
+            }
+            
+            $activities = $query->select('activités.id_activité', 'activités.nom_act', 'activités.description')
+                ->distinct()
                 ->get();
             
             return response()->json(['success' => true, 'activities' => $activities]);
@@ -1983,37 +1913,7 @@ Route::get('/api/public/activities', function () {
         ]
     ]);
 });
-// API pour lister les utilisateurs (publique pour le moment pour debug)
-// API pour lister les utilisateurs (publique pour le moment pour debug)
-Route::get('/api/public/users', function () {
-    try {
-        $users = DB::table('utilisateurs')
-            ->leftJoin('utilisateurs as validateurs', 'utilisateurs.id_validateur', '=', 'validateurs.id_user')
-            ->select(
-                'utilisateurs.*', 
-                'validateurs.nom_user as validator_name',
-                'validateurs.email_user as validator_email'
-            )
-            ->get();
-            
-        // Stats
-        $stats = [
-            'total' => $users->count(),
-            'administrators' => $users->where('role', 'administrateur')->count(),
-            'validators' => $users->where('role', 'validateur')->count(),
-            'employees' => $users->whereIn('role', ['employé', 'sous-traitant'])->count(),
-            'active' => $users->where('status', 'actif')->count()
-        ];
-        
-        return response()->json([
-            'users' => $users,
-            'stats' => $stats
-        ]);
-        
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
-});
+
 
 // Route DELETE pour supprimer un utilisateur (Keycloak + Local)
 Route::delete('/api/admin/users/{id}', function ($id) {

@@ -158,16 +158,20 @@ function fetchUsersAndRender() {
     fetch('/api/public/users', { credentials: 'same-origin' })
         .then(res => res.json())
         .then(data => {
-            usersData = (data.users || []).map(u => ({
-                id: u.id_user,
-                nom: u.nom_user,
-                email: u.email_user,
-                role: u.role,
-                status: u.status,
-                createdAt: u.created_at,
-                id_validateur: u.id_validateur || null,
-                validator: u.validator || null
-            }));
+            console.log('API Response:', data);
+            usersData = (data.users || []).map(u => {
+                console.log('Mapping user:', u.nom_user, 'Validator:', u.validator);
+                return {
+                    id: u.id_user,
+                    nom: u.nom_user,
+                    email: u.email_user,
+                    role: u.role,
+                    status: u.status,
+                    createdAt: u.created_at,
+                    id_validateur: u.id_validateur || null,
+                    validator: u.validator || null
+                };
+            });
 
             // Mettre à jour les statistiques
             if (data.stats) {

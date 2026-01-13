@@ -265,6 +265,8 @@ class CRAManager {
         this.addCellListeners();
     }
 
+
+
     addCellListeners() {
         const dayCells = this.craTableBody.querySelectorAll('.day-cell');
         dayCells.forEach(cell => {
@@ -429,6 +431,8 @@ class CRAManager {
         const totalCell = row.querySelector('.total-cell');
         totalCell.textContent = total.toFixed(1);
     }
+
+
 
     formatDate(year, month, day) {
         const mm = String(month).padStart(2, '0');

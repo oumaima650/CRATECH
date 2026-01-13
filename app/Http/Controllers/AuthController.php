@@ -594,12 +594,33 @@ class AuthController extends Controller
             Utilisateur::where('id_user', $user->id_user)->update(array_merge($updates, ['updated_at' => now()]));
             
             // --- Intégration Keycloak ---
-            if ($passwordChanged && $user->keycloak_id) {
-                try {
-                    $this->updateKeycloakPassword($user->keycloak_id, $newPassword);
-                    Log::info('Mot de passe Keycloak synchronisé via profil pour: ' . $user->email_user);
-                } catch (\Exception $e) {
-                    Log::error('Échec synchronisation mot de passe Keycloak (Profil): ' . $e->getMessage());
+            if ($passwordChanged) {
+                // S'assurer qu'on a l'ID Keycloak
+                $keycloakId = $user->keycloak_id;
+                
+                if (!$keycloakId) {
+                    // Si l'ID est manquant en local, on tente de le trouver dans Keycloak par l'email
+                    Log::info('Sync Profil: keycloak_id manquant pour ' . $user->email_user . ', tentative de récupération...');
+                    $keycloakId = $this->getKeycloakUserIdByEmail($user->email_user);
+                    if ($keycloakId) {
+                        Utilisateur::where('id_user', $user->id_user)->update(['keycloak_id' => $keycloakId]);
+                        Log::info('Sync Profil: keycloak_id récupéré et mis à jour pour ' . $user->email_user);
+                    }
+                }
+
+                if ($keycloakId) {
+                    try {
+                        $this->updateKeycloakPassword($keycloakId, $newPassword);
+                        Log::info('Mot de passe Keycloak synchronisé via profil pour: ' . $user->email_user);
+                    } catch (\Exception $e) {
+                        Log::error('Échec synchronisation mot de passe Keycloak (Profil): ' . $e->getMessage());
+                        return response()->json([
+                            'success' => false, 
+                            'message' => 'Mise à jour locale réussie, mais échec de la synchronisation avec Keycloak. ' . $e->getMessage()
+                        ], 500);
+                    }
+                } else {
+                    Log::warning('Sync Profil: Utilisateur non trouvé dans Keycloak pour ' . $user->email_user);
                 }
             }
             // ----------------------------
@@ -744,5 +765,53 @@ class AuthController extends Controller
         }
 
         return true;
+    }
+
+    /**
+     * Chercher l'ID Keycloak d'un utilisateur par son email
+     */
+    private function getKeycloakUserIdByEmail($email)
+    {
+        $services = config('services.keycloak');
+        
+        // 1. Obtenir le token admin
+        $tokenUrl = "{$services['base_url']}/realms/{$services['realms']}/protocol/openid-connect/token";
+        
+        try {
+            $response = Http::asForm()->post($tokenUrl, [
+                'client_id' => $services['client_id'],
+                'client_secret' => $services['client_secret'],
+                'grant_type' => 'client_credentials',
+            ]);
+
+            if (!$response->successful()) {
+                Log::error('Keycloak Admin Auth Failed during search:', ['status' => $response->status()]);
+                return null;
+            }
+
+            $token = $response->json('access_token');
+
+            // 2. Chercher par email
+            $searchUrl = "{$services['base_url']}/admin/realms/{$services['realms']}/users";
+            
+            $userResponse = Http::withToken($token)->get($searchUrl, [
+                'email' => $email,
+                'exact' => true
+            ]);
+
+            if ($userResponse->successful()) {
+                $users = $userResponse->json();
+                if (!empty($users)) {
+                    return $users[0]['id'] ?? null;
+                }
+            }
+            
+            Log::info('Recherche Keycloak par email: aucun résultat pour ' . $email);
+            return null;
+
+        } catch (\Exception $e) {
+            Log::error('Erreur recherche Keycloak par email: ' . $e->getMessage());
+            return null;
+        }
     }
 }

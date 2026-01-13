@@ -341,6 +341,16 @@
                 if (els.statRejected) { els.statRejected.dataset.target = rejected; els.statRejected.textContent = rejected; }
             }
 
+            function updateRowActions(item) {
+                const actions = item.tr.querySelector('.action-buttons');
+                if (!actions) return;
+
+                const isProcessed = item.statusKey === 'valide' || item.statusKey === 'refuse';
+                actions.querySelectorAll('.action-validate, .action-reject').forEach(btn => {
+                    btn.style.display = isProcessed ? 'none' : 'inline-flex';
+                });
+            }
+
             // Filtering + pagination
             const pageSize = 10;
             let currentPage = 1;
@@ -367,7 +377,11 @@
                 const end = start + pageSize;
                 const visible = new Set(items.slice(start, end).map(x => x.tr));
                 // Toggle row visibility
-                allItems.forEach(x => { x.tr.style.display = visible.has(x.tr) ? '' : 'none'; });
+                allItems.forEach(x => {
+                    const isVisible = visible.has(x.tr);
+                    x.tr.style.display = isVisible ? '' : 'none';
+                    if (isVisible) updateRowActions(x);
+                });
                 // Update stats on filtered set
                 updateStats(items);
                 // Render pagination controls
@@ -449,9 +463,8 @@
                         item.statusKey = newStatus;
                         item.statusBadge.className = `status-badge ${newStatus}`;
                         item.statusBadge.textContent = newText;
+                        updateRowActions(item);
                     }
-                    // Optionally disable buttons after action
-                    btn.closest('.action-buttons')?.querySelectorAll('button').forEach(b => { if (!b.classList.contains('btn-view')) b.disabled = true; });
                     if (typeof showNotification === 'function') {
                         showNotification(`CRA #${craId} ${actionLabel}`, btnValidate ? 'success' : 'warning');
                     }
@@ -464,26 +477,6 @@
 
             // Initial render
             renderPage(1);
-
-            // Export Excel
-            if (els.btnExportExcel) {
-                els.btnExportExcel.addEventListener('click', function () {
-                    window.location.href = '/admin/cra/export-excel';
-                });
-            }
-
-            // Masquer les boutons Valider/Rejeter si le CRA est refusé ou validé
-            setTimeout(() => {
-                allItems.forEach(item => {
-                    const actions = item.tr.querySelector('.action-buttons');
-                    if (!actions) return;
-                    if (item.statusKey === 'valide' || item.statusKey === 'refuse') {
-                        actions.querySelectorAll('.action-validate, .action-reject').forEach(btn => btn.style.display = 'none');
-                    } else {
-                        actions.querySelectorAll('.action-validate, .action-reject').forEach(btn => btn.style.display = '');
-                    }
-                });
-            }, 300);
 
             // Export Excel du CRA sélectionné (exactement comme employe/mes-cra.html)
             if (els.btnExportExcel) {

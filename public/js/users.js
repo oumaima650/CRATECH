@@ -128,7 +128,7 @@ function fetchUsersAndRender() {
             return res.json();
         })
         .then(data => {
-            console.log('Data received:', data);
+            console.log('API Response:', data);
             let rawUsers = data.users || [];
 
             // FILTRE: Exclure les administrateurs (insensible à la casse)
@@ -137,16 +137,19 @@ function fetchUsersAndRender() {
                     const r = (u.role || '').toLowerCase();
                     return r !== 'administrateur' && r !== 'admin';
                 })
-                .map(u => ({
-                    id: u.id_user || u.id,
-                    nom: u.nom_user || u.nom || 'Sans nom',
-                    email: u.email_user || u.email || 'Sans email',
-                    role: u.role || 'Inconnu',
-                    status: u.status || 'inactif',
-                    createdAt: u.created_at,
-                    id_validateur: u.id_validateur || null,
-                    validator: u.validator || null
-                }));
+                .map(u => {
+                    console.log('Mapping user:', u.nom_user, 'Validator:', u.validator);
+                    return {
+                        id: u.id_user || u.id,
+                        nom: u.nom_user || u.nom || 'Sans nom',
+                        email: u.email_user || u.email || 'Sans email',
+                        role: u.role || 'Inconnu',
+                        status: u.status || 'inactif',
+                        createdAt: u.created_at,
+                        id_validateur: u.id_validateur || null,
+                        validator: u.validator || null
+                    };
+                });
 
             console.log('Processed users:', usersData);
 
