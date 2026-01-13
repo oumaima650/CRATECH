@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
     initCSRFToken();
     initAnimations();
     initInteractiveElements();
-    initRememberMe();
     initForgotPassword();
 });
 
@@ -233,16 +232,14 @@ async function submitEmployeeLogin(form) {
     const data = {
         username: formData.get('username'),
         email: formData.get('email'),
-        password: formData.get('password'),
-        remember: formData.get('remember') ? true : false
+        password: formData.get('password')
     };
 
     // Log des données pour déboguer
     console.log('Données envoyées:', {
         username: data.username,
         email: data.email,
-        password: '***',
-        remember: data.remember
+        password: '***'
     });
 
     try {
@@ -262,8 +259,6 @@ async function submitEmployeeLogin(form) {
 
         // Redirection immédiate
         if (response.ok && result.success) {
-            // Sauvegarder les identifiants si "Se souvenir de moi" est coché
-            handleRememberMePersistence(data);
 
             showFormMessage('Connexion réussie ! Redirection...', 'success');
             setTimeout(() => {
@@ -293,8 +288,7 @@ async function submitAdminLogin(form) {
         username: formData.get('username'),
         email: formData.get('email'),
         password: formData.get('password'),
-        admin_section: formData.get('admin_section'),
-        remember: formData.get('remember') ? true : false
+        admin_section: formData.get('admin_section')
     };
 
     // Log des données pour déboguer
@@ -302,8 +296,7 @@ async function submitAdminLogin(form) {
         username: data.username,
         email: data.email,
         password: '***',
-        admin_section: data.admin_section,
-        remember: data.remember
+        admin_section: data.admin_section
     });
 
     try {
@@ -324,8 +317,6 @@ async function submitAdminLogin(form) {
             const result = await response.json();
 
             if (result.success) {
-                // Sauvegarder les identifiants si "Se souvenir de moi" est coché
-                handleRememberMePersistence(data);
 
                 // Succès - redirection immédiate
                 showFormMessage('Connexion admin réussie ! Redirection...', 'success');
@@ -548,40 +539,6 @@ function initPerformanceOptimizations() {
     });
 }
 
-// Persistance "Se souvenir de moi"
-function initRememberMe() {
-    const rememberMe = document.getElementById('rememberMe');
-    const adminRememberMe = document.getElementById('adminRememberMe');
-
-    // Charger les données sauvegardées
-    const savedData = JSON.parse(localStorage.getItem('cratech_remembered_user') || '{}');
-
-    if (savedData.username) {
-        const employeeId = document.getElementById('employeeId');
-        const employeeEmail = document.getElementById('employeeEmail');
-        const adminId = document.getElementById('adminId');
-        const adminEmail = document.getElementById('adminEmail');
-
-        if (employeeId) employeeId.value = savedData.username;
-        if (employeeEmail) employeeEmail.value = savedData.email || '';
-        if (adminId) adminId.value = savedData.username;
-        if (adminEmail) adminEmail.value = savedData.email || '';
-
-        if (rememberMe) rememberMe.checked = true;
-        if (adminRememberMe) adminRememberMe.checked = true;
-    }
-}
-
-function handleRememberMePersistence(data) {
-    if (data.remember) {
-        localStorage.setItem('cratech_remembered_user', JSON.stringify({
-            username: data.username,
-            email: data.email
-        }));
-    } else {
-        localStorage.removeItem('cratech_remembered_user');
-    }
-}
 
 // Gestion "Mot de passe oublié"
 function initForgotPassword() {

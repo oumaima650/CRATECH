@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'keycloak' => [
+        'client_id' => env('KEYCLOAK_CLIENT_ID', 'cratech-app'),
+        'client_secret' => env('KEYCLOAK_CLIENT_SECRET', 'Mako5Mrhpriywd1iJvV4mzScKnqJ8R4L'),
+        'redirect' => env('KEYCLOAK_REDIRECT_URI', 'http://localhost:8000/auth/keycloak/callback'),
+        'base_url' => env('KEYCLOAK_BASE_URL', 'http://localhost:8180'),
+        'realms' => env('KEYCLOAK_REALM', 'CRATECH'),
+    ],
+
 ];

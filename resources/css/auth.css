@@ -890,3 +890,66 @@ body {
     justify-content: flex-end;
     gap: 1rem;
 }
+
+/* ========== KEYCLOAK BUTTON & SEPARATOR ========== */
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+    color: var(--gray-400);
+    font-size: 0.85rem;
+    max-width: 420px;
+    width: 100%;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.auth-divider span {
+    padding: 0 1rem;
+    font-weight: 500;
+}
+
+.keycloak-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 420px;
+    padding: 1.1rem;
+    background: var(--white);
+    color: var(--gray-700);
+    border: 1.5px solid var(--gray-200);
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.keycloak-btn:hover {
+    background: var(--gray-50);
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.1);
+}
+
+.keycloak-btn i {
+    font-size: 1.1rem;
+    color: var(--primary-blue);
+    transition: transform 0.3s ease;
+}
+
+.keycloak-btn:hover i {
+    transform: rotate(15deg);
+}

@@ -168,8 +168,21 @@ class CRAManager {
 
     async loadProjects() {
         try {
-            const response = await fetch('/employe/activities', { credentials: 'same-origin' });
+            const url = `/employe/activities?year=${this.currentYear}&month=${this.currentMonth + 1}`;
+            console.log('🔍 [DEBUG] loadProjects() appelé:', {
+                url,
+                year: this.currentYear,
+                month: this.currentMonth + 1
+            });
+
+            const response = await fetch(url, { credentials: 'same-origin' });
             const data = await response.json();
+
+            console.log('📦 [DEBUG] Réponse API reçue:', {
+                ok: response.ok,
+                activitiesCount: data.activities ? data.activities.length : 0,
+                activities: data.activities
+            });
 
             if (response.ok && data.activities) {
                 this.projects = data.activities.map(activity => ({
@@ -177,18 +190,21 @@ class CRAManager {
                     name: activity.nom_act,
                     code: activity.nom_act.substring(0, 5).toUpperCase()
                 }));
+                console.log('✅ [DEBUG] this.projects mis à jour:', this.projects);
             } else {
                 this.projects = [];
+                console.warn('⚠️ [DEBUG] Aucune activité, this.projects = []');
                 this.showNotification('Aucune activité assignée', 'info');
             }
         } catch (error) {
-            console.error('Erreur lors du chargement des activités:', error);
+            console.error('❌ [DEBUG] Erreur loadProjects:', error);
             this.projects = [];
             this.showNotification('Erreur lors du chargement des activités', 'error');
         }
     }
 
     buildCRATable() {
+        this.craData = {};
         const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
 
         // Build header
@@ -420,7 +436,7 @@ class CRAManager {
         return `${year}-${mm}-${dd}`;
     }
 
-    navigateMonth(direction) {
+    async navigateMonth(direction) {
         this.currentMonth += direction;
         if (this.currentMonth < 0) {
             this.currentMonth = 11;
@@ -431,12 +447,14 @@ class CRAManager {
         }
 
         this.updateSelectors();
+        await this.loadProjects();
         this.buildCRATable();
     }
 
-    onDateChange() {
+    async onDateChange() {
         this.currentMonth = parseInt(this.monthSelect.value);
         this.currentYear = parseInt(this.yearSelect.value);
+        await this.loadProjects();
         this.buildCRATable();
     }
 

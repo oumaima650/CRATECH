@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use App\Mail\CompteCreeMail;
 
 class AdminController extends Controller
@@ -204,16 +205,34 @@ public function users()
         ]);
 
         try {
-            // Créer l'utilisateur avec le statut actif par défaut
-            $user = Utilisateur::create([
+        // --- Intégration Keycloak ---
+        $keycloakId = null;
+        try {
+            $keycloakId = $this->createKeycloakUser([
                 'nom_user' => $request->nom_user,
                 'email_user' => $request->email_user,
-                'motdepasse_user' => Hash::make($request->password),
+                'password' => $request->password,
                 'role' => $request->role,
-                'status' => 'actif', // Statut par défaut
-                'id_validateur' => null,
-                'remember_token' => null,
             ]);
+            if ($keycloakId) {
+                Log::info('Utilisateur créé dans Keycloak avec succès:', ['keycloak_id' => $keycloakId]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Échec de la création Keycloak, on continue en local:', ['error' => $e->getMessage()]);
+        }
+        // ----------------------------
+
+        // Créer l'utilisateur avec le statut actif par défaut
+        $user = Utilisateur::create([
+            'nom_user' => $request->nom_user,
+            'email_user' => $request->email_user,
+            'motdepasse_user' => Hash::make($request->password),
+            'role' => $request->role,
+            'status' => 'actif', // Statut par défaut
+            'id_validateur' => null,
+            'keycloak_id' => $keycloakId, // Stocker l'ID Keycloak
+            'remember_token' => null,
+        ]);
 
             // Récupérer l'ID après la création
             $userId = $user->id_user;
@@ -268,6 +287,26 @@ public function users()
             'message' => 'Utilisateur mis à jour avec succès',
             'user' => $user
         ]);
+    }
+
+    public function toggleUserStatus($id)
+    {
+        try {
+            $user = Utilisateur::where('id_user', $id)->firstOrFail();
+            $user->status = $user->status === 'actif' ? 'inactif' : 'actif';
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Statut mis à jour avec succès',
+                'new_status' => $user->status
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function deleteUser($id)
@@ -954,5 +993,64 @@ public function users()
                 'message' => 'Erreur lors de la suppression de l\'activité'
             ], 500);
         }
+    }
+
+    /**
+     * Créer un utilisateur dans Keycloak via l'API Admin
+     */
+    private function createKeycloakUser($userData)
+    {
+        $services = config('services.keycloak');
+        
+        // 1. Obtenir le token admin (via client credentials)
+        $tokenUrl = "{$services['base_url']}/realms/{$services['realms']}/protocol/openid-connect/token";
+        
+        $response = Http::asForm()->post($tokenUrl, [
+            'client_id' => $services['client_id'],
+            'client_secret' => $services['client_secret'],
+            'grant_type' => 'client_credentials',
+        ]);
+
+        if (!$response->successful()) {
+            Log::error('Keycloak Admin Auth Failed:', ['status' => $response->status(), 'body' => $response->json()]);
+            return null;
+        }
+
+        $token = $response->json('access_token');
+
+        // 2. Créer l'utilisateur
+        $nameParts = explode(' ', $userData['nom_user'], 2);
+        $firstName = $nameParts[0];
+        $lastName = $nameParts[1] ?? '.'; // Placeholder si pas de nom de famille
+
+        $adminUrl = "{$services['base_url']}/admin/realms/{$services['realms']}/users";
+        
+        $userResponse = Http::withToken($token)->post($adminUrl, [
+            'username' => $userData['email_user'],
+            'email' => $userData['email_user'],
+            'enabled' => true,
+            'emailVerified' => true,
+            'firstName' => $firstName,
+            'lastName' => $lastName,
+            'credentials' => [
+                [
+                    'type' => 'password',
+                    'value' => $userData['password'],
+                    'temporary' => false
+                ]
+            ]
+        ]);
+
+        if ($userResponse->status() === 201) {
+            $location = $userResponse->header('Location');
+            if ($location) {
+                $parts = explode('/', $location);
+                $keycloakId = end($parts);
+                return $keycloakId;
+            }
+        }
+
+        Log::error('Keycloak User Creation Failed:', ['status' => $userResponse->status(), 'body' => $userResponse->json()]);
+        return null;
     }
 }

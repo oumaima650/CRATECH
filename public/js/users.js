@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
     initValidatorModal();
     fetchUsersAndRender();
     loadValidators();
+
+    // Mise à jour SEULEMENT des statistiques toutes les 3 secondes (User Request)
+    setInterval(fetchStatsOnly, 3000);
 });
 
 // Données des utilisateurs (chargées via API)
@@ -101,7 +104,19 @@ function initTableActions() {
     }
 }
 
-// Charger et rendre
+// Charger seulement les statistiques (pour le polling de 3s)
+function fetchStatsOnly() {
+    fetch('/api/public/users', { credentials: 'same-origin' })
+        .then(res => res.json())
+        .then(data => {
+            if (data.stats) {
+                updateUsersStatsFromAPI(data.stats);
+            }
+        })
+        .catch(err => console.error('Erreur stats polling:', err));
+}
+
+// Charger les utilisateurs et les statistiques
 function fetchUsersAndRender() {
     console.log('Fetching users...');
     const tbody = document.getElementById('usersTableBody');
@@ -130,10 +145,7 @@ function fetchUsersAndRender() {
                     status: u.status || 'inactif',
                     createdAt: u.created_at,
                     id_validateur: u.id_validateur || null,
-                    validator: u.validator_name ? {
-                        nom: u.validator_name,
-                        email: u.validator_email
-                    } : null
+                    validator: u.validator || null
                 }));
 
             console.log('Processed users:', usersData);
@@ -178,14 +190,14 @@ function createUserRow(user) {
     const row = document.createElement('tr');
     const canHaveValidator = user.role === 'employé' || user.role === 'sous-traitant';
 
-    // Avatar avec premières lettres
+    // Avatar avec premières lettres - FIX: filtrer les parties vides pour éviter UNDEFINED
     let initials = 'U';
-    if (typeof user.nom === 'string' && user.nom.length > 0) {
-        const parts = user.nom.split(' ');
+    if (typeof user.nom === 'string' && user.nom.trim().length > 0) {
+        const parts = user.nom.trim().split(/\s+/).filter(part => part.length > 0);
         if (parts.length > 1) {
-            initials = parts[0][0] + parts[1][0];
-        } else {
-            initials = user.nom.substring(0, 2);
+            initials = parts[0][0] + parts[parts.length - 1][0];
+        } else if (parts.length === 1) {
+            initials = parts[0].substring(0, 2);
         }
     }
     initials = initials.toUpperCase();
@@ -198,11 +210,9 @@ function createUserRow(user) {
             </div>
             <div class="user-cell-info">
                 <span class="user-cell-name">${user.nom}</span>
+                <span class="user-cell-email">${user.email}</span>
             </div>
         </div>
-        </td>
-        <td>
-            <span class="user-cell-email">${user.email}</span>
         </td>
         <td>
             <span class="role-badge ${getRoleClass(user.role)}">
@@ -211,12 +221,18 @@ function createUserRow(user) {
             </span>
         </td>
         <td>
-            ${canHaveValidator ? getValidatorCell(user) : '<span style="color: var(--gray-400);">-</span>'}
+             ${canHaveValidator ? getValidatorCell(user) : '<span style="color: var(--gray-400);">-</span>'}
         </td>
         <td>
-            <div style="display: flex; align-items: center;">
-                <span class="status-dot ${user.status === 'actif' ? 'status-active' : 'status-inactive'}"></span>
-                <span style="font-weight: 500; font-size: 0.85rem;">${getStatusLabel(user.status)}</span>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <label class="status-switch">
+                    <input type="checkbox" ${user.status === 'actif' ? 'checked' : ''} 
+                        onchange="handleStatusToggle('${user.id}', this)">
+                    <span class="status-slider"></span>
+                </label>
+                <span class="status-label" style="font-weight: 500; font-size: 0.85rem; min-width: 45px;">
+                    ${getStatusLabel(user.status)}
+                </span>
             </div>
         </td>
         <td>
@@ -224,8 +240,6 @@ function createUserRow(user) {
         </td>
         <td>
             <div class="action-buttons" style="display: flex; gap: 0.5rem;">
-                <!-- Validator button removed -->
-                <!-- Edit button removed -->
                 <button class="btn-action btn-delete" onclick="showDeleteConfirmation('${user.id}', '${user.nom}')" title="Supprimer">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -234,6 +248,42 @@ function createUserRow(user) {
     `;
 
     return row;
+}
+
+// Fonction pour gérer le basculement du statut
+async function handleStatusToggle(userId, checkbox) {
+    const label = checkbox.parentElement.nextElementSibling;
+    const originalChecked = checkbox.checked;
+
+    try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        const response = await fetch(`/admin/users/${userId}/toggle-status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            label.textContent = data.new_status === 'actif' ? 'Actif' : 'Inactif';
+            showNotification(`Statut mis à jour : ${data.new_status}`, 'success');
+
+            // Mettre à jour les données locales
+            const user = usersData.find(u => u.id == userId);
+            if (user) user.status = data.new_status;
+        } else {
+            checkbox.checked = !originalChecked;
+            showNotification(data.message || 'Erreur lors de la mise à jour', 'error');
+        }
+    } catch (err) {
+        console.error('Erreur toggle status:', err);
+        checkbox.checked = !originalChecked;
+        showNotification('Erreur de connexion', 'error');
+    }
 }
 
 function getRoleClass(role) {
@@ -492,22 +542,26 @@ function updateStatNumber(elementId, value) {
     const element = document.getElementById(elementId);
     if (!element) return;
 
+    const startValue = parseInt(element.textContent) || 0;
+    if (startValue === value) return;
+
     element.setAttribute('data-target', value);
 
-    const currentVal = parseInt(element.textContent) || 0;
-    if (currentVal === value) return; // Pas de changement
-
     // Animation du compteur
-    let current = 0;
-    const increment = Math.max(1, value / 30);
+    let current = startValue;
+    const duration = 1000; // 1 seconde
+    const steps = 50;
+    const increment = (value - startValue) / steps;
+    const stepTime = duration / steps;
+
     const timer = setInterval(() => {
         current += increment;
-        if (current >= value) {
+        if ((increment > 0 && current >= value) || (increment < 0 && current <= value)) {
             current = value;
             clearInterval(timer);
         }
         element.textContent = Math.floor(current);
-    }, 20);
+    }, stepTime);
 }
 
 function getNotificationIcon(type) {
@@ -524,16 +578,19 @@ function getNotificationIcon(type) {
 function getValidatorCell(user) {
     if (user.validator) {
         return `
-            <div class="validator-info">
+            <div class="validator-info" style="display: flex; align-items: center; gap: 0.5rem;">
+                <div style="width: 28px; height: 28px; background: var(--primary-light, #e0f2fe); color: var(--primary-blue, #3b82f6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600;">
+                    ${(user.validator.nom || 'V').charAt(0).toUpperCase()}
+                </div>
                 <span class="validator-name" style="font-weight: 500; font-size: 0.85rem; color: var(--gray-700);">${user.validator.nom}</span>
-                <button class="btn-action btn-edit" style="width: 24px; height: 24px; margin-left: 0.5rem;" onclick="assignValidatorDirectly('${user.id}', '${user.nom}')" title="Modifier le validateur">
+                <button class="btn-action btn-edit" style="width: 24px; height: 24px; color: var(--gray-400); background: none; border: none; cursor: pointer; transition: color 0.2s;" onclick="assignValidatorDirectly('${user.id}', '${user.nom}')" title="Modifier le validateur">
                     <i class="fas fa-edit" style="font-size: 0.7rem;"></i>
                 </button>
             </div>
         `;
     } else {
         return `
-            <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="assignValidatorDirectly('${user.id}', '${user.nom}')">
+            <button class="btn btn-secondary" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; border-radius: 6px; display: flex; align-items: center; gap: 0.4rem;" onclick="assignValidatorDirectly('${user.id}', '${user.nom}')">
                 <i class="fas fa-plus" style="font-size: 0.7rem;"></i> Affecter
             </button>
         `;
@@ -599,6 +656,8 @@ function assignValidatorDirectly(userId, userName) {
                     email: user.email || user.email_user,
                     role: user.role
                 }));
+                // Mettre à jour la variable globale pour confirmValidatorSelection
+                validatorsData = validators;
             }
 
             // Ouvrir la modal avec les validateurs
@@ -686,21 +745,75 @@ function closeValidatorSelectionModal() {
 }
 
 function confirmValidatorSelection() {
+    console.log('Confirmation - selectedValidatorId:', selectedValidatorId);
+    console.log('Confirmation - currentUserForValidator:', currentUserForValidator);
+
     if (!selectedValidatorId || !currentUserForValidator) {
         showNotification('Veuillez sélectionner un validateur', 'error');
         return;
     }
 
-    // Appel API pour affecter le validateur (simulation ou réel)
+    // Récupérer un jeton CSRF frais
+    fetch('/csrf-token')
+        .then(res => res.json())
+        .then(csrfData => {
+            const csrfToken = csrfData.token;
 
-    // Ici on suppose que l'API existe ou on met à jour localement pour la démo
-    const user = usersData.find(u => u.id === currentUserForValidator);
-    if (user) {
-        // Mise à jour locale pour retour immédiat
-        showNotification('Validateur affecté avec succès', 'success');
-        closeValidatorSelectionModal();
-        renderUsersTable(); // Re-render pour afficher le nouveau validateur
-    }
+            // Appel API pour affecter le validateur
+            return fetch('/api/assign-validator', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    user_id: currentUserForValidator,
+                    id_validateur: selectedValidatorId,
+                    note: 'Affectation via interface admin'
+                })
+            });
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Erreur lors de l\'affectation');
+            }
+        })
+        .then(data => {
+            if (data.success) {
+                // Mettre à jour localement
+                const user = usersData.find(u => u.id == currentUserForValidator);
+                if (user) {
+                    user.id_validateur = selectedValidatorId;
+
+                    // Trouver le validateur pour afficher son nom
+                    const validator = (typeof validatorsData !== 'undefined' ? validatorsData : []).find(v => v.id == selectedValidatorId);
+                    if (validator) {
+                        user.validator = {
+                            id: selectedValidatorId,
+                            nom: validator.nom,
+                            email: validator.email
+                        };
+                    }
+                    showNotification('Validateur affecté avec succès !', 'success');
+                }
+
+                // Fermer la modal
+                closeValidatorSelectionModal();
+
+                // Recharger le tableau
+                fetchUsersAndRender();
+            } else {
+                throw new Error(data.message || 'Erreur lors de l\'affectation');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showNotification('Erreur lors de l\'affectation du validateur: ' + error.message, 'error');
+        });
 }
 // Create User Modal Logic
 function openCreateUserModal() {

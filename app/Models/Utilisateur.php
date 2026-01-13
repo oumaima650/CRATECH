@@ -22,6 +22,7 @@ class Utilisateur extends Authenticatable
         'role',
         'status',
         'id_validateur',
+        'keycloak_id',
         'remember_token',
     ];
 

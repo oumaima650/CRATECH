@@ -16,6 +16,10 @@ use Illuminate\Http\Request;
 // Route d'accueil
 Route::get('/', [AcceuilController::class, 'index'])->name('accueil');
 
+// Authentification Keycloak
+Route::get('/auth/keycloak/redirect', [AuthController::class, 'redirectToKeycloak'])->name('keycloak.redirect');
+Route::get('/auth/keycloak/callback', [AuthController::class, 'handleKeycloakCallback'])->name('keycloak.callback');
+
 // Page utilisateurs HTML publique (pas d'auth)
 Route::get('/admin/users.html', function () {
     $path = resource_path('views/admin/users.html');
@@ -532,7 +536,7 @@ Route::get('/employe/mes-cra.html', function () {
 });
 
 // API employe activities (avec authentification)
-Route::get('/employe/activities', function () {
+Route::get('/employe/activities', function (Illuminate\Http\Request $request) {
     try {
         $user = Auth::user();
         if (!$user) {
@@ -541,13 +545,42 @@ Route::get('/employe/activities', function () {
                 'message' => 'Utilisateur non connecté'
             ], 401);
         }
+
+        $year = $request->get('year');
+        $month = $request->get('month');
         
-        // Get activities assigned to user from user_acts table
-        $activities = DB::table('user__acts')
+        // DEBUG: Log les paramètres reçus
+        \Log::info('API /employe/activities appelée', [
+            'user_id' => $user->id_user,
+            'user_name' => $user->nom_user,
+            'year' => $year,
+            'month' => $month
+        ]);
+        
+        $query = DB::table('user__acts')
             ->join('activités', 'user__acts.id_activité', '=', 'activités.id_activité')
-            ->where('user__acts.id_user', $user->id_user)
-            ->select('activités.id_activité', 'activités.nom_act', 'activités.description')
+            ->where('user__acts.id_user', $user->id_user);
+
+        if ($year && $month) {
+            // Filtrage strict : SEULEMENT si activité ET assignation sont actives
+            $query->where('activités.status', 'actif')
+                  ->where('user__acts.status', 'actif');
+        } else {
+            // Sans contexte de date, on ne montre que le strictement actif
+            $query->where('activités.status', 'actif')
+                  ->where('user__acts.status', 'actif');
+        }
+
+        $activities = $query->select('activités.id_activité', 'activités.nom_act', 'activités.description')
+            ->distinct()
             ->get();
+        
+        // DEBUG: Log le résultat
+        \Log::info('API /employe/activities résultat', [
+            'count' => $activities->count(),
+            'activities' => $activities->pluck('nom_act')->toArray()
+        ]);
+
         
         return response()->json([
             'success' => true,
@@ -896,15 +929,15 @@ Route::get('/api/public/users', function () {
     $stats = null;
     if (!request('role')) {
         $allUsers = Utilisateur::all();
-        $totalUsers = $allUsers->count();
-        $administrators = $allUsers->where('role', 'administrateur')->count();
+        $administratorsCount = $allUsers->where('role', 'administrateur')->count();
+        $totalUsers = $allUsers->count() - $administratorsCount;
         $validators = $allUsers->where('role', 'validateur')->count();
         $employees = $allUsers->whereIn('role', ['employé', 'sous-traitant'])->count();
         $activeUsers = $allUsers->where('status', 'actif')->count();
         
         $stats = [
             'total' => $totalUsers,
-            'administrators' => $administrators,
+            'administrators' => $administratorsCount,
             'validators' => $validators,
             'employees' => $employees,
             'active' => $activeUsers
@@ -1126,7 +1159,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
     Route::get('/api/users/{id}', [AdminController::class, 'getUserData'])->name('admin.api.user');
     Route::put('/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
-    Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+         Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
+     Route::post('/users/{id}/toggle-status', [AdminController::class, 'toggleUserStatus'])->name('admin.users.toggle-status');
+
     
     // Routes pour les activités
     Route::get('/activities', [AdminController::class, 'activities'])->name('admin.activities');
@@ -1857,31 +1892,7 @@ Route::middleware(['auth'])->group(function () {
         ]);
     });
 
-    Route::post('/account/update', function () {
-        $user = Auth::user();
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'Non connecté'], 401);
-        }
-
-        $data = request()->validate([
-            'nom' => 'nullable|string|max:255',
-            'password' => 'nullable|string|min:8|confirmed'
-        ]);
-
-        $updates = [];
-        if (isset($data['nom']) && $data['nom'] !== '') {
-            $updates['nom_user'] = $data['nom'];
-        }
-        if (isset($data['password']) && $data['password'] !== '') {
-            $updates['motdepasse_user'] = Hash::make($data['password']);
-        }
-
-        if (!empty($updates)) {
-            DB::table('utilisateurs')->where('id_user', $user->id_user)->update(array_merge($updates, ['updated_at' => now()]));
-        }
-
-        return response()->json(['success' => true, 'message' => 'Compte mis à jour avec succès']);
-    });
+    Route::post('/account/update', [AuthController::class, 'updateAccount']);
 });
 
 // Routes pour les vues HTML directes
@@ -1925,7 +1936,11 @@ Route::get('/css/{file}', function ($file) {
 Route::get('/js/{file}', function ($file) {
     $path = resource_path('js/' . $file);
     if (file_exists($path)) {
-        return response(file_get_contents($path))->header('Content-Type', 'application/javascript');
+        return response(file_get_contents($path))
+            ->header('Content-Type', 'application/javascript')
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
     abort(404);
 });
@@ -1986,7 +2001,7 @@ Route::get('/api/public/users', function () {
             'total' => $users->count(),
             'administrators' => $users->where('role', 'administrateur')->count(),
             'validators' => $users->where('role', 'validateur')->count(),
-            'employees' => $users->where('role', 'employé')->count(),
+            'employees' => $users->whereIn('role', ['employé', 'sous-traitant'])->count(),
             'active' => $users->where('status', 'actif')->count()
         ];
         
@@ -1997,6 +2012,89 @@ Route::get('/api/public/users', function () {
         
     } catch (\Exception $e) {
         return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+// Route DELETE pour supprimer un utilisateur (Keycloak + Local)
+Route::delete('/api/admin/users/{id}', function ($id) {
+    try {
+        // Récupérer l'utilisateur
+        $user = Utilisateur::where('id_user', $id)->first();
+        
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Utilisateur non trouvé'
+            ], 404);
+        }
+        
+        // Supprimer de Keycloak si l'utilisateur a un keycloak_id
+        if ($user->keycloak_id) {
+            try {
+                $services = config('services.keycloak');
+                
+                // 1. Obtenir le token admin
+                $tokenUrl = "{$services['base_url']}/realms/{$services['realms']}/protocol/openid-connect/token";
+                
+                $tokenResponse = \Illuminate\Support\Facades\Http::asForm()->post($tokenUrl, [
+                    'client_id' => $services['client_id'],
+                    'client_secret' => $services['client_secret'],
+                    'grant_type' => 'client_credentials',
+                ]);
+
+                if (!$tokenResponse->successful()) {
+                    \Illuminate\Support\Facades\Log::error('Échec Auth Admin Keycloak pour suppression:', [
+                        'status' => $tokenResponse->status(),
+                        'body' => $tokenResponse->json()
+                    ]);
+                    throw new \Exception('Échec authentification Keycloak Admin');
+                }
+
+                $token = $tokenResponse->json('access_token');
+
+                // 2. Supprimer l'utilisateur de Keycloak
+                $deleteUrl = "{$services['base_url']}/admin/realms/{$services['realms']}/users/{$user->keycloak_id}";
+                
+                $deleteResponse = \Illuminate\Support\Facades\Http::withToken($token)->delete($deleteUrl);
+
+                if (!$deleteResponse->successful() && $deleteResponse->status() !== 404) {
+                    \Illuminate\Support\Facades\Log::error('Échec suppression Keycloak:', [
+                        'status' => $deleteResponse->status(),
+                        'keycloak_id' => $user->keycloak_id
+                    ]);
+                    throw new \Exception('Échec suppression dans Keycloak');
+                }
+                
+                \Illuminate\Support\Facades\Log::info('Utilisateur supprimé de Keycloak:', [
+                    'keycloak_id' => $user->keycloak_id,
+                    'email' => $user->email_user
+                ]);
+                
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Erreur suppression Keycloak: ' . $e->getMessage());
+                // On continue quand même pour supprimer en local
+            }
+        }
+        
+        // Supprimer de la base de données locale
+        $user->delete();
+        
+        \Illuminate\Support\Facades\Log::info('Utilisateur supprimé de la base locale:', [
+            'id' => $id,
+            'email' => $user->email_user
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Utilisateur supprimé avec succès'
+        ]);
+        
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Erreur suppression utilisateur: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur lors de la suppression: ' . $e->getMessage()
+        ], 500);
     }
 });
 
